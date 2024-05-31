@@ -1,0 +1,23 @@
+:root {
+    --color-rojo: #A60808;
+    --color-amarillo: #EDBD0C;
+    --color-gris: #737373;
+    --success: #28a745;
+    --info: #17a2b8;
+    --warning: #ffc107;
+    --danger: #dc3545;
+    --light: #f8f9fa;
+    --dark: #101214;
+    --dark-200: #262829;
+}
+
+.account-container {
+    width: 100%;
+    height: 100vh;
+    background: black;
+    background-image: url(/Img/gimasioPrincipal.png);
+}
+
+.login-container {
+    background-color: var(--light);
+}
