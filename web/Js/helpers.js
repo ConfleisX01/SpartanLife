@@ -5,11 +5,8 @@ export async function getModule(url) {
     try {
         const response = await fetch(url)
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`)
-        }
-
         const html = await response.text()
+        
         return html
     } catch (error) {
         alert("Error al obtener el contenido, intentelo nuevamente")

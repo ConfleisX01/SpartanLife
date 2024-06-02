@@ -3,7 +3,7 @@ import * as msg from './messages.js'
 // Objeto para usar los helpers
 import * as hlp from './helpers.js'
 //Objeto para usar los helpers de las APIS
-import * as APIhlp from './APIhelpers.js'
+import * as APIhlp from './APIHelpers.js'
 //Objeto para debugear
 import * as Dbg from './Debug.js'
 
@@ -11,7 +11,7 @@ async function loadIndexControls() {
     let btnLogin = document.getElementById('btnLogin')
 
     btnLogin.addEventListener('click', async () => {
-        const content = await hlp.getModule("./Html/Sesion/login.html")
+        const content = await hlp.getModule("Html/Sesion/account.html")
         hlp.applyContent(content, "container-body")
         loadSesionControls()
     })

@@ -15,7 +15,7 @@
     width: 100%;
     height: 100vh;
     background: black;
-    background-image: url(/Img/gimasioPrincipal.png);
+    background-image: url(../Img/gym_bg_1.png);
 }
 
 .login-container {
