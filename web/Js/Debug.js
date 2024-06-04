@@ -6,7 +6,7 @@ export function loadModule(content) {
 
 export function verifyUser(userData) {
     const user = users.find(user => user.User === userData.User && user.Password === userData.Password)
-    return user ? user.Rol : false
+    return user ? user : false
 }
 
 export function addUser(user) {

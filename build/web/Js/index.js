@@ -4,6 +4,8 @@ import * as msg from './messages.js'
 import * as hlp from './helpers.js'
 //Objeto para usar los helpers de las APIS
 import * as APIhlp from './APIHelpers.js'
+// Objeto para control del dashboard
+import * as dsh from './Dashboard.js'
 //Objeto para debugear
 import * as Dbg from './Debug.js'
 
@@ -41,11 +43,13 @@ async function loadSesionControls() {
         switchAccountMode(1)
     })
 
+    // TODO: Crear la verificacion real para el usuario
     btnLoginStart.addEventListener('click', () => {
         if (hlp.verifyInputs(loginElements)) {
             let user = { "User": lbUser.value, "Password": lbPassword.value }
             if (Dbg.verifyUser(user)) {
                 msg.successMessage("Usuario Verificado", "Ingresando al sistema")
+                loadDashboad(Dbg.verifyUser(user))
             } else {
                 msg.errorMessage("Usuario Incorrecto", "El usuario ingresado no existe", "Ingrese un usuario existente")
             }
@@ -54,6 +58,7 @@ async function loadSesionControls() {
         }
     })
 
+    // TODO: Crear el metodo real para crear un nuevo usuario
     btnCreate.addEventListener('click', () => {
         if (hlp.verifyInputs(signinElements)) {
             let user = { "Name" : lbUserName.value, "LastName" : lbUserLastName.value, "User" : lbUserCreate.value, "Password" : lbPasswordCreate.value, "Rol" : "USER"}
@@ -79,6 +84,43 @@ function switchAccountMode(position) {
     }
 }
 
-loadIndexControls()
+// Funcion para cargar el DashBoard
+function loadDashboad(user) {
+    if(user.Rol == 'ADMIN') {
+        loadAdminDashboard()
+    } else if(user.Rol == 'USER') {
+        loadUserDashboard()
+    }
+}
 
-//Dbg.loadModule(await hlp.getModule('./Html/Sesion/login.html'))
+// Funcion para loguear al usuario tipo ADMIN
+async function loadAdminDashboard() {
+    const container = document.querySelector('body')
+
+    const contentMenu = await hlp.getModule('Html/Dashboard/dashboard.html')
+
+    container.innerHTML = ""
+    container.innerHTML = contentMenu
+
+    // Cargamos por defecto el modulo vista de empleados
+    const moduleViewEmployee = await hlp.getModule('Html/Empleado/Vista.html')
+    dsh.loadUserViewTable(moduleViewEmployee)
+
+    fixDashboard()
+}
+
+// Funcion para loguear al usuario tipo USER
+function loadUserDashboard() {
+
+}
+
+// Funcion para arregar el error de las alertas en el dashboard
+function fixDashboard() {
+    const container = document.querySelector('body')
+    container.classList.remove('swal2-height-auto')
+}
+
+// Funcion principal para cargar los controladores del sistema
+//loadIndexControls()
+// TODO: Funcion de prueba, eliminar cuando se termine de provar el apartado del dashboard
+loadAdminDashboard()
