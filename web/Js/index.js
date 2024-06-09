@@ -6,6 +6,8 @@ import * as hlp from './helpers.js'
 import * as APIhlp from './APIHelpers.js'
 // Objeto para control del dashboard
 import * as dsh from './Dashboard.js'
+// Objeto para el control de los empleados
+import * as emp from './Edit.js'
 //Objeto para debugear
 import * as Dbg from './Debug.js'
 
@@ -61,7 +63,7 @@ async function loadSesionControls() {
     // TODO: Crear el metodo real para crear un nuevo usuario
     btnCreate.addEventListener('click', () => {
         if (hlp.verifyInputs(signinElements)) {
-            let user = { "Name" : lbUserName.value, "LastName" : lbUserLastName.value, "User" : lbUserCreate.value, "Password" : lbPasswordCreate.value, "Rol" : "USER"}
+            let user = { "Name": lbUserName.value, "LastName": lbUserLastName.value, "User": lbUserCreate.value, "Password": lbPasswordCreate.value, "Rol": "USER" }
             Dbg.addUser(user)
             msg.successMessage("Usuario Creado", "Se ha creado el usuario con exito")
             Dbg.viewUsers()
@@ -75,7 +77,7 @@ function switchAccountMode(position) {
     let containerLogin = document.getElementById('container-login')
     let containerSigin = document.getElementById('container-signin')
 
-    if(position == 0) {
+    if (position == 0) {
         containerLogin.classList.add('d-none')
         containerSigin.classList.remove('d-none')
     } else if (position == 1) {
@@ -86,9 +88,9 @@ function switchAccountMode(position) {
 
 // Funcion para cargar el DashBoard
 function loadDashboad(user) {
-    if(user.Rol == 'ADMIN') {
+    if (user.Rol == 'ADMIN') {
         loadAdminDashboard()
-    } else if(user.Rol == 'USER') {
+    } else if (user.Rol == 'USER') {
         loadUserDashboard()
     }
 }
@@ -101,6 +103,8 @@ async function loadAdminDashboard() {
 
     container.innerHTML = ""
     container.innerHTML = contentMenu
+
+    loadControls()
 
     // Cargamos por defecto el modulo vista de empleados
     const moduleViewEmployee = await hlp.getModule('Html/Empleado/Vista.html')
@@ -120,7 +124,39 @@ function fixDashboard() {
     container.classList.remove('swal2-height-auto')
 }
 
+function loadControls() {
+    const btnListEmployee = document.querySelector('#btnListEmployee')
+    const btnEditEmployee = document.querySelector('#btnEditEmployee')
+    const btnAttendance = document.querySelector('#btnAttendance')
+    const btnVacations = document.querySelector('#btnVacations')
+    const btnPay = document.querySelector('#btnPay')
+
+    btnListEmployee.addEventListener('click', async () => {
+        const moduleViewEmployee = await hlp.getModule('Html/Empleado/Vista.html')
+        dsh.loadUserViewTable(moduleViewEmployee)
+    })
+
+    btnEditEmployee.addEventListener('click', async () => {
+        const content = await hlp.getModule('Html/Empleado/Editar.html')
+        const container = '#module-container'
+
+        emp.loadModule(container, content)
+    })
+
+    btnAttendance.addEventListener('click', () => {
+        // * Agregar la logica de carga de modulo
+    })
+
+    btnVacations.addEventListener('click', () => {
+        // * Agregar la logica de carga de modulo
+    })
+
+    btnPay.addEventListener('click', () => {
+        // * Agregar la logica de carga de modulo
+    })
+}
+
 // Funcion principal para cargar los controladores del sistema
 //loadIndexControls()
-// TODO: Funcion de prueba, eliminar cuando se termine de provar el apartado del dashboard
+// TODO: Funcion de prueba, eliminar cuando se termine de probar el apartado del dashboard
 loadAdminDashboard()
