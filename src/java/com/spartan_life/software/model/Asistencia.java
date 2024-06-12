@@ -8,25 +8,17 @@ public class Asistencia {
     private Empleado empleado;
     private String inicioSemana;
     private String finSemana;
-    private String diasAsistidos;
+    private int diasAsistidos;
     
     public Asistencia(){
         
     }
 
-    public Asistencia(int idAsistencia, Empleado empleado, String inicioSemana, String finSemana, String diasAsistidos) {
+    public Asistencia(int idAsistencia, Empleado empleado, String inicioSemana, String finSemana, int diasAsistidos) {
         this.idAsistencia = idAsistencia;
         this.empleado = empleado;
         this.inicioSemana = inicioSemana;
         this.finSemana = finSemana;
-        this.diasAsistidos = diasAsistidos;
-    }
-
-    public String getDiasAsistidos() {
-        return diasAsistidos;
-    }
-
-    public void setDiasAsistidos(String diasAsistidos) {
         this.diasAsistidos = diasAsistidos;
     }
 
@@ -61,6 +53,13 @@ public class Asistencia {
     public void setFinSemana(String finSemana) {
         this.finSemana = finSemana;
     }
-    
-    
+
+    public int getDiasAsistidos() {
+        return diasAsistidos;
+    }
+
+    public void setDiasAsistidos(int diasAsistidos) {
+        this.diasAsistidos = diasAsistidos;
+    }
+
 }

@@ -8,26 +8,28 @@ public class Usuario {
     private Persona persona;
     private String nombreUsuario;
     private String contrasenia;
+    private String token;
     private String rol;
     
     public Usuario(){
         
     }
 
-    public Usuario(int idUusario, Persona persona, String nombreUsuario, String contrasenia, String rol) {
+    public Usuario(int idUusario, Persona persona, String nombreUsuario, String contrasenia, String token, String rol) {
         this.idUusario = idUusario;
         this.persona = persona;
         this.nombreUsuario = nombreUsuario;
         this.contrasenia = contrasenia;
+        this.token = token;
         this.rol = rol;
     }
 
-    public String getRol() {
-        return rol;
+    public String getToken() {
+        return token;
     }
 
-    public void setRol(String rol) {
-        this.rol = rol;
+    public void setToken(String token) {
+        this.token = token;
     }
 
     public int getIdUusario() {
@@ -61,5 +63,14 @@ public class Usuario {
     public void setContrasenia(String contrasenia) {
         this.contrasenia = contrasenia;
     }
+
+    public String getRol() {
+        return rol;
+    }
+
+    public void setRol(String rol) {
+        this.rol = rol;
+    }
+
     
 }
