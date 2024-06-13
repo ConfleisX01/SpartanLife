@@ -1,50 +1,52 @@
 <div class="row w-100 h-100 m-0">
   <div class="col-2 sideBar p-0 d-none d-md-block h-100">
-    <div class="container-fluid user-information m-0 py-2 d-flex align-items-cetner justify-content-center flex-column">
-      <div class="avatar-icon">
-        <img src="https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg" alt="">
+    <div class="d-flex flex-column h-100">
+      <div class="container-fluid user-information m-0 py-2 d-flex align-items-cetner justify-content-center flex-column">
+        <div class="avatar-icon">
+          <img src="https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg" alt="">
+        </div>
+        <div class="py-2 text-center">
+          <h4 class="m-0">Juan Pablo</h4>
+          <p class="m-0">Administrador</p>
+        </div>
       </div>
-      <div class="py-2 text-center">
-        <h4 class="m-0">Juan Pablo</h4>
-        <p class="m-0">Administrador</p>
+      <div class="container-fluid menu-bar p-0 py-4 flex-grow-1">
+        <div class="">
+          <h5 class="m-0"><i class="bi bi-people-fill menu-title"></i> Empleados</h5>
+        </div>
+        <div class="">
+          <ul class="p-0">
+            <li class="menu-item py-2">
+              <p class="fw-light m-0" id="btnListEmployee">Lista de Empleados</p>
+            </li>
+            <li class="menu-item py-2">
+              <p class="fw-light m-0" id="btnEditEmployee">Editar Empleados</p>
+            </li>
+            <li class="menu-item py-2">
+              <p class="fw-light m-0" id="btnAttendance">Registrar Asistencias</p>
+            </li>
+            <li class="menu-item py-2">
+              <p class="fw-light m-0" id="btnVacations">Solicitud de Vacaciones</p>
+            </li>
+            <li class="menu-item py-2">
+              <p class="fw-light m-0" id="btnPay">Registrar Sueldo</p>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="container-fluid menu-account-bar p-0 py-2">
+        <div class="">
+          <ul class="p-0">
+            <li class="menu-item py-2">
+              <p class="fw-light m-0">Configuración</p>
+            </li>
+            <li class="menu-item py-2">
+              <p class="fw-light m-0">Log Out</p>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
-    <div class="container-fluid menu-bar p-0 py-4">
-      <div class="">
-        <h5 class="m-0"><i class="bi bi-people-fill menu-title"></i> Empleados</h5>
-      </div>
-      <div class="">
-        <ul class="p-0">
-          <li class="menu-item py-2">
-            <p class="fw-light m-0">Lista de Empleados</p>
-          </li>
-          <li class="menu-item py-2">
-            <p class="fw-light m-0">Editar Empleados</p>
-          </li>
-          <li class="menu-item py-2">
-            <p class="fw-light m-0">Registrar Asistencias</p>
-          </li>
-          <li class="menu-item py-2">
-            <p class="fw-light m-0">Solicitud de Vacaciones</p>
-          </li>
-          <li class="menu-item py-2">
-            <p class="fw-light m-0">Registrar Sueldo</p>
-          </li>
-        </ul>
-      </div>
     </div>
-    <div class="container-fluid menu-account-bar p-0 py-2">
-      <div class="">
-        <ul class="p-0">
-          <li class="menu-item py-2">
-            <p class="fw-light m-0">Configuración</p>
-          </li>
-          <li class="menu-item py-2">
-            <p class="fw-light m-0">Log Out</p>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </div>
   <div class="col-md-10 main-content p-0 d-flex flex-column align-items-center px-3" id="module-container"></div>
 </div>

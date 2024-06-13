@@ -1,17 +1,17 @@
-/* Fuente */
-@import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
-
-* {
-  font-family: "Rubik", sans-serif;
-}
-
-/* Colores */
 :root {
   --princial_color: #113458;
   --first_complementary: #f2aa1f;
-  --second_complementary: #f1ece7;
+  --second_complementary: #F0F4F9;
   --dark: #090909;
   --white: #ffffff;
+  --button-save-bg: #B4D1EE;
+  --button-save-color: #124679;
+  --buton-delete-bg: #EDB3B3;
+  --button-delete-color: #B42020;
+  --buton-update-bg: #fff889;
+  --button-update-color: #cc9702;
+  --border: #DEE2E6;
+  --dark-text: #343A40;
 }
 
 /* Estilos Principales */
@@ -27,6 +27,10 @@ ul li {
   list-style: none;
 }
 
+th {
+  font-weight: 400;
+}
+
 .main-content {
   height: 100%;
   overflow-y: scroll;
@@ -34,19 +38,8 @@ ul li {
 
 .sideBar {
   background-color: var(--white);
-  /* border-right: 1px solid;
-  border-image-source: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, var(--first_complementary) 50%, rgba(255, 255, 255, 0) 100%);
-  border-image-slice: 1;
-  border-image-width: 1px;
-  border-image-outset: 0;
-  border-image-repeat: stretch; */
   box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
-  display: flex !important;
   flex-direction: column;
-}
-
-.menu-bar {
-  flex-grow: 1;
 }
 
 .user-information {
@@ -136,4 +129,81 @@ ul li {
 .employe-param-title {
   margin: 0;
   font-weight: bold;
+}
+
+.form-container {
+  width: 500px;
+  height: 100%;
+  background-color: var(--white);
+  position: absolute;
+  right: 0;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  transform: translateX(500px);
+  transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.form-active {
+  transform: translateX(0);
+}
+
+.btn-base {
+  border: inherit;
+  padding: 0.3rem 1.2rem;
+  border-radius: 0.2rem;
+  font-weight: 500;
+}
+
+.button_save {
+  background-color: var(--button-save-bg);
+  color: var(--button-save-color);
+}
+
+.button_danger {
+  background-color: var(--buton-delete-bg);
+  color: var(--button-delete-color);
+}
+
+.button_update {
+  background-color: var(--buton-update-bg);
+  color: var(--button-update-color);
+}
+
+.file-input-custom {
+  width: 100%;
+  height: 8rem;
+  border: 4px dashed var(--border);
+  border-radius: 0.5rem;
+  position: relative;
+  cursor: pointer;
+}
+
+.file-input-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.file-input-content p {
+  color: var(--dark-text);
+}
+
+.input-file {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.separator {
+  border-bottom: 1px solid var(--border);
 }
