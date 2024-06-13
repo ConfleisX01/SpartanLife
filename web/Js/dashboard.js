@@ -76,7 +76,6 @@ function addClickEventToHiddenInfo() {
 
 function toggleHiddenClass(element) {
     element.classList.toggle('d-none');
-    element.classList.toggle('');
 }
 
 // Datos falsos

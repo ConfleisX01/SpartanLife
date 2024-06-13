@@ -31,15 +31,21 @@ th {
   font-weight: 400;
 }
 
+.selected th{
+  background-color: var(--button-save-bg) !important;
+}
+
 .main-content {
   height: 100%;
   overflow-y: scroll;
 }
 
 .sideBar {
+  width: 100px;
   background-color: var(--white);
   box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
   flex-direction: column;
+  transition: all 3s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
 .user-information {
@@ -79,13 +85,12 @@ th {
   padding: 0rem 2rem;
 }
 
-.menu-item {
-  transition: all 0.2s ease-in-out;
-  padding: 0rem 2rem;
-}
-
 .menu-item:hover {
   background-color: var(--second_complementary);
+}
+
+.menu-item i {
+  font-size: x-large;
 }
 
 .table-head {
@@ -206,4 +211,130 @@ th {
 
 .separator {
   border-bottom: 1px solid var(--border);
+}
+
+.container-form-attendance {
+  background-color: var(--white);
+  border-radius: 0.4rem;
+}
+
+/* Menu lateral */
+
+.sideBar {
+  width: 80px;
+  background-color: white;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  transition: all 0.5s cubic-bezier(0.075, 0.82, 0.165, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+.header-menu {
+  width: 80px;
+  overflow: hidden;
+}
+
+.body-menu {
+  width: 80px;
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+.footer-menu {
+  width: 80px;
+  overflow: hidden;
+}
+
+.menu-item {
+  width: 100%;
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+.menu-item:hover {
+  background-color: #d7d7d7;
+}
+
+ul {
+  width: 100%;
+}
+
+ul li {
+  list-style: none;
+  display: flex;
+  align-items: center;
+}
+
+i {
+  font-size: 1.6rem;
+}
+
+.expanded {
+  width: 300px;
+}
+
+#btnExpand {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+#btnExpand:hover {
+  background-color: #d7d7d7;
+}
+
+.logo {
+  width: 100%;
+}
+
+ul li p {
+  display: none;
+  margin: 0rem 1rem;
+  white-space: nowrap;
+}
+
+.tooltip {
+  display: none !important;
+}
+
+.avatar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.avatar div {
+  display: none;
+}
+
+.avatar p {
+  display: none;
+  white-space: nowrap;
+}
+
+.avatar img {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+}
+
+.sideBar.expanded .header-menu, .body-menu, .footer-menu {
+  width: 100%;
+}
+
+.sideBar.expanded ul li p {
+  display: block;
+}
+
+.sideBar.expanded .avatar p{
+  display: block;
+}
+
+.sideBar.expanded .avatar div{
+  display: block;
 }

@@ -5,11 +5,13 @@ import * as hlp from './helpers.js'
 //Objeto para usar los helpers de las APIS
 import * as APIhlp from './APIHelpers.js'
 // Objeto para control del dashboard
-import * as dsh from './Dashboard.js'
+import * as dsh from './dashboard.js'
 // Objeto para el control de los empleados
-import * as emp from './Edit.js'
+import * as emp from './edit.js'
+// Objeto para el control de las asistencias
+import * as atn from './attendance.js'
 //Objeto para debugear
-import * as Dbg from './Debug.js'
+import * as Dbg from './debug.js'
 
 async function loadIndexControls() {
     let btnLogin = document.getElementById('btnLogin')
@@ -110,6 +112,10 @@ async function loadAdminDashboard() {
     const moduleViewEmployee = await hlp.getModule('Html/Empleado/Vista.html')
     dsh.loadUserViewTable(moduleViewEmployee)
 
+    // ! Funcion para probar el modulo asistencias, eliminar cuando se termine de probar este apartado
+    const content = await hlp.getModule('Html/Asistencias/Registro.html')
+    atn.load(content)
+
     fixDashboard()
 }
 
@@ -130,6 +136,12 @@ function loadControls() {
     const btnAttendance = document.querySelector('#btnAttendance')
     const btnVacations = document.querySelector('#btnVacations')
     const btnPay = document.querySelector('#btnPay')
+    const btnExpand = document.querySelector('#btnExpand')
+    const sideMenu = document.querySelector('#sideBar')
+
+    btnExpand.onclick = function () {
+        sideMenu.classList.toggle('expanded')
+    }
 
     btnListEmployee.addEventListener('click', async () => {
         const moduleViewEmployee = await hlp.getModule('Html/Empleado/Vista.html')
@@ -143,8 +155,9 @@ function loadControls() {
         emp.loadModule(container, content)
     })
 
-    btnAttendance.addEventListener('click', () => {
-        // * Agregar la logica de carga de modulo
+    btnAttendance.addEventListener('click', async () => {
+        const content = await hlp.getModule('Html/Asistencias/Registro.html')
+        atn.load(content)
     })
 
     btnVacations.addEventListener('click', () => {
