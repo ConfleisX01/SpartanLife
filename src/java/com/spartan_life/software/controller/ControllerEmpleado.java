@@ -54,7 +54,7 @@ public class ControllerEmpleado {
 
         } catch (Exception ex) {
             ex.printStackTrace();
-            return e;
+            return null;
         }
     }
 
@@ -98,11 +98,11 @@ public class ControllerEmpleado {
 
         } catch (Exception ex) {
             ex.printStackTrace();
-            return e;
+            return null;
         }
     }
     
-    public void eliminarEmpleado(Empleado e){
+    public Empleado eliminarEmpleado(Empleado e){
         String query =  "CALL eliminarEmpleado(?, ?)";
              try {
             ConexionMysql connMySQL = new ConexionMysql();
@@ -120,9 +120,11 @@ public class ControllerEmpleado {
             cstmt.close();
             conn.close();
             connMySQL.close();
+            return e;
 
         } catch (Exception ex) {
             ex.printStackTrace();
+            return null;
         }
     }
     

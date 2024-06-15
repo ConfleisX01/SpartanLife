@@ -27,11 +27,20 @@ public class RestSucursal {
 
         try {
             Sucursal sucursal = gson.fromJson(s, Sucursal.class);
-            cs.insertarSucursal(sucursal);
-            out = """
-                  {"response" : "operacion exitosa"}
+           Sucursal local =   cs.insertarSucursal(sucursal);
+           
+             if (local != null) {
+                out = """
+                 {"response" : "operacion exitosa"}
+                 """;
+                out = String.format(out, s);
+            } else {
+                out = """
+                  {"response" : "Error en la transacción"}
                   """;
-            out = String.format(out, s);
+                out = String.format(out, s);
+            }
+          
         } catch (Exception e) {
             e.printStackTrace();
             out = """
@@ -53,11 +62,19 @@ public class RestSucursal {
 
         try {
             Sucursal sucursal = gson.fromJson(s, Sucursal.class);
-            cs.modificarSucursal(sucursal);
-            out = """
-                  {"response" : "operacion exitosa"}
+            Sucursal local =  cs.modificarSucursal(sucursal);
+            
+            if (local != null) {
+                out = """
+                 {"response" : "operacion exitosa"}
+                 """;
+                out = String.format(out, s);
+            } else {
+                out = """
+                  {"response" : "Error en la transacción"}
                   """;
-            out = String.format(out, s);
+                out = String.format(out, s);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             out = """
@@ -78,10 +95,19 @@ public class RestSucursal {
 
         try {
             Sucursal sucursal = gson.fromJson(s, Sucursal.class);
-            cs.eliminarSucursal(sucursal);
-            out = """
-                  {"response" : "operacion exitosa"}
+            Sucursal local =  cs.eliminarSucursal(sucursal);
+            
+              if (local != null) {
+                out = """
+                 {"response" : "operacion exitosa"}
+                 """;
+                out = String.format(out, s);
+            } else {
+                out = """
+                  {"response" : "Error en la transacción"}
                   """;
+                out = String.format(out, s);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             out = """

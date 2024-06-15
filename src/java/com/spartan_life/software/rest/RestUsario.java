@@ -27,13 +27,21 @@ public class RestUsario {
         try {
 
             Usuario usuario = gson.fromJson(u, Usuario.class);
-            cu.insertarUsuario(usuario);
+            //para poder compar datos
+            Usuario usuarioLocal =      cu.insertarUsuario(usuario);
+        if (usuarioLocal != null) {
             out = """
                   {"response" : "operacion exitosa"}
                   """;
             out = String.format(out, u);
 
-        } catch (Exception ex) {
+        }else{
+              out = """
+                  {"response" : "Error en la transacción"}
+                  """;
+                 out = String.format(out, u);
+        }
+        }catch (Exception ex) {
             ex.printStackTrace();
             out = """
                   {"response" : "Error en la transacción"}

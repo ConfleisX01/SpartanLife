@@ -15,6 +15,7 @@ import javax.lang.model.util.Types;
 
 public class ControllerUsuario {
 
+    // contrase;a
     public String bytesToHex(byte[] hash) {
         StringBuilder hexString = new StringBuilder(2 * hash.length);
         for (int i = 0; i < hash.length; i++) {
@@ -34,8 +35,7 @@ public class ControllerUsuario {
         return bytesToHex(hash);
     }
 
-    // Método para insertar un nuevo usuario con contraseña encriptada
-    public void insertarUsuario(Usuario u) {
+    public Usuario insertarUsuario(Usuario u) {
         String query = "CALL insertarUsuario(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try {
@@ -43,13 +43,13 @@ public class ControllerUsuario {
             Connection conn = conexionMysql.open();
             CallableStatement csmt = (CallableStatement) conn.prepareCall(query);
 
-            // Encriptar la contraseña del usuario con SHA-256
+            // encriptar la contraseña del usuario con SHA-256
             String contraseniaEncriptada = calcularHashSHA256(u.getContrasenia());
 
-            // Obtener la persona asociada al usuario
+//datos que se usaran
             Persona persona = u.getPersona();
 
-            // Establecer los parámetros del procedimiento almacenado
+            // datos de entrada
             csmt.setString(1, u.getNombreUsuario());
             csmt.setString(2, contraseniaEncriptada);
             csmt.setString(3, u.getRol());
@@ -61,28 +61,43 @@ public class ControllerUsuario {
             csmt.setString(9, persona.getCurp());
             csmt.setString(10, persona.getNss());
 
-            //DATOS DE SALIDA
+            //salida
             csmt.registerOutParameter(11, java.sql.Types.INTEGER);
 
             csmt.execute();
-
-            // Verificar el resultado
+            // resultado de la peticion
             int resultado = csmt.getInt(11);
+
             if (resultado == -1) {
                 System.out.println("Error: El usuario ya existe.");
+                csmt.close();
+                conn.close();
+                conexionMysql.close();
+                return null;
+
             } else if (resultado == 1) {
                 System.out.println("Usuario creado exitosamente.");
+                csmt.close();
+                conn.close();
+                conexionMysql.close();
+                return u;
             } else {
                 System.out.println("Error desconocido al crear el usuario.");
+                csmt.close();
+                conn.close();
+                conexionMysql.close();
+                return null;
             }
+
         } catch (Exception ex) {
             ex.printStackTrace();
+            return null;
         }
     }
 
-    // Método para iniciar sesión
+    // metodo para iniciar sesión
     public Usuario loginUser(String nombreUsuario, String contrasenia) {
-        // Calcular el hash de la contraseña proporcionada
+        // calcular el hash de la contraseña
         String contraseniaEncriptada = "";
         try {
             contraseniaEncriptada = calcularHashSHA256(contrasenia);
@@ -98,7 +113,7 @@ public class ControllerUsuario {
             ConexionMysql conexionMysql = new ConexionMysql();
             Connection conn = conexionMysql.open();
             PreparedStatement pstmtSelect = conn.prepareStatement(querySelect);
-            
+
             pstmtSelect.setString(1, nombreUsuario);
             pstmtSelect.setString(2, contraseniaEncriptada);
 
@@ -110,15 +125,14 @@ public class ControllerUsuario {
             byte[] tokenBytes = tokenString.getBytes(java.nio.charset.StandardCharsets.UTF_8);
 
             ResultSet rs = pstmtSelect.executeQuery();
-    
+
             String queryToken = "UPDATE usuario SET token = ? WHERE id_usuario = ?;";
             PreparedStatement cstmtToken = conn.prepareStatement(queryToken);
 
-
             if (rs.next()) {
 
-             cstmtToken.setString(1, cl.bytesToHex(tokenBytes));
-              cstmtToken.setString(2, rs.getString("id_usuario"));
+                cstmtToken.setString(1, cl.bytesToHex(tokenBytes));
+                cstmtToken.setString(2, rs.getString("id_usuario"));
                 System.out.println("token actalizado: " + cl.bytesToHex(tokenBytes));
                 System.out.println("id actalizado: " + rs.getInt("id_usuario"));
                 u.setIdUusario(rs.getInt("id_usuario"));
@@ -127,7 +141,7 @@ public class ControllerUsuario {
                 u.setToken(rs.getString("token"));
                 u.setRol(rs.getString("rol"));
                 System.out.println("este es el token: " + cl.bytesToHex(tokenBytes));
-                
+
                 pstmtSelect.execute();
                 cstmtToken.executeUpdate();
             } else {
@@ -137,39 +151,39 @@ public class ControllerUsuario {
             rs.close();
             pstmtSelect.close();
             conn.close();
+                 return u;
 
         } catch (Exception ex) {
             ex.printStackTrace();
+            return null;
         }
+
+   
+    }
+
+    public Usuario traerUsuario(int id_usuario) throws SQLException {
+        ConexionMysql conexionMysql = new ConexionMysql();
+        Connection conn = conexionMysql.open();
+        Usuario u = new Usuario();
+        String query = "SELECT * FROM usuario WHERE id_usuario = ?";
+
+        PreparedStatement pstmt = conn.prepareStatement(query);
+
+        pstmt.setInt(1, id_usuario);
+
+        ResultSet rs = pstmt.executeQuery();
+
+        if (rs.next()) {
+            u.setIdUusario(rs.getInt("id_usuario"));
+            u.setNombreUsuario(rs.getString("nombre_usuario"));
+            u.setContrasenia(rs.getString("contrasenia"));
+            u.setToken(rs.getString("token"));
+            u.setRol(rs.getString("rol"));
+        }
+        rs.close();
+        pstmt.close();
+        conn.close();
 
         return u;
     }
-
-   
-    
-   public Usuario traerUsuario (int id_usuario)throws SQLException {
-       ConexionMysql conexionMysql = new  ConexionMysql();
-       Connection conn = conexionMysql.open();
-       Usuario u = new Usuario();
-       String query = "SELECT * FROM usuario WHERE id_usuario = ?";
-       
-       PreparedStatement pstmt = conn.prepareStatement(query);
-       
-       pstmt.setInt(1, id_usuario);
-       
-       ResultSet rs = pstmt.executeQuery();
-       
-       if(rs.next()){
-           u.setIdUusario(rs.getInt("id_usuario"));
-                u.setNombreUsuario(rs.getString("nombre_usuario"));
-                u.setContrasenia(rs.getString("contrasenia"));
-                u.setToken(rs.getString("token"));
-                u.setRol(rs.getString("rol"));
-       }
-         rs.close();
-    pstmt.close();
-    conn.close();
-
-    return u;
-   }
 }

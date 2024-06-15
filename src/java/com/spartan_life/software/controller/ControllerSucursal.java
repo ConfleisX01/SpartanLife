@@ -12,14 +12,13 @@ import java.util.List;
 
 public class ControllerSucursal {
 
-   // Método para insertar una nueva sucursal
     public Sucursal insertarSucursal(Sucursal s) {
         String query = "CALL insertarSucursal(?, ?)";
 
         try {
             ConexionMysql conexionMysql = new ConexionMysql();
             Connection conn = conexionMysql.open();
-            // Llamar al procedimiento almacenado
+            
             CallableStatement cstmt = (CallableStatement) conn.prepareCall(query);
 
             cstmt.setString(1, s.getNombreSucursal());
@@ -37,14 +36,11 @@ public class ControllerSucursal {
         }
     }
 
-   // Método para modificar una sucursal
     public Sucursal modificarSucursal(Sucursal s) {
         try {
-            // Establecer la conexión con la base de datos
             ConexionMysql conexionMysql = new ConexionMysql();
             Connection conn = conexionMysql.open();
 
-            // Llamar al procedimiento almacenado
             String query = "CALL modificarSucursal(?, ?, ?)";
             CallableStatement cstmt = (CallableStatement) conn.prepareCall(query);
             cstmt.setInt(1, s.getIdSucursal());
@@ -52,7 +48,6 @@ public class ControllerSucursal {
             cstmt.setString(3, s.getDireccion_sucursal());
             cstmt.execute();
 
-            // Cerrar la conexión
               cstmt.close();
             conn.close();
             conexionMysql.close();
@@ -62,15 +57,12 @@ public class ControllerSucursal {
             return null;
         }
     }
-// Método para eliminar una sucursal
 
    public Sucursal eliminarSucursal(Sucursal s) {
     try {
-        // Establecer la conexión con la base de datos
         ConexionMysql conexionMysql = new ConexionMysql();
         Connection conn = conexionMysql.open();
 
-        // Llamar al procedimiento almacenado
         String query = "CALL eliminarSucursal(?)";
         CallableStatement cstmt = (CallableStatement) conn.prepareCall(query);
         cstmt.setInt(1, s.getIdSucursal());
@@ -89,14 +81,10 @@ public class ControllerSucursal {
 
 
   public List<Sucursal> getAllSucursales() throws SQLException{
-       // Consulta a la vista para obtener los empleados actualizados
     String sql = "SELECT * FROM sucursal";
     
-      // Nos conectamos a la base de datos:
     ConexionMysql connMySQL = new ConexionMysql();
-    // Abrimos la conexión con la base de datos:
     Connection conn = connMySQL.open();
-    // Ejecutaremos la consulta:
     try (PreparedStatement pstmt = conn.prepareStatement(sql);
          ResultSet rs = pstmt.executeQuery()) {
         List<Sucursal> sucursales = new ArrayList<>();
@@ -105,7 +93,6 @@ public class ControllerSucursal {
         }
         return sucursales;
     } finally {
-        // Cerramos los recursos:
         connMySQL.close();
     }
   }

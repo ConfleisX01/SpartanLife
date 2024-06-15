@@ -27,13 +27,19 @@ public class RestPuesto {
         
         try{
             Puesto puesto = gson.fromJson(p, Puesto.class);
-            cp.insertarPuesto(puesto);
+            Puesto local =  cp.insertarPuesto(puesto);
             
-            out = """
-                  {"response" : "operacion Exitosa"}
+          if (local != null) {
+                out = """
+                 {"response" : "operacion exitosa"}
+                 """;
+                out = String.format(out, p);
+            } else {
+                out = """
+                  {"response" : "Error en la transacción"}
                   """;
-            out = String.format(out, p);
-            
+                out = String.format(out, p);
+            }
         }catch (Exception e){
             e.printStackTrace();
                 out = """
@@ -55,13 +61,19 @@ public class RestPuesto {
         
         try{
             Puesto puesto = gson.fromJson(p, Puesto.class);
-            cp.eliminarPuesto(puesto);
+           Puesto local =  cp.eliminarPuesto(puesto);
             
-            out = """
-                  {"response" : "operacion Exitosa"}
+          if (local != null) {
+                out = """
+                 {"response" : "operacion exitosa"}
+                 """;
+                out = String.format(out, p);
+            } else {
+                out = """
+                  {"response" : "Error en la transacción"}
                   """;
-            out = String.format(out, p);
-            
+                out = String.format(out, p);
+            }
         }catch (Exception e){
             e.printStackTrace();
                 out = """

@@ -14,7 +14,6 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.util.List;
 
-
 @Path("empleado")
 public class RestEmpleado {
 
@@ -30,15 +29,23 @@ public class RestEmpleado {
         try {
             // formao json
             Empleado empleado = gson.fromJson(e, Empleado.class);
-            ce.insertEmpleado(empleado);
-            out= """
+            Empleado local = ce.insertEmpleado(empleado);
+
+            if (local != null) {
+                out = """
                  {"response" : "operacion exitosa"}
                  """;
-            out = String.format(out, e);
-            
+                out = String.format(out, e);
+            } else {
+                out = """
+                  {"response" : "Error en la transacción"}
+                  """;
+                out = String.format(out, e);
+            }
+
         } catch (Exception ex) {
             ex.printStackTrace();
-          out = """
+            out = """
                   {"response" : "Error en la transacción"}
                   """;
         }
@@ -56,11 +63,19 @@ public class RestEmpleado {
         try {
             // se formatea el objeto en json
             Empleado empleado = gson.fromJson(e, Empleado.class);
-            ce.modificarEmpleado(empleado);
-            out = """
-                  {"response" : "operacion exitosa"}
+            Empleado local = ce.modificarEmpleado(empleado);
+
+            if (local != null) {
+                out = """
+                 {"response" : "operacion exitosa"}
+                 """;
+                out = String.format(out, e);
+            } else {
+                out = """
+                  {"response" : "Error en la transacción"}
                   """;
-            out = String.format(out, e);
+                out = String.format(out, e);
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
             out = """
@@ -69,8 +84,8 @@ public class RestEmpleado {
         }
         return Response.status(Response.Status.CREATED).entity(out).build();
     }
-    
-     @Path("eliminarEmpleado")
+
+    @Path("eliminarEmpleado")
     @Produces(MediaType.APPLICATION_JSON)
     @POST
     public Response eliminarEmpleado(@FormParam("empleado") @DefaultValue("") String e) {
@@ -81,11 +96,19 @@ public class RestEmpleado {
         try {
             // se formatea el objeto en json
             Empleado empleado = gson.fromJson(e, Empleado.class);
-            ce.eliminarEmpleado(empleado);
-            out = """
-                  {"response" : "operacion exitosa"}
+            Empleado local = ce.eliminarEmpleado(empleado);
+
+            if (local != null) {
+                out = """
+                 {"response" : "operacion exitosa"}
+                 """;
+                out = String.format(out, e);
+            } else {
+                out = """
+                  {"response" : "Error en la transacción"}
                   """;
-            out = String.format(out, e);
+                out = String.format(out, e);
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
             out = """
@@ -94,45 +117,45 @@ public class RestEmpleado {
         }
         return Response.status(Response.Status.CREATED).entity(out).build();
     }
-    
-      @Path("getAllEdad")
-@Produces(MediaType.APPLICATION_JSON)
-@GET
-public Response getAllEdad(@QueryParam("idPersona") int idPersona) {
-    String out = null;
-    List<Empleado> empleados = null;
-    ControllerEmpleado cs = new ControllerEmpleado();
-    try {
-        // Llamada al método getAll(int idPersona) pasando el idPersona recibido como parámetro
-        empleados = cs.getAllEdad(idPersona);
-        out = new Gson().toJson(empleados);
-    } catch (Exception e) {
-        e.printStackTrace();
-        out = """
-                  {"error" : "Ocurrió un error, intente más tarde."}
-                  """;
-    }
-    return Response.status(Response.Status.OK).entity(out).build();
-}
 
-@Path("getAll")
-@Produces(MediaType.APPLICATION_JSON)
-@GET
-public Response getAll(@QueryParam("idPersona") int idPersona) {
-    String out = null;
-    List<Empleado> empleados = null;
-    ControllerEmpleado cs = new ControllerEmpleado();
-    try {
-        // Llamada al método getAll(int idPersona) pasando el idPersona recibido como parámetro
-        empleados = cs.getAll();
-        out = new Gson().toJson(empleados);
-    } catch (Exception e) {
-        e.printStackTrace();
-        out = """
+    @Path("getAllEdad")
+    @Produces(MediaType.APPLICATION_JSON)
+    @GET
+    public Response getAllEdad(@QueryParam("idPersona") int idPersona) {
+        String out = null;
+        List<Empleado> empleados = null;
+        ControllerEmpleado cs = new ControllerEmpleado();
+        try {
+            // Llamada al método getAll(int idPersona) pasando el idPersona recibido como parámetro
+            empleados = cs.getAllEdad(idPersona);
+            out = new Gson().toJson(empleados);
+        } catch (Exception e) {
+            e.printStackTrace();
+            out = """
                   {"error" : "Ocurrió un error, intente más tarde."}
                   """;
+        }
+        return Response.status(Response.Status.OK).entity(out).build();
     }
-    return Response.status(Response.Status.OK).entity(out).build();
-}
+
+    @Path("getAll")
+    @Produces(MediaType.APPLICATION_JSON)
+    @GET
+    public Response getAll(@QueryParam("idPersona") int idPersona) {
+        String out = null;
+        List<Empleado> empleados = null;
+        ControllerEmpleado cs = new ControllerEmpleado();
+        try {
+            // Llamada al método getAll(int idPersona) pasando el idPersona recibido como parámetro
+            empleados = cs.getAll();
+            out = new Gson().toJson(empleados);
+        } catch (Exception e) {
+            e.printStackTrace();
+            out = """
+                  {"error" : "Ocurrió un error, intente más tarde."}
+                  """;
+        }
+        return Response.status(Response.Status.OK).entity(out).build();
+    }
 
 }

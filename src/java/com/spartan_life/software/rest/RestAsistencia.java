@@ -24,16 +24,19 @@ public class RestAsistencia {
         Gson gson = new Gson();
 
         try {
-            System.out.println("hola desde el rest: " + a);
             Asistencia asistencia = gson.fromJson(a, Asistencia.class);
-              System.out.println("hola desde el rest2: " + asistencia);
-            ca.insertarAsistencia(asistencia);
-            out = """
+            Asistencia local = ca.insertarAsistencia(asistencia);
+            if (local != null) {
+                out = """
                  {"response" : "operacion exitosa"}
                  """;
-            out = String.format(out, a);
-  
-
+                out = String.format(out, a);
+            } else {
+                out = """
+                  {"response" : "Error en la transacción"}
+                  """;
+                out = String.format(out, a);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             out = """
@@ -42,5 +45,38 @@ public class RestAsistencia {
         }
         return Response.status(Response.Status.CREATED).entity(out).build();
     }
-
+    
+    @Path("modificarAsistencia")
+    @Produces(MediaType.APPLICATION_JSON)
+    @POST 
+    public Response modificarAsistencia(@FormParam("asistencia") @DefaultValue("") String a){
+        String out = "";
+        
+        ControllerAsistencia ca = new ControllerAsistencia();
+        Gson gson = new Gson();
+        
+        try {
+            Asistencia asistencia = gson.fromJson(a, Asistencia.class);
+            Asistencia local = ca.modificarAsistencia(asistencia);
+            
+                 if (local != null) {
+                out = """
+                 {"response" : "operacion exitosa"}
+                 """;
+                out = String.format(out, a);
+            } else {
+                out = """
+                  {"response" : "Error en la transacción"}
+                  """;
+                out = String.format(out, a);
+            }
+            
+        } catch (Exception e) {
+              e.printStackTrace();
+            out = """
+                  {"response" : "Error en la transacción"}
+                  """;
+        }
+        return Response.status(Response.Status.CREATED).entity(out).build();
+    }
 }
