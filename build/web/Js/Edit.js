@@ -1,5 +1,7 @@
 import * as msg from './messages.js'
 
+import * as msg from './messages.js'
+
 // ? Funcion para cargar el modulo entero desde el menu
 export function loadModule(content) {
     applyContentOnModule(content)
@@ -19,13 +21,19 @@ function applyContentOnModule(content = null) {
 
 // ? Funcion para cargar los controles principales del modulo
 async function loadControls() {
+async function loadControls() {
     const buttonNewEmployee = document.querySelector('#btnAddNew')
     const form = document.querySelector('.form-container')
 
     buttonNewEmployee.addEventListener('click', async () => {
+    buttonNewEmployee.addEventListener('click', async () => {
         if (!form.classList.contains('form-active') && !form.classList.contains('form-edit')) {
             loadEmptyForm()
         } else {
+            const response = await msg.confirmMessage("No se puede realizar esta accion", "Ciera el formulario antes de acceder a otro", "Cerrar Formulario")
+            if (response) {
+                closeForm()
+            }
             const response = await msg.confirmMessage("No se puede realizar esta accion", "Ciera el formulario antes de acceder a otro", "Cerrar Formulario")
             if (response) {
                 closeForm()
@@ -37,6 +45,7 @@ async function loadControls() {
 }
 
 // ? Funcion para cargar la tabla de empleados con la informacion de los empleados
+async function loadTable() {
 async function loadTable() {
     const tableBody = document.querySelector('#table-body')
     const form = document.querySelector('.form-container')
@@ -77,9 +86,14 @@ async function loadTable() {
         employeeItem.appendChild(position)
 
         employeeItem.addEventListener('click', async () => {
+        employeeItem.addEventListener('click', async () => {
             if (!form.classList.contains('form-active') || !form.classList.contains('form-empty')) {
                 loadEmployeeData(index)
             } else {
+                const response = await msg.confirmMessage("No se puede realizar esta accion", "Ciera el formulario antes de acceder a otro", "Cerrar Formulario")
+                if (response) {
+                    closeForm()
+                }
                 const response = await msg.confirmMessage("No se puede realizar esta accion", "Ciera el formulario antes de acceder a otro", "Cerrar Formulario")
                 if (response) {
                     closeForm()
@@ -304,4 +318,5 @@ const employees = [
         "Antiguedad": "6 meses",
         "Sucursal": "Delta"
     }
+]
 ]
