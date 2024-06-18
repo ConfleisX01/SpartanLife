@@ -8,6 +8,12 @@ import * as APIhlp from './APIHelpers.js'
 import * as dsh from './Dashboard.js'
 // Objeto para el control de los empleados
 import * as emp from './Edit.js'
+// Objeto para el control de las asistencias
+import * as atn from './attendance.js'
+// Objeto para el control de solicitudes de vacaciones
+import * as vcs from './vacations.js'
+// Objeto para el control de configuraciones de la sucursal
+import * as entConfig from './enterprise.js'
 //Objeto para debugear
 import * as Dbg from './Debug.js'
 
@@ -130,6 +136,15 @@ function loadControls() {
     const btnAttendance = document.querySelector('#btnAttendance')
     const btnVacations = document.querySelector('#btnVacations')
     const btnPay = document.querySelector('#btnPay')
+    const btnExpand = document.querySelector('#btnExpand')
+    const btnEnterpriseConfiguration = document.querySelector('#btnEnterpriseConfiguration')
+    const btnConfig = document.querySelector('#btnConfig')
+    const btnLogout = document.querySelector('#btnLogout')
+    const sideMenu = document.querySelector('#sideBar')
+
+    btnExpand.onclick = function () {
+        sideMenu.classList.toggle('expanded')
+    }
 
     btnListEmployee.addEventListener('click', async () => {
         const moduleViewEmployee = await hlp.getModule('Html/Empleado/Vista.html')
@@ -138,25 +153,30 @@ function loadControls() {
 
     btnEditEmployee.addEventListener('click', async () => {
         const content = await hlp.getModule('Html/Empleado/Editar.html')
-        const container = '#module-container'
-
-        emp.loadModule(container, content)
+        emp.loadModule(content)
     })
 
-    btnAttendance.addEventListener('click', () => {
-        // * Agregar la logica de carga de modulo
+    btnAttendance.addEventListener('click', async () => {
+        const content = await hlp.getModule('Html/Asistencias/Registro.html')
+        atn.load(content)
     })
 
-    btnVacations.addEventListener('click', () => {
-        // * Agregar la logica de carga de modulo
+    btnVacations.addEventListener('click', async () => {
+        const content = await hlp.getModule('Html/Vacaciones/Solicitudes.html')
+        vcs.loadVacationsModule(content)
     })
 
     btnPay.addEventListener('click', () => {
         // * Agregar la logica de carga de modulo
     })
+
+    btnEnterpriseConfiguration.addEventListener('click', async () => {
+        const content = await hlp.getModule('Html/Empresa/Configuraciones.html')
+        entConfig.loadEnterpriseConfigurationModule(content)
+    })
 }
 
 // Funcion principal para cargar los controladores del sistema
-//loadIndexControls()
+// loadIndexControls()
 // TODO: Funcion de prueba, eliminar cuando se termine de probar el apartado del dashboard
 loadAdminDashboard()

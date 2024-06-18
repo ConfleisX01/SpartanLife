@@ -1,0 +1,65 @@
+<div class="form-container d-flex flex-column">
+    <div class="container-fluid d-flex justify-content-between p-2 separator">
+        <div>
+            <button class="btn-base button_3" id="btnClosePanel"><i class="bi bi-arrow-bar-left"></i></button>
+        </div>
+        <div class="buttons-container">
+        </div>
+    </div>
+    <div class="container-fluid py-3 separator">
+        <h5>Panel de Seleccion</h5>
+        <p class="m-0">Selecciona el empleado para poder registrar las vacaciones</p>
+    </div>
+    <div class="container-fluid py-3 flex-grow-1 overflow-auto">
+        <div class="container-fluid table-responsive p-0">
+            <table class="table table-hover caption-top">
+                <caption>Tabla de empleados</caption>
+                <thead>
+                    <tr>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Apellidos</th>
+                        <th scope="col">RFC</th>
+                        <th scope="col">NSS</th>
+                    </tr>
+                </thead>
+                <tbody id="employees-table">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid m-0 p-0">
+    <h2>Empleados / Registrar Vacaciones</h2>
+</div>
+<div class="container-fluid container-form-attendance py-2">
+    <div class="container-fluid separator">
+        <h4>Seleccionar Empleado</h4>
+    </div>
+    <div class="container-fluid d-flex aling-items-center justify-content-center py-2">
+        <button class="btn-base button_3" id="btnSelectEmployee">Seleccionar Empleado</button>
+    </div>
+    <div class="container-fluid separator">
+        <h4>Registrar Vacaciones</h4>
+    </div>
+    <div class="container-fluid d-flex aling-items-center justify-content-center">
+        <div class="container-fluid form w-75 row">
+            <div class="col-md-6 p-2">
+                <label for="txtWeekStart">Inicio</label>
+                <input type="date" id="txtWeekStart" class="form-control">
+            </div>
+            <div class="col-md-6 p-2">
+                <label for="txtWeekEnd">Fin</label>
+                <input type="date" id="txtWeekEnd" class="form-control">
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid d-flex justify-content-between">
+        <div>
+            <button class="btn-base button_3" id="btnShowSelected">Mostrar Seleccionado</button>
+        </div>
+        <div>
+            <button class="btn-base button_save" id="btnSave">Guardar</button>
+        </div>
+    </div>
+</div>

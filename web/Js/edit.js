@@ -1,12 +1,20 @@
 import * as msg from './messages.js'
 
 // ? Funcion para cargar el modulo entero desde el menu
-export function loadModule(container, content) {
-    let body = document.querySelector(container)
-
-    body.innerHTML = content
+export function loadModule(content) {
+    applyContentOnModule(content)
 
     loadControls()
+}
+
+function applyContentOnModule(content = null) {
+    const container = document.querySelector('#module-container')
+
+    if (content) {
+        container.innerHTML = content
+    } else {
+        alert("Modulo no encontrado, vuelva a intentarlo...")
+    }
 }
 
 // ? Funcion para cargar los controles principales del modulo

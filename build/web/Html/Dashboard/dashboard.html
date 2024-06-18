@@ -1,52 +1,67 @@
-<div class="row w-100 h-100 m-0">
-  <div class="col-2 sideBar p-0 d-none d-md-block h-100">
-    <div class="d-flex flex-column h-100">
-      <div class="container-fluid user-information m-0 py-2 d-flex align-items-cetner justify-content-center flex-column">
-        <div class="avatar-icon">
-          <img src="https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg" alt="">
-        </div>
-        <div class="py-2 text-center">
-          <h4 class="m-0">Juan Pablo</h4>
-          <p class="m-0">Administrador</p>
+<div class="w-100 h-100 m-0 d-flex">
+  <div class="sideBar" id="sideBar">
+    <div class="header-menu">
+      <div class="logo">
+        <div id="btnExpand">
+          <i class="bi bi-list"></i>
         </div>
       </div>
-      <div class="container-fluid menu-bar p-0 py-4 flex-grow-1">
-        <div class="">
-          <h5 class="m-0"><i class="bi bi-people-fill menu-title"></i> Empleados</h5>
-        </div>
-        <div class="">
-          <ul class="p-0">
-            <li class="menu-item py-2">
-              <p class="fw-light m-0" id="btnListEmployee">Lista de Empleados</p>
-            </li>
-            <li class="menu-item py-2">
-              <p class="fw-light m-0" id="btnEditEmployee">Editar Empleados</p>
-            </li>
-            <li class="menu-item py-2">
-              <p class="fw-light m-0" id="btnAttendance">Registrar Asistencias</p>
-            </li>
-            <li class="menu-item py-2">
-              <p class="fw-light m-0" id="btnVacations">Solicitud de Vacaciones</p>
-            </li>
-            <li class="menu-item py-2">
-              <p class="fw-light m-0" id="btnPay">Registrar Sueldo</p>
-            </li>
-          </ul>
-        </div>
-      </div>
-      <div class="container-fluid menu-account-bar p-0 py-2">
-        <div class="">
-          <ul class="p-0">
-            <li class="menu-item py-2">
-              <p class="fw-light m-0">Configuración</p>
-            </li>
-            <li class="menu-item py-2">
-              <p class="fw-light m-0">Log Out</p>
-            </li>
-          </ul>
+      <div class="avatar py-2">
+        <img src="https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg" alt="Avatar de Juan Pablo">
+        <div class="text-center">
+          <p class="m-0">Juan Pablo</p>
+          <p class="fw-bold m-0">Administrador</p>
         </div>
       </div>
     </div>
+    <div class="body-menu py-2" id="bodyMenu">
+      <ul class="p-0">
+        <li class="menu-item" id="btnListEmployee">
+          <i class="bi bi-person-lines-fill"></i>
+          <p>Lista de Empleados</p>
+          <span class="tooltip">Lista de Empleados</span>
+        </li>
+        <li class="menu-item" id="btnEditEmployee">
+          <i class="bi bi-person-fill-gear"></i>
+          <p>Editar Empleados</p>
+          <span class="tooltip">Editar Empleados</span>
+        </li>
+        <li class="menu-item" id="btnAttendance">
+          <i class="bi bi-person-video2"></i>
+          <p>Registrar Asistencias</p>
+          <span class="tooltip">Registrar Asistencias</span>
+        </li>
+        <li class="menu-item" id="btnVacations">
+          <i class="bi bi-calendar4-week"></i>
+          <p>Solicitud de Vacaciones</p>
+          <span class="tooltip">Solicitud de Vacaciones</span>
+        </li>
+        <li class="menu-item" id="btnPay">
+          <i class="bi bi-cash-coin"></i>
+          <p>Registrar Sueldo</p>
+          <span class="tooltip">Registrar Sueldo</span>
+        </li>
+        <li class="menu-item" id="btnEnterpriseConfiguration">
+          <i class="bi bi-building-gear"></i>
+          <p>Configuración de Sucursal</p>
+          <span class="tooltip">Configuración de Sucursal</span>
+        </li>
+      </ul>
     </div>
-  <div class="col-md-10 main-content p-0 d-flex flex-column align-items-center px-3" id="module-container"></div>
+    <div class="footer-menu">
+      <ul class="p-0">
+        <li class="menu-item" id="btnConfig">
+          <i class="bi bi-gear"></i>
+          <p>Configuración</p>
+          <span class="tooltip">Configuración</span>
+        </li>
+        <li class="menu-item" id="btnLogout">
+          <i class="bi bi-box-arrow-left"></i>
+          <p>Log Out</p>
+          <span class="tooltip">Log Out</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="flex-grow-1 main-content d-flex flex-column align-items-center px-3" id="module-container"></div>
 </div>

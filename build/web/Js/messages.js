@@ -15,7 +15,7 @@ export function errorMessage(title, text, help) {
     })
 }
 
-export async function confirmMessage(title, text, btnConfirmText, responseTitle, resposeText) {
+export async function confirmMessage(title, text, btnConfirmText) {
     const result = await Swal.fire({
         title: title,
         text: text,
@@ -26,12 +26,15 @@ export async function confirmMessage(title, text, btnConfirmText, responseTitle,
         confirmButtonText: btnConfirmText
     });
 
+    const container = document.querySelector('body')
+    container.classList.remove('swal2-height-auto')
+
     if (result.isConfirmed) {
-        await Swal.fire({
-            title: responseTitle,
-            text: resposeText,
-            icon: "success"
-        });
+        // await Swal.fire({
+        //     title: responseTitle,
+        //     text: resposeText,
+        //     icon: "success"
+        // });
         return true;
     } else {
         return false;
