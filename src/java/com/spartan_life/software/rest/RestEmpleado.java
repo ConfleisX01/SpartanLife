@@ -141,7 +141,7 @@ public class RestEmpleado {
     @Path("getAll")
     @Produces(MediaType.APPLICATION_JSON)
     @GET
-    public Response getAll(@QueryParam("idPersona") int idPersona) {
+    public Response getAll() {
         String out = null;
         List<Empleado> empleados = null;
         ControllerEmpleado cs = new ControllerEmpleado();

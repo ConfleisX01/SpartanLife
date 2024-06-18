@@ -1,3 +1,5 @@
+import * as msg from './messages.js'
+
 // ? Funcion para cargar el modulo entero desde el menu
 export function loadModule(container, content) {
     let body = document.querySelector(container)
@@ -8,29 +10,18 @@ export function loadModule(container, content) {
 }
 
 // ? Funcion para cargar los controles principales del modulo
-function loadControls() {
+async function loadControls() {
     const buttonNewEmployee = document.querySelector('#btnAddNew')
     const form = document.querySelector('.form-container')
 
-    buttonNewEmployee.addEventListener('click', () => {
+    buttonNewEmployee.addEventListener('click', async () => {
         if (!form.classList.contains('form-active') && !form.classList.contains('form-edit')) {
             loadEmptyForm()
         } else {
-            Swal.fire({
-                title: "Acción no permitida",
-                text: "Actualmente tienes un formulario abierto. Por favor, ciérralo antes de abrir otro.",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Cerrar formulario"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    closeForm()
-                }
-            });
-            
-            fixDashboard()
+            const response = await msg.confirmMessage("No se puede realizar esta accion", "Ciera el formulario antes de acceder a otro", "Cerrar Formulario")
+            if (response) {
+                closeForm()
+            }
         }
     })
 
@@ -38,7 +29,7 @@ function loadControls() {
 }
 
 // ? Funcion para cargar la tabla de empleados con la informacion de los empleados
-function loadTable() {
+async function loadTable() {
     const tableBody = document.querySelector('#table-body')
     const form = document.querySelector('.form-container')
 
@@ -77,25 +68,14 @@ function loadTable() {
         employeeItem.appendChild(old)
         employeeItem.appendChild(position)
 
-        employeeItem.addEventListener('click', () => {
+        employeeItem.addEventListener('click', async () => {
             if (!form.classList.contains('form-active') || !form.classList.contains('form-empty')) {
                 loadEmployeeData(index)
             } else {
-                Swal.fire({
-                    title: "Acción no permitida",
-                    text: "Actualmente tienes un formulario abierto. Por favor, ciérralo antes de abrir otro.",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#3085d6",
-                    cancelButtonColor: "#d33",
-                    confirmButtonText: "Cerrar formulario"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        closeForm()
-                    }
-                });
-
-                fixDashboard()
+                const response = await msg.confirmMessage("No se puede realizar esta accion", "Ciera el formulario antes de acceder a otro", "Cerrar Formulario")
+                if (response) {
+                    closeForm()
+                }
             }
         })
 
@@ -226,11 +206,6 @@ function cleanForm() {
     })
 }
 
-function fixDashboard() {
-    const container = document.querySelector('body')
-    container.classList.remove('swal2-height-auto')
-}
-
 function closeForm() {
     const form = document.querySelector('.form-container')
     const buttonsContainer = document.querySelector('.buttons-container')
@@ -321,4 +296,4 @@ const employees = [
         "Antiguedad": "6 meses",
         "Sucursal": "Delta"
     }
-];
+]
