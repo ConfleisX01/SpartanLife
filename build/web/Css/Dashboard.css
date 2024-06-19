@@ -146,6 +146,7 @@ th {
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   transform: translateX(500px);
   transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+  overflow-y: scroll;
 }
 
 .form-active {

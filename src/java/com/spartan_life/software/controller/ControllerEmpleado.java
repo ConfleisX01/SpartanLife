@@ -177,9 +177,11 @@ private Empleado fill(ResultSet rs) throws SQLException {
 
     // Datos de la sucursal
     sucursal.setIdSucursal(rs.getInt("id_sucursal"));
+    sucursal.setNombreSucursal(rs.getString("nombre_sucursal"));
     
     // datos del puesto
-    puesto.setIdPuesto(0);
+    puesto.setIdPuesto(rs.getInt("id_puesto"));
+    puesto.setNombrePuesto(rs.getString("nombre_puesto"));
     
     // Datos del empleado
     empleado.setIdEmpleado(rs.getInt("id_empleado"));
@@ -190,6 +192,7 @@ private Empleado fill(ResultSet rs) throws SQLException {
     // Asignar objetos a empleado
     empleado.setPersona(persona);
     empleado.setSucursal(sucursal);
+    empleado.setPuesto(puesto);
 
     return empleado;
 }

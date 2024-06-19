@@ -5,7 +5,7 @@ import * as hlp from './helpers.js'
 //Objeto para usar los helpers de las APIS
 import * as APIhlp from './APIHelpers.js'
 // Objeto para control del dashboard
-import * as dsh from './dashboard.js'
+import * as dsh from './Dashboard.js'
 // Objeto para el control de los empleados
 import * as emp from './Edit.js'
 // Objeto para el control de las asistencias
@@ -15,7 +15,7 @@ import * as vcs from './vacations.js'
 // Objeto para el control de configuraciones de la sucursal
 import * as entConfig from './enterprise.js'
 //Objeto para debugear
-import * as Dbg from './debug.js'
+import * as Dbg from './Debug.js'
 
 async function loadIndexControls() {
     let btnLogin = document.getElementById('btnLogin')
@@ -116,10 +116,6 @@ async function loadAdminDashboard() {
     const moduleViewEmployee = await hlp.getModule('Html/Empleado/Vista.html')
     dsh.loadUserViewTable(moduleViewEmployee)
 
-    // ! Funcion para probar el modulo asistencias, eliminar cuando se termine de probar este apartado
-    const content = await hlp.getModule('Html/Asistencias/Registro.html')
-    atn.load(content)
-
     fixDashboard()
 }
 
@@ -160,9 +156,6 @@ function loadControls() {
         emp.loadModule(content)
     })
 
-    btnAttendance.addEventListener('click', async () => {
-        const content = await hlp.getModule('Html/Asistencias/Registro.html')
-        atn.load(content)
     btnAttendance.addEventListener('click', async () => {
         const content = await hlp.getModule('Html/Asistencias/Registro.html')
         atn.load(content)

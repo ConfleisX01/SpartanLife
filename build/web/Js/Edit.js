@@ -1,12 +1,13 @@
 import * as msg from './messages.js'
-
-import * as msg from './messages.js'
+import * as hlp from './helpers.js'
+import * as APIhlp from './APIHelpers.js'
 
 // ? Funcion para cargar el modulo entero desde el menu
 export function loadModule(content) {
     applyContentOnModule(content)
 
     loadControls()
+    loadTable()
 }
 
 function applyContentOnModule(content = null) {
@@ -21,11 +22,9 @@ function applyContentOnModule(content = null) {
 
 // ? Funcion para cargar los controles principales del modulo
 async function loadControls() {
-async function loadControls() {
     const buttonNewEmployee = document.querySelector('#btnAddNew')
     const form = document.querySelector('.form-container')
 
-    buttonNewEmployee.addEventListener('click', async () => {
     buttonNewEmployee.addEventListener('click', async () => {
         if (!form.classList.contains('form-active') && !form.classList.contains('form-edit')) {
             loadEmptyForm()
@@ -34,75 +33,65 @@ async function loadControls() {
             if (response) {
                 closeForm()
             }
-            const response = await msg.confirmMessage("No se puede realizar esta accion", "Ciera el formulario antes de acceder a otro", "Cerrar Formulario")
-            if (response) {
-                closeForm()
-            }
         }
     })
-
-    loadTable()
 }
 
 // ? Funcion para cargar la tabla de empleados con la informacion de los empleados
-async function loadTable() {
-async function loadTable() {
+async function loadTable(data = null) {
     const tableBody = document.querySelector('#table-body')
     const form = document.querySelector('.form-container')
 
-    employees.forEach((employee, index) => {
-        let employeeItem = document.createElement('tr')
-        let photo = document.createElement('th')
-        let name = document.createElement('th')
-        let born = document.createElement('th')
-        let age = document.createElement('th')
-        let job = document.createElement('th')
-        let rfc = document.createElement('th')
-        let curp = document.createElement('th')
-        let nss = document.createElement('th')
-        let old = document.createElement('th')
-        let position = document.createElement('th')
+    if (data != null) {
+        data.forEach((employee, index) => {
+            let employeeItem = document.createElement('tr')
+            let photo = document.createElement('th')
+            let name = document.createElement('th')
+            let born = document.createElement('th')
+            let age = document.createElement('th')
+            let job = document.createElement('th')
+            let rfc = document.createElement('th')
+            let curp = document.createElement('th')
+            let nss = document.createElement('th')
+            let old = document.createElement('th')
+            let position = document.createElement('th')
 
-        photo.textContent = employee.Foto
-        name.textContent = employee.Nombre + " " + employee.Apellidos
-        born.textContent = employee.Nacimiento
-        age.textContent = employee.Edad
-        job.textContent = employee.Puesto
-        rfc.textContent = employee.RFC
-        curp.textContent = employee.CURP
-        nss.textContent = employee.NSS
-        old.textContent = employee.Antiguedad
-        position.textContent = employee.Sucursal
+            photo.textContent = employee.Foto
+            name.textContent = employee.Nombre + " " + employee.Apellidos
+            born.textContent = employee.Nacimiento
+            age.textContent = employee.Edad
+            job.textContent = employee.Puesto
+            rfc.textContent = employee.RFC
+            curp.textContent = employee.CURP
+            nss.textContent = employee.NSS
+            old.textContent = employee.Antiguedad
+            position.textContent = employee.Sucursal
 
-        employeeItem.appendChild(photo)
-        employeeItem.appendChild(name)
-        employeeItem.appendChild(born)
-        employeeItem.appendChild(age)
-        employeeItem.appendChild(job)
-        employeeItem.appendChild(rfc)
-        employeeItem.appendChild(curp)
-        employeeItem.appendChild(nss)
-        employeeItem.appendChild(old)
-        employeeItem.appendChild(position)
+            employeeItem.appendChild(photo)
+            employeeItem.appendChild(name)
+            employeeItem.appendChild(born)
+            employeeItem.appendChild(age)
+            employeeItem.appendChild(job)
+            employeeItem.appendChild(rfc)
+            employeeItem.appendChild(curp)
+            employeeItem.appendChild(nss)
+            employeeItem.appendChild(old)
+            employeeItem.appendChild(position)
 
-        employeeItem.addEventListener('click', async () => {
-        employeeItem.addEventListener('click', async () => {
-            if (!form.classList.contains('form-active') || !form.classList.contains('form-empty')) {
-                loadEmployeeData(index)
-            } else {
-                const response = await msg.confirmMessage("No se puede realizar esta accion", "Ciera el formulario antes de acceder a otro", "Cerrar Formulario")
-                if (response) {
-                    closeForm()
+            employeeItem.addEventListener('click', async () => {
+                if (!form.classList.contains('form-active') || !form.classList.contains('form-empty')) {
+                    loadEmployeeData(index)
+                } else {
+                    const response = await msg.confirmMessage("No se puede realizar esta accion", "Ciera el formulario antes de acceder a otro", "Cerrar Formulario")
+                    if (response) {
+                        closeForm()
+                    }
                 }
-                const response = await msg.confirmMessage("No se puede realizar esta accion", "Ciera el formulario antes de acceder a otro", "Cerrar Formulario")
-                if (response) {
-                    closeForm()
-                }
-            }
+            })
+
+            tableBody.appendChild(employeeItem)
         })
-
-        tableBody.appendChild(employeeItem)
-    })
+    }
 }
 
 // ? Funcion para cargar el empleado al formulario
@@ -153,9 +142,12 @@ function loadDataOnForm(employee) {
 }
 
 // ? Funcion para mostrar un formulario vacio para agregar un empleado nuevo
-function loadEmptyForm() {
+async function loadEmptyForm() {
+    const BRANCH_URL = ''
+    const JOB_URL = ''
     const form = document.querySelector('.form-container')
     const formDangerZone = document.querySelector('.form-danger-zone')
+    const branchs = 
 
     cleanForm()
 
@@ -247,76 +239,91 @@ function deleteEmployee() {
     alert("Borrando empleado...")
 }
 
-function saveEmployee() {
-    alert("Guardando empleado nuevo...")
+async function saveEmployee() {
+    const data = await getInputValues(getAllInputs())
+    const URL = 'http://localhost:8080/SpartanLife/api/empleado/insertEmpleado'
+
+    let employee = createEmployeeJson(data)
+
+    console.log(employee)
+
+    APIhlp.saveObjectApiData(URL, 'empleado', employee)
 }
 
-// ? Datos falsos
-const employees = [
-    {
-        "Foto": "Sin Foto",
-        "Nombre": "Juan Pablo",
-        "Apellidos": "Perez Fernandez",
-        "Nacimiento": "22/02/2004",
-        "Edad": "20",
-        "Puesto": "Desarrollador",
-        "RFC": "PERJ040222HNLAJP01",
-        "CURP": "PERJ040222HNLAJR08",
-        "NSS": "12345678901",
-        "Antiguedad": "2 meses",
-        "Sucursal": "Delta"
-    },
-    {
-        "Foto": "Sin Foto",
-        "Nombre": "Ana Maria",
-        "Apellidos": "Lopez Garcia",
-        "Nacimiento": "15/08/1995",
-        "Edad": "28",
-        "Puesto": "Diseñadora",
-        "RFC": "LOPA950815HNLRGC02",
-        "CURP": "LOPA950815HNLRGA08",
-        "NSS": "23456789012",
-        "Antiguedad": "1 año",
-        "Sucursal": "Gamma"
-    },
-    {
-        "Foto": "Sin Foto",
-        "Nombre": "Carlos Eduardo",
-        "Apellidos": "Martinez Lopez",
-        "Nacimiento": "30/11/1988",
-        "Edad": "35",
-        "Puesto": "Administrador",
-        "RFC": "MARC881130HNLLZC03",
-        "CURP": "MARC881130HNLLZE08",
-        "NSS": "34567890123",
-        "Antiguedad": "5 años",
-        "Sucursal": "Alpha"
-    },
-    {
-        "Foto": "Sin Foto",
-        "Nombre": "Beatriz Elena",
-        "Apellidos": "Ramirez Gonzalez",
-        "Nacimiento": "07/05/1992",
-        "Edad": "32",
-        "Puesto": "Recursos Humanos",
-        "RFC": "RAGB920507HNLMZB04",
-        "CURP": "RAGB920507HNLMZE08",
-        "NSS": "45678901234",
-        "Antiguedad": "3 años",
-        "Sucursal": "Beta"
-    },
-    {
-        "Foto": "Sin Foto",
-        "Nombre": "David Alonso",
-        "Apellidos": "Gonzalez Perez",
-        "Nacimiento": "12/03/2000",
-        "Edad": "24",
-        "Puesto": "Contador",
-        "RFC": "GOPD000312HNLGZA05",
-        "CURP": "GOPD000312HNLGZA08",
-        "NSS": "56789012345",
-        "Antiguedad": "6 meses",
-        "Sucursal": "Delta"
+async function getInputValues(inputs) {
+    let data = {}
+
+    for (const input of inputs) {
+        const element = document.querySelector(input.selector)
+
+        if (element) {
+            const value = await verifyInputValue(element)
+
+            if (value) {
+                data[input.key] = value
+            } else {
+                alert("Formulario incompleto...")
+            }
+        }
     }
-]
-]
+
+    return data
+}
+
+async function verifyInputValue(input) {
+    if (input.type === 'file') {
+        if (input.files.length > 0) {
+            return await hlp.imageToBase64(input.files[0])
+        } else {
+            return false
+        }
+    } else {
+        if (input.value != '') {
+            return input.value
+        } else {
+            return false
+        }
+    }
+}
+
+function createEmployeeJson(data) {
+    const employee = {
+        persona: {
+            "nombre": data.nombre,
+            "apellidoPaterno": data.apellidos,
+            "apellidoMaterno": data.apellidos, // ! Separar los apellidos
+            "fechaNacimiento": data.fechaNacimiento,
+            "rfc": data.rfc,
+            "curp": data.curp,
+            "nss": data.nss,
+        },
+        sucursal: {
+            "idSucursal": 1 // ! Obtener el id de la sucursal
+        },
+        puesto: {
+            "idPuesto": 1
+        },
+        "salarioDia": "500",
+        "foto": data.foto,
+        "pagoExtra": "500"
+    }
+
+    return employee
+}
+
+function getAllInputs() {
+    const inputs = [
+        { selector: '#txtFoto', key: 'foto' },
+        { selector: '#txtName', key: 'nombre' },
+        { selector: '#txtLastName', key: 'apellidos' },
+        { selector: '#txtBornDate', key: 'fechaNacimiento' },
+        { selector: '#txtAge', key: 'edad' },
+        { selector: '#txtJob', key: 'puesto' },
+        { selector: '#txtRFC', key: 'rfc' },
+        { selector: '#txtCURP', key: 'curp' },
+        { selector: '#txtNSS', key: 'nss' },
+        { selector: '#txtOld', key: 'antiguedad' },
+        { selector: '#txtPosition', key: 'sucursal' },
+    ]
+    return inputs
+}

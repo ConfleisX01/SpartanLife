@@ -12,7 +12,7 @@
     </div>
     <div class="container-fluid py-3">
         <div class="file-input-custom">
-            <input type="file" class="input-file">
+            <input type="file" class="input-file" id="txtFoto">
             <div class="file-input-content">
                 <h4 class="m-0">Foto</h4>
                 <p class="m-0 fw-light">Arrastra una foto o presiona para buscar una</p>
@@ -21,25 +21,25 @@
     </div>
     <div class="container-fluid separator form-container-inputs">
         <div class="row">
-            <div class="col-md-6 p-2">
+            <div class="col-md-12 p-2">
                 <label for="txtName" class="form-label">Nombre</label>
                 <input type="text" placeholder="Ingresa el nombre" class="form-control" id="txtName">
             </div>
             <div class="col-md-6 p-2">
-                <label for="txtLastName" class="form-label">Apellidos</label>
-                <input type="text" placeholder="Ingresa los apellidos" class="form-control" id="txtLastName">
+                <label for="txtLastName" class="form-label">Apellido Materno</label>
+                <input type="text" placeholder="Ingresa los apellidos" class="form-control" id="txtFirstLastName">
+            </div>
+            <div class="col-md-6 p-2">
+                <label for="txtLastName" class="form-label">Apellido Paterno</label>
+                <input type="text" placeholder="Ingresa los apellidos" class="form-control" id="txtSecondLastName">
             </div>
             <div class="col-md-6 p-2">
                 <label for="txtBornDate" class="form-label">Fecha de Nacimiento</label>
                 <input type="date" class="form-control" id="txtBornDate">
             </div>
             <div class="col-md-6 p-2">
-                <label for="txtAge" class="form-label">Edad</label>
-                <input type="number" placeholder="Ingresa la Edad" class="form-control" id="txtAge">
-            </div>
-            <div class="col-md-12 p-2">
                 <label for="txtJob" class="form-label">Puesto</label>
-                <input type="text" placeholder="Ingresa el puesto" class="form-control" id="txtJob">
+                <select name="txtJob" id="txtJob" class="form-select"></select>
             </div>
             <div class="col-md-6 p-2">
                 <label for="txtRFC" class="form-label">RFC</label>
@@ -54,12 +54,16 @@
                 <input type="text" placeholder="Ingresa el NSS" class="form-control" id="txtNSS">
             </div>
             <div class="col-md-6 p-2">
-                <label for="txtOld" class="form-label">Antiguedad</label>
-                <input type="text" placeholder="Ingresa la antiguedad" class="form-control" id="txtOld">
+                <label for="txtOld" class="form-label">Salario al Dia</label>
+                <input type="number" placeholder="Ingresa el salario" class="form-control" id="txtSalaryDay">
             </div>
-            <div class="col-md-12 p-2">
+            <div class="col-md-6 p-2">
+                <label for="txtOld" class="form-label">Salario Extra</label>
+                <input type="number" placeholder="Ingresa el salario" class="form-control" id="txtSalaryExtra">
+            </div>
+            <div class="col-md-6 p-2">
                 <label for="txtPosition" class="form-label">Sucursal</label>
-                <input type="text" placeholder="Ingresa la sucursal" class="form-control" id="txtPosition">
+                <select name="txtPosition" id="txtPosition" class="form-select"></select>
             </div>
         </div>
     </div>

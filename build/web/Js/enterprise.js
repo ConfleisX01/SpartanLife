@@ -32,7 +32,7 @@ function loadConfigControls() {
 }
 
 function createNewBranch() {
-    const inputsSelectors = [{ selector : "#txtNombreSucursal" }]
+    const inputsSelectors = [{ selector: "#txtNombreSucursal" }]
 
     const inputsValues = getInputValues(inputsSelectors)
 
@@ -42,7 +42,7 @@ function createNewBranch() {
 }
 
 function createNewJob() {
-    const inputsSelectors = [{ selector : "#txtNombrePuesto"}]
+    const inputsSelectors = [{ selector: "#txtNombrePuesto" }]
 
     const inputsValues = getInputValues(inputsSelectors)
 
@@ -52,7 +52,7 @@ function createNewJob() {
 }
 
 function getInputValues(inputs) {
-    const data = null
+    let data = null
 
     inputs.forEach(input => {
         const element = document.querySelector(input.selector)
@@ -63,10 +63,9 @@ function getInputValues(inputs) {
             if (value) {
                 data = JSON.stringify({ "data": value })
             } else {
-                alert("Formulario inconpleto...")
+                alert("Formulario incompleto...")
             }
         }
-
     })
 
     return data

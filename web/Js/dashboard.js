@@ -15,8 +15,6 @@ async function loadTable() {
 
     const employees = await APIhlp.getAllData("http://localhost:8080/SpartanLife/api/empleado/getAll")
 
-    console.log(employees)
-
     employees.forEach(employee => {
         let item = loadItem(employee);
         let template = document.createElement('template');
@@ -37,7 +35,7 @@ function loadItem(employee) {
                     <p class="employe-param-title" id="txtNameView">${employee.persona.nombre}</p>
                   </div>
                   <div class="col-6 col-md-3 d-flex align-items-center">
-                    <p class="employe-param-title" id="txtJobView">${employee.Puesto}</p>
+                    <p class="employe-param-title" id="txtJobView">${employee.puesto.nombrePuesto}</p>
                   </div>
                   <div class="col-6 col-md-3 d-flex align-items-center">
                     <p class="employe-param-title" id="txtRFCView">${employee.persona.rfc}</p>
@@ -51,7 +49,7 @@ function loadItem(employee) {
                     <div class="col-md-3 text-center text-md-start">
                       <p class="employe-param-title fw-light" id="txtBornHidden">Fecha de Nacimiento: ${employee.persona.fechaNacimiento}</p>
                       <p class="employe-param-title fw-light" id="txtAgeHidden">Edad: ${employee.persona.edad}</p>
-                      <p class="employe-param-title fw-light" id="txtJobHidden">Puesto: ${employee.Puesto}</p>
+                      <p class="employe-param-title fw-light" id="txtJobHidden">Puesto: ${employee.puesto.nombrePuesto}</p>
                     </div>
                     <div class="col-md-3 text-center text-md-start">
                       <p class="employe-param-title fw-light" id="txtRFCHidden">RFC: ${employee.persona.rfc}</p>
@@ -60,7 +58,7 @@ function loadItem(employee) {
                     </div>
                     <div class="col-md-3 text-center text-md-start">
                       <p class="employe-param-title fw-light" id="txtAntiquityHidden">Antiguedad: ${employee.antiguedad}</p>
-                      <p class="employe-param-title fw-light" id="txtBranchHidden">Sucursal: ${employee.Sucursal}</p>
+                      <p class="employe-param-title fw-light" id="txtBranchHidden">Sucursal: ${employee.sucursal.nombreSucursal}</p>
                     </div>
                   </div>
                 </div>
