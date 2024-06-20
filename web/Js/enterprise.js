@@ -1,3 +1,7 @@
+import * as msg from './messages.js'
+import * as hlp from './helpers.js'
+import * as APIhlp from './APIHelpers.js'
+
 export function loadEnterpriseConfigurationModule(content) {
     applyContentOnModule(content)
 
@@ -31,50 +35,53 @@ function loadConfigControls() {
     })
 }
 
-function createNewBranch() {
-    const inputsSelectors = [{ selector: "#txtNombreSucursal" }]
+async function createNewBranch() {
+    const URL = 'http://localhost:8080/SpartanLife/api/sucursal/insertarSucursal'
+    const inputsSelectors = [
+        { selector: "#txtBranchName", key: "BranchName" },
+        { selector: "#txtBranchAddress", key: "BranchAdress" }
+    ]
 
-    const inputsValues = getInputValues(inputsSelectors)
+    const inputsValues = await hlp.getInputValues(inputsSelectors)
 
-    if (inputsValues) {
-        // ? Enviar mediante la API los valores
-    }
-}
-
-function createNewJob() {
-    const inputsSelectors = [{ selector: "#txtNombrePuesto" }]
-
-    const inputsValues = getInputValues(inputsSelectors)
-
-    if (inputsValues) {
-        // ? Enviar mediante la API los valores
-    }
-}
-
-function getInputValues(inputs) {
-    let data = null
-
-    inputs.forEach(input => {
-        const element = document.querySelector(input.selector)
-
-        if (element) {
-            const value = verifyInputValue(element)
-
-            if (value) {
-                data = JSON.stringify({ "data": value })
-            } else {
-                alert("Formulario incompleto...")
-            }
-        }
-    })
-
-    return data
-}
-
-function verifyInputValue(input) {
-    if (input.value != '') {
-        return input.value
+    if (inputsValues != null) {
+        let branch = createBranchJson(inputsValues)
+        APIhlp.saveObjectApiData(URL, "sucursal", branch)
+        msg.successMessage("Sucursal Creada", "La nueva sucursal ha sido creada con éxito.")
     } else {
-        return false
+        msg.errorMessage("Error", "Hubo un error al crear la sucursal", "Por favor, vuelve a intentarlo.")
     }
+}
+
+async function createNewJob() {
+    const URL = 'http://localhost:8080/SpartanLife/api/puesto/insertarPuesto'
+    const inputsSelectors = [{ selector: "#txtJobName", key : "jobName" }]
+
+    const inputsValues = await hlp.getInputValues(inputsSelectors)
+
+    if (inputsValues != null) {
+        let job = createJobJson(inputsValues)
+        console.log(job)
+        APIhlp.saveObjectApiData(URL, "puesto", job)
+        msg.successMessage("Puesto Creado", "El nuevo puesto ha sido creada con éxito.")
+    } else {
+        msg.errorMessage("Error", "Hubo un error al crear el puesto", "Por favor, vuelve a intentarlo.")
+    }
+}
+
+function createBranchJson(branch) {
+    const newBranch = {
+        "nombreSucursal": branch.BranchName,
+        "direccion_sucursal": branch.BranchAdress
+    }
+
+    return newBranch
+}
+
+function createJobJson(job) {
+    const newJob = {
+        "nombrePuesto" : job.jobName
+    }
+
+    return newJob
 }

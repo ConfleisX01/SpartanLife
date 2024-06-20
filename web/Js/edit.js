@@ -3,11 +3,13 @@ import * as hlp from './helpers.js'
 import * as APIhlp from './APIHelpers.js'
 
 // ? Funcion para cargar el modulo entero desde el menu
-export function loadModule(content) {
+export async function loadModule(content) {
+    const URL = "http://localhost:8080/SpartanLife/api/empleado/getAll"
+    const data = await APIhlp.getAllData(URL)
     applyContentOnModule(content)
 
     loadControls()
-    loadTable()
+    loadTable(data)
 }
 
 function applyContentOnModule(content = null) {
@@ -46,6 +48,7 @@ async function loadTable(data = null) {
         data.forEach((employee, index) => {
             let employeeItem = document.createElement('tr')
             let photo = document.createElement('th')
+            let image = document.createElement('img')
             let name = document.createElement('th')
             let born = document.createElement('th')
             let age = document.createElement('th')
@@ -56,16 +59,18 @@ async function loadTable(data = null) {
             let old = document.createElement('th')
             let position = document.createElement('th')
 
-            photo.textContent = employee.Foto
-            name.textContent = employee.Nombre + " " + employee.Apellidos
-            born.textContent = employee.Nacimiento
-            age.textContent = employee.Edad
-            job.textContent = employee.Puesto
-            rfc.textContent = employee.RFC
-            curp.textContent = employee.CURP
-            nss.textContent = employee.NSS
-            old.textContent = employee.Antiguedad
-            position.textContent = employee.Sucursal
+            image.src = employee.foto
+            image.classList.add('employe-table-image')
+            photo.appendChild(image)
+            name.textContent = `${employee.persona.nombre} ${employee.persona.apellidoPaterno} ${employee.persona.apellidoMaterno}`
+            born.textContent = employee.persona.fechaNacimiento
+            age.textContent = employee.persona.edad
+            job.textContent = employee.puesto.nombrePuesto
+            rfc.textContent = employee.persona.rfc
+            curp.textContent = employee.persona.curp
+            nss.textContent = employee.persona.nss
+            old.textContent = employee.antiguedad
+            position.textContent = employee.sucursal.nombreSucursal
 
             employeeItem.appendChild(photo)
             employeeItem.appendChild(name)
@@ -143,13 +148,16 @@ function loadDataOnForm(employee) {
 
 // ? Funcion para mostrar un formulario vacio para agregar un empleado nuevo
 async function loadEmptyForm() {
-    const BRANCH_URL = ''
-    const JOB_URL = ''
+    const BRANCH_URL = 'http://localhost:8080/SpartanLife/api/sucursal/getAll'
+    const JOB_URL = 'http://localhost:8080/SpartanLife/api/puesto/getAll'
     const form = document.querySelector('.form-container')
     const formDangerZone = document.querySelector('.form-danger-zone')
-    const branchs = 
+    const branchs = await APIhlp.getAllData(BRANCH_URL)
+    const jobs = await APIhlp.getAllData(JOB_URL)
 
     cleanForm()
+
+    loadOptionsOnSelects(branchs, jobs)
 
     if (!form.classList.contains('form-active')) {
         const buttonSaveNew = document.createElement('button')
@@ -172,6 +180,27 @@ async function loadEmptyForm() {
 
     form.classList.add('form-active')
     form.classList.add('form-empty')
+}
+
+function loadOptionsOnSelects(branchs = null, jobs = null) {
+    const branchSelect = document.querySelector('#txtBranch')
+    const jobSelect = document.querySelector('#txtJob')
+
+    branchs.forEach(branch => {
+        let option = document.createElement('option')
+        option.value = branch.idSucursal
+        option.text = branch.nombreSucursal
+
+        branchSelect.appendChild(option)
+    })
+
+    jobs.forEach(job => {
+        let option = document.createElement('option')
+        option.value = job.idPuesto
+        option.text = job.nombrePuesto
+
+        jobSelect.appendChild(option)
+    })
 }
 
 // ? Funcion para formatear una fecha DD/MM/YYYY al formato de los inptus tipo DATE
@@ -245,9 +274,13 @@ async function saveEmployee() {
 
     let employee = createEmployeeJson(data)
 
-    console.log(employee)
-
-    APIhlp.saveObjectApiData(URL, 'empleado', employee)
+    if (employee != null) {
+        APIhlp.saveObjectApiData(URL, 'empleado', employee)
+        msg.successMessage("Empleado Creado", "El empleado ha sido creado con éxito.")
+        cleanForm()
+    } else {
+        msg.errorMessage("Error", "Hubo un error al crear el empleado", "Por favor, vuelve a intentarlo.")
+    }
 }
 
 async function getInputValues(inputs) {
@@ -290,22 +323,22 @@ function createEmployeeJson(data) {
     const employee = {
         persona: {
             "nombre": data.nombre,
-            "apellidoPaterno": data.apellidos,
-            "apellidoMaterno": data.apellidos, // ! Separar los apellidos
+            "apellidoPaterno": data.apellidoPaterno,
+            "apellidoMaterno": data.apellidoMaterno,
             "fechaNacimiento": data.fechaNacimiento,
             "rfc": data.rfc,
             "curp": data.curp,
             "nss": data.nss,
         },
         sucursal: {
-            "idSucursal": 1 // ! Obtener el id de la sucursal
+            "idSucursal": data.sucursal
         },
         puesto: {
-            "idPuesto": 1
+            "idPuesto": data.puesto
         },
-        "salarioDia": "500",
+        "salarioDia": data.salarioDia,
         "foto": data.foto,
-        "pagoExtra": "500"
+        "pagoExtra": data.salarioExtra
     }
 
     return employee
@@ -315,15 +348,16 @@ function getAllInputs() {
     const inputs = [
         { selector: '#txtFoto', key: 'foto' },
         { selector: '#txtName', key: 'nombre' },
-        { selector: '#txtLastName', key: 'apellidos' },
+        { selector: '#txtFirstLastName', key: 'apellidoPaterno' },
+        { selector: '#txtSecondLastName', key: 'apellidoMaterno' },
         { selector: '#txtBornDate', key: 'fechaNacimiento' },
-        { selector: '#txtAge', key: 'edad' },
         { selector: '#txtJob', key: 'puesto' },
         { selector: '#txtRFC', key: 'rfc' },
         { selector: '#txtCURP', key: 'curp' },
         { selector: '#txtNSS', key: 'nss' },
-        { selector: '#txtOld', key: 'antiguedad' },
-        { selector: '#txtPosition', key: 'sucursal' },
+        { selector: '#txtSalaryDay', key: 'salarioDia' },
+        { selector: '#txtSalaryExtra', key: 'salarioExtra' },
+        { selector: '#txtBranch', key: 'sucursal' },
     ]
     return inputs
 }

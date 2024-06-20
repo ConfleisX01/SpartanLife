@@ -29,7 +29,7 @@ function loadItem(employee) {
     let item = `<div class="table-item">
                 <div class="row">
                   <div class="col-6 col-md-3 d-flex align-items-center">
-                    <img class="employe-table-image" src="https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg" alt="">
+                    <img class="employe-table-image" src="${employee.foto}" alt="">
                   </div>
                   <div class="col-6 col-md-3 d-flex align-items-center">
                     <p class="employe-param-title" id="txtNameView">${employee.persona.nombre}</p>
@@ -42,7 +42,7 @@ function loadItem(employee) {
                   </div>
                   <div class="col-md-12 employe-info-hidden row py-3 p-0 m-0 d-none">
                     <div class="col-md-3 text-center">
-                      <img class="employe-table-info-image" src="https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg">
+                      <img class="employe-table-info-image" src="${employee.foto}">
                       <p class="fs-2 m-0" id="txtNameHidden">${employee.persona.nombre}</p>
                       <p class="fs-5 m-0 fw-light" id="txtLastNameHidden">${employee.persona.apellidoPaterno + " "+ employee.persona.apellidoMaterno}</p>
                     </div>

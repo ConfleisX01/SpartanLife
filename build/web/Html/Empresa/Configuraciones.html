@@ -3,31 +3,40 @@
 </div>
 <div class="container-fluid p-2">
     <div class="row row-cols-1 row-cols-md-2 g-4">
+        <!-- Sección para Crear Nueva Sucursal -->
         <div class="col p-2">
             <div class="bg-white rounded p-2">
                 <div class="container-fluid p-2">
                     <p>Crear nueva sucursal</p>
                 </div>
                 <div class="container-fluid p-2">
-                    <label for="txtNombreSucursal">Nombre de la sucursal</label>
-                    <input type="text" class="form-control" id="txtNombreSucursal"
-                        placeholder="Ingresa el nombre de la sucursal">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label for="txtBranchName">Nombre de la sucursal</label>
+                            <input type="text" class="form-control" id="txtBranchName" placeholder="Ingresa el nombre de la sucursal">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="txtBranchAddress">Dirección de la sucursal</label>
+                            <input type="text" class="form-control" id="txtBranchAddress" placeholder="Ingresa la dirección de la sucursal">
+                        </div>
+                    </div>
                 </div>
-                <div class="container-fluid p-2">
+                <div class="container-fluid p-2 text-end">
                     <button class="btn-base button_save" id="btnCreateBranch">Crear Sucursal</button>
                 </div>
             </div>
         </div>
+        <!-- Sección para Crear Nuevo Puesto de Trabajo -->
         <div class="col p-2">
             <div class="bg-white rounded p-2">
                 <div class="container-fluid p-2">
                     <p>Crear nuevo puesto de trabajo</p>
                 </div>
                 <div class="container-fluid p-2">
-                    <label for="txtNombrePuesto">Nombre del puesto</label>
-                    <input type="text" class="form-control" id="txtNombrePuesto" placeholder="Ingresa el nuevo puesto">
+                    <label for="txtJobName">Nombre del puesto</label>
+                    <input type="text" class="form-control" id="txtJobName" placeholder="Ingresa el nuevo puesto">
                 </div>
-                <div class="container-fluid p-2">
+                <div class="container-fluid p-2 text-end">
                     <button class="btn-base button_save" id="btnCreateJob">Crear Puesto</button>
                 </div>
             </div>
