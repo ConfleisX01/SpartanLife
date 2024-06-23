@@ -4,7 +4,7 @@ import * as APIhlp from './APIHelpers.js'
 
 // ? Funcion para cargar el modulo entero desde el menu
 export async function loadModule(content) {
-    const URL = "http://localhost:8080/SpartanLife/api/empleado/getAll"
+    const URL = 'http://localhost:8080/SpartanLife/api/empleado/getAll'
     const data = await APIhlp.getAllData(URL)
     applyContentOnModule(content)
 

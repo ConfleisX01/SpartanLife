@@ -1,4 +1,6 @@
 import * as msg from './messages.js'
+import * as hlp from './helpers.js'
+import * as APIhlp from './APIHelpers.js'
 
 export function loadVacationsModule(content) {
     const moduleContainer = document.querySelector('#module-container')
@@ -13,14 +15,17 @@ function clearContainer(container) {
     container.innerHTML = ''
 }
 
-function loadModuleControls() {
+async function loadModuleControls() {
     const btnSelectEmployee = document.querySelector('#btnSelectEmployee')
     const btnShowSelected = document.querySelector('#btnShowSelected')
+    const btnSaveData = document.querySelector('#btnSave')
+    let employees = await getAllEmployees()
 
     let employeeSelected = null
 
-    addFunctionToElement(() => openPanel(index => { employeeSelected = index }), btnSelectEmployee)
-    addFunctionToElement(() => showEmployeeSelected(employeeSelected), btnShowSelected)
+    addFunctionToElement(() => openPanel(index => { employeeSelected = index }, employees), btnSelectEmployee)
+    addFunctionToElement(() => showEmployeeSelected(employeeSelected, employees), btnShowSelected)
+    addFunctionToElement(() => saveVacationsData(employeeSelected), btnSaveData)
 }
 
 function addFunctionToElement(event, element) {
@@ -29,12 +34,12 @@ function addFunctionToElement(event, element) {
     element.addEventListener('click', event)
 }
 
-function openPanel(onSelectEmployee) {
+function openPanel(onSelectEmployee, employees) {
     togglePanelVisibility()
 
     loadPanelControls()
 
-    loadEmployeeTable(onSelectEmployee)
+    loadEmployeeTable(onSelectEmployee, employees)
 }
 
 function togglePanelVisibility() {
@@ -51,26 +56,25 @@ function loadPanelControls() {
     addFunctionToElement(togglePanelVisibility, btnClosePanel)
 }
 
-function loadEmployeeTable(onSelectEmployee) {
+async function loadEmployeeTable(onSelectEmployee, employees) {
     const tableBody = document.querySelector('#employees-table')
 
     if (tableBody) {
         clearContainer(tableBody)
-        const employees = getAllEmployees()
         employees.forEach((employee, index) => {
             let employeeInfo = {
-                "Nombre": employee.Nombre,
-                "Apellido": employee.Apellidos,
-                "RFC": employee.RFC,
-                "NSS": employee.NSS,
+                "Nombre": employee.persona.nombre,
+                "Apellido": `${employee.persona.apellidoPaterno} ${employee.persona.apellidoMaterno}`,
+                "RFC": employee.persona.rfc,
+                "NSS": employee.persona.nss,
             }
-            let employeeRow = createRow(employeeInfo, index, onSelectEmployee)
+            let employeeRow = createRow(employeeInfo, index, onSelectEmployee, employees)
             tableBody.appendChild(employeeRow)
         })
     }
 }
 
-function createRow(employeeInfo, index, onSelectEmployee) {
+function createRow(employeeInfo, index, onSelectEmployee, employees) {
     const row = document.createElement('tr')
 
     for (const key in employeeInfo) {
@@ -86,88 +90,64 @@ function createRow(employeeInfo, index, onSelectEmployee) {
         rows.forEach(row => row.classList.remove('selected'));
         row.classList.add('selected');
 
-        onSelectEmployee(index)
+        onSelectEmployee(employees[index].idEmpleado)
     })
 
     return row
 }
 
-function showEmployeeSelected(employeeSelected) {
-    const employees = getAllEmployees()
+function showEmployeeSelected(employeeSelected, employees) {
+    let employeeInfo = employees.filter(empleado => empleado.idEmpleado === employeeSelected)
 
-    if (employeeSelected == null) {
-        msg.errorMessage("Ningún empleado seleccionado", "Por favor, selecciona un empleado.", "Presiona el botón 'Seleccionar Empleado'.");
+    if (employeeSelected != null) {
+        msg.questionMessage("Empleado Seleccionado", `${employeeInfo[0].persona.nombre} ${employeeInfo[0].persona.apellidoPaterno} ${employeeInfo[0].persona.apellidoMaterno}`)
     } else {
-        msg.questionMessage("Empleado Seleccionado", employees[employeeSelected].Nombre)
+        msg.errorMessage("Ningún empleado seleccionado", "Por favor, selecciona un empleado.", "Presiona el botón 'Seleccionar Empleado'.");
     }
 }
 
-function getAllEmployees() {
-    return [
-        {
-            "Foto": "Sin Foto",
-            "Nombre": "Juan Pablo",
-            "Apellidos": "Perez Fernandez",
-            "Nacimiento": "22/02/2004",
-            "Edad": "20",
-            "Puesto": "Desarrollador",
-            "RFC": "PERJ040222HNLAJP01",
-            "CURP": "PERJ040222HNLAJR08",
-            "NSS": "12345678901",
-            "Antiguedad": "2 meses",
-            "Sucursal": "Delta"
-        },
-        {
-            "Foto": "Sin Foto",
-            "Nombre": "Ana Maria",
-            "Apellidos": "Lopez Garcia",
-            "Nacimiento": "15/08/1995",
-            "Edad": "28",
-            "Puesto": "Diseñadora",
-            "RFC": "LOPA950815HNLRGC02",
-            "CURP": "LOPA950815HNLRGA08",
-            "NSS": "23456789012",
-            "Antiguedad": "1 año",
-            "Sucursal": "Gamma"
-        },
-        {
-            "Foto": "Sin Foto",
-            "Nombre": "Carlos Eduardo",
-            "Apellidos": "Martinez Lopez",
-            "Nacimiento": "30/11/1988",
-            "Edad": "35",
-            "Puesto": "Administrador",
-            "RFC": "MARC881130HNLLZC03",
-            "CURP": "MARC881130HNLLZE08",
-            "NSS": "34567890123",
-            "Antiguedad": "5 años",
-            "Sucursal": "Alpha"
-        },
-        {
-            "Foto": "Sin Foto",
-            "Nombre": "Beatriz Elena",
-            "Apellidos": "Ramirez Gonzalez",
-            "Nacimiento": "07/05/1992",
-            "Edad": "32",
-            "Puesto": "Recursos Humanos",
-            "RFC": "RAGB920507HNLMZB04",
-            "CURP": "RAGB920507HNLMZE08",
-            "NSS": "45678901234",
-            "Antiguedad": "3 años",
-            "Sucursal": "Beta"
-        },
-        {
-            "Foto": "Sin Foto",
-            "Nombre": "David Alonso",
-            "Apellidos": "Gonzalez Perez",
-            "Nacimiento": "12/03/2000",
-            "Edad": "24",
-            "Puesto": "Contador",
-            "RFC": "GOPD000312HNLGZA05",
-            "CURP": "GOPD000312HNLGZA08",
-            "NSS": "56789012345",
-            "Antiguedad": "6 meses",
-            "Sucursal": "Delta"
-        }
-    ]
+async function getAllEmployees() {
+    const URL = 'http://localhost:8080/SpartanLife/api/empleado/getAll'
+
+    const employees = await APIhlp.getAllData(URL)
+
+    return employees
 }
+
+// ! Funcion por terminar (Joel no ha terminado el REST de las solicitudes de trabajo, pinche vato mariwano)
+async function saveVacationsData(employeeSelected) {
+    const inputsValues = await hlp.getInputValues(getAllInputs())
+    const URL = '' // Agregar URL para agregar el objeto
+    
+    if (inputsValues != null) {
+        let vacation = createVacationsJson(inputsValues, employeeSelected)
+        APIhlp.saveObjectApiData(URL, 'vacacion', vacation)
+        msg.successMessage() // Mostrar mensaje de exito
+    } else {
+        msg.errorMessage() // Mostrar mensaje de error
+    }
+}
+
+function getAllInputs() {
+    const inputs = [
+        { selector: '#txtWeekStart', key: 'weekStart' },
+        { selector: '#txtWeekEnd', key: 'weekEnd' }
+    ]
+
+    return inputs
+}
+
+function createVacationsJson(data, employeeSelected) {
+    const object = {
+        "idEmpleado": employeeSelected,
+        "inicioSemana": data.weekStart,
+        "finSemana": data.weekEnd,
+        "estatus": 1
+    }
+
+    return object
+}
+
+// * Notas futuras * ///
+// * Necesitamos enviar el objeto a la API pero el REST aun no esta hecho
+// * Esperemos que Joel lo haga pronto para poder seguir avanzando porque esto se esta haciendo eterno

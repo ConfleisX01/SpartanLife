@@ -61,7 +61,6 @@ async function createNewJob() {
 
     if (inputsValues != null) {
         let job = createJobJson(inputsValues)
-        console.log(job)
         APIhlp.saveObjectApiData(URL, "puesto", job)
         msg.successMessage("Puesto Creado", "El nuevo puesto ha sido creada con éxito.")
     } else {
