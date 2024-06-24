@@ -1,6 +1,7 @@
 import * as msg from './messages.js'
 import * as hlp from './helpers.js'
 import * as APIhlp from './APIHelpers.js'
+import { URL_BASE } from './config.js'
 
 export function loadVacationsModule(content) {
     const moduleContainer = document.querySelector('#module-container')
@@ -107,7 +108,7 @@ function showEmployeeSelected(employeeSelected, employees) {
 }
 
 async function getAllEmployees() {
-    const URL = 'http://localhost:8080/SpartanLife/api/empleado/getAll'
+    const URL = URL_BASE + '/empleado/getAll'
 
     const employees = await APIhlp.getAllData(URL)
 

@@ -2,16 +2,16 @@
   --princial_color: #113458;
   --first_complementary: #f2aa1f;
   --second_complementary: #F0F4F9;
-  --dark: #090909;
+  --dark: #0F172A;
   --white: #ffffff;
-  --button-save-bg: #B4D1EE;
-  --button-save-color: #124679;
-  --buton-delete-bg: #EDB3B3;
-  --button-delete-color: #B42020;
-  --buton-update-bg: #fff889;
-  --button-update-color: #cc9702;
+  --button-save-bg: #1D4ED8;
+  --buton-delete-bg: #B91C1C;
+  --buton-update-bg: #FACC15;
+  --button-text: #F8FAFC;
   --border: #DEE2E6;
   --dark-text: #343A40;
+  --white-200: #E2E8F0;
+  --white-50: #F8FAFC;
 }
 
 /* Estilos Principales */
@@ -39,14 +39,6 @@ th {
 .main-content {
   height: 100%;
   overflow-y: scroll;
-}
-
-.sideBar {
-  width: 100px;
-  background-color: var(--white);
-  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
-  flex-direction: column;
-  transition: all 3s cubic-bezier(0.075, 0.82, 0.165, 1);
 }
 
 .user-information {
@@ -95,9 +87,9 @@ th {
 }
 
 .table-head {
-  background-color: var(--princial_color);
+  background-color: var(--white-200);
   border-radius: 0.3rem;
-  color: white;
+  color: var(--dark);
 }
 
 .table-employe-item {
@@ -115,6 +107,10 @@ th {
   cursor: pointer;
   transition: all 0.2s ease-in-out;
   margin: 1rem 0rem;
+}
+
+.soft-shadow {
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
 }
 
 .table-item:hover {
@@ -163,17 +159,17 @@ th {
 
 .button_save {
   background-color: var(--button-save-bg);
-  color: var(--button-save-color);
+  color: var(--button-text);
 }
 
 .button_danger {
   background-color: var(--buton-delete-bg);
-  color: var(--button-delete-color);
+  color: var(--button-text);
 }
 
 .button_update {
   background-color: var(--buton-update-bg);
-  color: var(--button-update-color);
+  color: var(--button-text);
 }
 
 .file-input-custom {
@@ -225,8 +221,7 @@ th {
 
 .sideBar {
   width: 80px;
-  background-color: white;
-  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  background-color: var(--white-50);
   transition: all 0.5s cubic-bezier(0.075, 0.82, 0.165, 1);
   display: flex;
   flex-direction: column;

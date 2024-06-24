@@ -1,15 +1,20 @@
 import * as msg from './messages.js'
 import * as hlp from './helpers.js'
 import * as APIhlp from './APIHelpers.js'
+import { URL_BASE } from './config.js'
 
 // ? Funcion para cargar el modulo entero desde el menu
 export async function loadModule(content) {
-    const URL = 'http://localhost:8080/SpartanLife/api/empleado/getAll'
+    const BRANCH_URL = URL_BASE + '/sucursal/getAll'
+    const JOB_URL = URL_BASE + '/puesto/getAll'
+    const URL = URL_BASE + '/empleado/getAll'
+    const branchs = await APIhlp.getAllData(BRANCH_URL)
+    const jobs = await APIhlp.getAllData(JOB_URL)
     const data = await APIhlp.getAllData(URL)
     applyContentOnModule(content)
 
-    loadControls()
-    loadTable(data)
+    loadControls(branchs, jobs)
+    loadTable(data, branchs, jobs)
 }
 
 function applyContentOnModule(content = null) {
@@ -23,13 +28,13 @@ function applyContentOnModule(content = null) {
 }
 
 // ? Funcion para cargar los controles principales del modulo
-async function loadControls() {
+async function loadControls(branchs, jobs) {
     const buttonNewEmployee = document.querySelector('#btnAddNew')
     const form = document.querySelector('.form-container')
 
     buttonNewEmployee.addEventListener('click', async () => {
         if (!form.classList.contains('form-active') && !form.classList.contains('form-edit')) {
-            loadEmptyForm()
+            loadEmptyForm(branchs, jobs)
         } else {
             const response = await msg.confirmMessage("No se puede realizar esta accion", "Ciera el formulario antes de acceder a otro", "Cerrar Formulario")
             if (response) {
@@ -40,7 +45,7 @@ async function loadControls() {
 }
 
 // ? Funcion para cargar la tabla de empleados con la informacion de los empleados
-async function loadTable(data = null) {
+async function loadTable(data = null, branchs, jobs) {
     const tableBody = document.querySelector('#table-body')
     const form = document.querySelector('.form-container')
 
@@ -85,7 +90,7 @@ async function loadTable(data = null) {
 
             employeeItem.addEventListener('click', async () => {
                 if (!form.classList.contains('form-active') || !form.classList.contains('form-empty')) {
-                    loadEmployeeData(index)
+                    loadEmployeeData(data, index, branchs, jobs)
                 } else {
                     const response = await msg.confirmMessage("No se puede realizar esta accion", "Ciera el formulario antes de acceder a otro", "Cerrar Formulario")
                     if (response) {
@@ -100,15 +105,15 @@ async function loadTable(data = null) {
 }
 
 // ? Funcion para cargar el empleado al formulario
-function loadEmployeeData(index) {
+function loadEmployeeData(employees, index, branchs, jobs) {
     const employee = employees[index]
 
-    loadDataOnForm(employee)
+    loadDataOnForm(employee, branchs, jobs)
 }
 
 // ? Funcion para cargar el formulario con los datos del empleado seleccionado
-function loadDataOnForm(employee) {
-    let inputs = document.querySelectorAll('.form-container-inputs input')
+function loadDataOnForm(employee, branchs, jobs) {
+    let inputs = getAllInputs()
     let form = document.querySelector('.form-container')
     let buttonsContainer = document.querySelector('.buttons-container')
     let buttonSave = document.createElement('button')
@@ -118,6 +123,8 @@ function loadDataOnForm(employee) {
     buttonSave.classList.add('button_update')
     buttonSave.id = 'btnUpdate'
     buttonSave.innerHTML = "Guardar Cambios"
+
+    loadOptionsOnSelects(branchs, jobs)
 
     // * Condicionamos a que solamente se agregue el boton si se abrio por primera vez el formulario
     if (!form.classList.contains('form-active')) {
@@ -129,31 +136,29 @@ function loadDataOnForm(employee) {
     }
 
     // * Cargamos los datos del empleado en el formulario para modificarlos
-    inputs[0].value = employee.Nombre
-    inputs[1].value = employee.Apellidos
-    inputs[2].value = setFormatedDate(employee.Nacimiento)
-    inputs[3].value = employee.Edad
-    inputs[4].value = employee.Puesto
-    inputs[5].value = employee.RFC
-    inputs[6].value = employee.CURP
-    inputs[7].value = employee.NSS
-    inputs[8].value = employee.Antiguedad
-    inputs[9].value = employee.Sucursal
+    let object = objectToFillForm(employee)
+
+    fillFormWithData(inputs, object)
 
     form.classList.add('form-active')
     form.classList.add('form-edit')
 
-    loadControlsForm()
+    loadControlsForm(employee)
+}
+
+function fillFormWithData(inputs, data) {
+    inputs.forEach(input => {
+        const element = document.querySelector(input.selector)
+        if (element) {
+            element.value = data[input.key] || ''
+        }
+    })
 }
 
 // ? Funcion para mostrar un formulario vacio para agregar un empleado nuevo
-async function loadEmptyForm() {
-    const BRANCH_URL = 'http://localhost:8080/SpartanLife/api/sucursal/getAll'
-    const JOB_URL = 'http://localhost:8080/SpartanLife/api/puesto/getAll'
+async function loadEmptyForm(branchs, jobs) {
     const form = document.querySelector('.form-container')
     const formDangerZone = document.querySelector('.form-danger-zone')
-    const branchs = await APIhlp.getAllData(BRANCH_URL)
-    const jobs = await APIhlp.getAllData(JOB_URL)
 
     cleanForm()
 
@@ -203,20 +208,8 @@ function loadOptionsOnSelects(branchs = null, jobs = null) {
     })
 }
 
-// ? Funcion para formatear una fecha DD/MM/YYYY al formato de los inptus tipo DATE
-function setFormatedDate(dateString) {
-    const parts = dateString.split('/')
-    const day = parts[0]
-    const month = parts[1]
-    const year = parts[2]
-
-    const formatedDate = `${year}-${month}-${day}`
-
-    return formatedDate
-}
-
 // ? Funcion para cargar los controles del formulario de edicion
-function loadControlsForm() {
+function loadControlsForm(employee = null) {
     const form = document.querySelector('.form-container')
     const btnBack = document.querySelector('#btnBack')
     const btnSave = document.querySelector('#btnSave')
@@ -227,8 +220,8 @@ function loadControlsForm() {
     btnBack.addEventListener('click', closeForm)
 
     if (btnUpdate != null) {
-        btnUpdate.removeEventListener('click', updateEmployee)
-        btnUpdate.addEventListener('click', updateEmployee)
+        btnUpdate.removeEventListener('click', () => updateEmployee(employee))
+        btnUpdate.addEventListener('click', () => updateEmployee(employee))
     }
 
     if (btnSave != null) {
@@ -260,17 +253,19 @@ function closeForm() {
     form.classList.remove('form-empty')
 }
 
-function updateEmployee() {
-    alert("Actualizando los datos...")
+async function updateEmployee(employee) {
+    const data = await getInputValues(getAllInputs())
+    console.log(data)
+    let newEmployee = createEmployeeJsonToUpdate(data, employee.persona.idPersona, employee.idEmpleado)
 }
 
-function deleteEmployee() {
+function deleteEmployee(index) {
     alert("Borrando empleado...")
 }
 
 async function saveEmployee() {
     const data = await getInputValues(getAllInputs())
-    const URL = 'http://localhost:8080/SpartanLife/api/empleado/insertEmpleado'
+    const URL = URL_BASE + '/empleado/insertEmpleado'
 
     let employee = createEmployeeJson(data)
 
@@ -320,6 +315,7 @@ async function verifyInputValue(input) {
 }
 
 function createEmployeeJson(data) {
+    console.log(data)
     const employee = {
         persona: {
             "nombre": data.nombre,
@@ -328,7 +324,7 @@ function createEmployeeJson(data) {
             "fechaNacimiento": data.fechaNacimiento,
             "rfc": data.rfc,
             "curp": data.curp,
-            "nss": data.nss,
+            "nss": data.nss
         },
         sucursal: {
             "idSucursal": data.sucursal
@@ -338,10 +334,55 @@ function createEmployeeJson(data) {
         },
         "salarioDia": data.salarioDia,
         "foto": data.foto,
-        "pagoExtra": data.salarioExtra
+        "pagoExtra": data.salarioExtra,
     }
 
     return employee
+}
+
+function createEmployeeJsonToUpdate(data, idPerson, idEmployee) {
+    const employee = {
+        persona: {
+            "nombre": data.nombre,
+            "apellidoPaterno": data.apellidoPaterno,
+            "apellidoMaterno": data.apellidoMaterno,
+            "fechaNacimiento": data.fechaNacimiento,
+            "rfc": data.rfc,
+            "curp": data.curp,
+            "nss": data.nss,
+            "idPersona": idPerson
+        },
+        sucursal: {
+            "idSucursal": data.sucursal
+        },
+        puesto: {
+            "idPuesto": data.puesto
+        },
+        "salarioDia": data.salarioDia,
+        "foto": data.foto,
+        "pagoExtra": data.salarioExtra,
+        "idEmpleado": idEmployee
+    }
+
+    return employee
+}
+
+function objectToFillForm(data) {
+    const newObject = {
+        nombre: data.persona.nombre,
+        apellidoPaterno: data.persona.apellidoPaterno,
+        apellidoMaterno: data.persona.apellidoMaterno,
+        fechaNacimiento: data.persona.fechaNacimiento,
+        puesto: data.puesto.idPuesto,
+        rfc: data.persona.rfc,
+        curp: data.persona.curp,
+        nss: data.persona.nss,
+        salarioDia: data.salarioDia,
+        salarioExtra: data.pagoExtra,
+        sucursal: data.sucursal.idSucursal
+    }
+
+    return newObject
 }
 
 function getAllInputs() {

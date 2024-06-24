@@ -1,6 +1,7 @@
 import * as msg from './messages.js'
 import * as hlp from './helpers.js'
 import * as APIhlp from './APIHelpers.js'
+import { URL_BASE } from './config.js'
 
 export function loadEnterpriseConfigurationModule(content) {
     applyContentOnModule(content)
@@ -36,7 +37,7 @@ function loadConfigControls() {
 }
 
 async function createNewBranch() {
-    const URL = 'http://localhost:8080/SpartanLife/api/sucursal/insertarSucursal'
+    const URL = URL_BASE + '/sucursal/insertarSucursal'
     const inputsSelectors = [
         { selector: "#txtBranchName", key: "BranchName" },
         { selector: "#txtBranchAddress", key: "BranchAdress" }
@@ -54,7 +55,7 @@ async function createNewBranch() {
 }
 
 async function createNewJob() {
-    const URL = 'http://localhost:8080/SpartanLife/api/puesto/insertarPuesto'
+    const URL = URL_BASE + '/puesto/insertarPuesto'
     const inputsSelectors = [{ selector: "#txtJobName", key : "jobName" }]
 
     const inputsValues = await hlp.getInputValues(inputsSelectors)

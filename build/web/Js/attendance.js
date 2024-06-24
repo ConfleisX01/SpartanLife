@@ -1,6 +1,7 @@
 import * as msg from './messages.js'
 import * as hlp from './helpers.js'
 import * as APIhlp from './APIHelpers.js'
+import { URL_BASE } from './config.js'
 
 export function load(content) {
     const container = document.querySelector('#module-container')
@@ -11,10 +12,10 @@ export function load(content) {
 }
 
 async function loadControls() {
+    const URL = URL_BASE + '/empleado/getAll'
     const btnSelectEmployee = document.querySelector('#btnSelectEmployee')
     const btnShowSelected = document.querySelector('#btnShowSelected')
     const btnSave = document.querySelector('#btnSave')
-    const URL = 'http://localhost:8080/SpartanLife/api/empleado/getAll'
     const employees = await APIhlp.getAllData(URL)
 
     let employeeSelected = null
@@ -117,8 +118,8 @@ function addUpdateButton(employeeSelected) {
 }
 
 async function updateLastAttendance(employeeSelected) {
-    const URL = 'http://localhost:8080/SpartanLife/api/asistencia/modificarAsistencia'
-    const URL_EMPLOYEES = 'http://localhost:8080/SpartanLife/api/empleado/getAll'
+    const URL = URL_BASE + '/asistencia/modificarAsistencia'
+    const URL_EMPLOYEES = URL_BASE + '/empleado/getAll'
     const inputsValues = await hlp.getInputValues(getAllInputs())
     const employees = await APIhlp.getAllData(URL_EMPLOYEES)
     let idEmployee = employees[employeeSelected].idEmpleado
@@ -134,7 +135,7 @@ async function updateLastAttendance(employeeSelected) {
 }
 
 async function sendAttendanceInformation(employeeSelected) {
-    const URL = 'http://localhost:8080/SpartanLife/api/asistencia/registrarAsistencia'
+    const URL = URL_BASE + '/asistencia/registrarAsistencia'
     const inputsValues = await hlp.getInputValues(getAllInputs())
 
     if (inputsValues != null) {

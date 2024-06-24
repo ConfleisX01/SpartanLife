@@ -186,6 +186,7 @@ private Empleado fill(ResultSet rs) throws SQLException {
     // Datos del empleado
     empleado.setIdEmpleado(rs.getInt("id_empleado"));
     empleado.setSalarioDia(rs.getFloat("salario_dia"));
+    empleado.setPagoExtra(rs.getFloat("pago_extra"));
     empleado.setFoto(rs.getString("foto"));
     empleado.setAntiguedad(rs.getString("antiguedad"));
 
