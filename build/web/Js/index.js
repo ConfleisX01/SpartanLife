@@ -28,56 +28,57 @@ async function loadIndexControls() {
 }
 
 async function loadSesionControls() {
-    let btnCreateAccount = document.getElementById('btnCreateAccount')
-    let btnLoginUser = document.getElementById('btnLoginUser')
-    let btnLoginStart = document.getElementById('btnLoginStart')
-    let btnCreate = document.getElementById('btnCreate')
-    let lbUser = document.getElementById('txtUser')
-    let lbPassword = document.getElementById('txtPassword')
-    let chRemeberUser = document.getElementById('rememberUser')
-    let lbUserName = document.getElementById('txtNames')
-    let lbUserLastName = document.getElementById('txtLastNames')
-    let lbUserCreate = document.getElementById('txtUserCreate')
-    let lbPasswordCreate = document.getElementById('txtPasswordCreate')
+    let btnCreateAccount = document.getElementById('btnCreateAccount');
+    let btnLoginUser = document.getElementById('btnLoginUser');
+    let btnLoginStart = document.getElementById('btnLoginStart');
+    let btnCreate = document.getElementById('btnCreate');
+    let lbUser = document.getElementById('txtUser');
+    let lbPassword = document.getElementById('txtPassword');
+    let chRemeberUser = document.getElementById('rememberUser');
+    let lbUserName = document.getElementById('txtNames');
+    let lbUserLastName = document.getElementById('txtLastNames');
+    let lbUserCreate = document.getElementById('txtUserCreate');
+    let lbPasswordCreate = document.getElementById('txtPasswordCreate');
 
-    const loginElements = [lbUser, lbPassword]
-    const signinElements = [lbUserName, lbUserLastName, lbUserCreate, lbPasswordCreate]
+    const loginElements = [lbUser, lbPassword];
+    const signinElements = [lbUserName, lbUserLastName, lbUserCreate, lbPasswordCreate];
 
     btnCreateAccount.addEventListener('click', () => {
-        switchAccountMode(0)
-    })
+        switchAccountMode(0);
+    });
 
     btnLoginUser.addEventListener('click', () => {
-        switchAccountMode(1)
-    })
+        switchAccountMode(1);
+    });
 
-    // TODO: Crear la verificacion real para el usuario
-    btnLoginStart.addEventListener('click', () => {
+    btnLoginStart.addEventListener('click', async () => {
         if (hlp.verifyInputs(loginElements)) {
-            let user = { "User": lbUser.value, "Password": lbPassword.value }
-            if (Dbg.verifyUser(user)) {
-                msg.successMessage("Usuario Verificado", "Ingresando al sistema")
-                loadDashboad(Dbg.verifyUser(user))
+            let user = { "User": lbUser.value, "Password": lbPassword.value };
+            let verifiedUser = await Dbg.verifyUser(user);
+            if (verifiedUser) {
+                msg.successMessage("Usuario Verificado", "Ingresando al sistema");
+                console.log(verifiedUser)
+                loadDashboad(verifiedUser);
             } else {
-                msg.errorMessage("Usuario Incorrecto", "El usuario ingresado no existe", "Ingrese un usuario existente")
+                msg.errorMessage("Usuario Incorrecto", "El usuario ingresado no existe", "Ingrese un usuario existente");
             }
         } else {
-            msg.errorMessage("Entradas Vacias", "Error al verificar el usuario", "Rellene todos los campos solicitados del formulario")
+            msg.errorMessage("Entradas Vacías", "Error al verificar el usuario", "Rellene todos los campos solicitados del formulario");
         }
-    })
+    });
 
-    // TODO: Crear el metodo real para crear un nuevo usuario
     btnCreate.addEventListener('click', () => {
         if (hlp.verifyInputs(signinElements)) {
-            let user = { "Name": lbUserName.value, "LastName": lbUserLastName.value, "User": lbUserCreate.value, "Password": lbPasswordCreate.value, "Rol": "USER" }
-            Dbg.addUser(user)
-            msg.successMessage("Usuario Creado", "Se ha creado el usuario con exito")
-            Dbg.viewUsers()
+            let user = { "Name": lbUserName.value, "LastName": lbUserLastName.value, "User": lbUserCreate.value, "Password": lbPasswordCreate.value, "Rol": "USER" };
+            Dbg.addUser(user);
+            msg.successMessage("Usuario Creado", "Se ha creado el usuario con éxito");
+            Dbg.viewUsers();
         } else {
-            msg.errorMessage("Entradas Vacias", "Error al crear el usuario", "Rellene todos los campos solicitados del formulario")
+            msg.errorMessage("Entradas Vacías", "Error al crear el usuario", "Rellene todos los campos solicitados del formulario");
         }
-    })
+    });
 }
+
 
 function switchAccountMode(position) {
     let containerLogin = document.getElementById('container-login')
@@ -94,9 +95,13 @@ function switchAccountMode(position) {
 
 // Funcion para cargar el DashBoard
 function loadDashboad(user) {
-    if (user.Rol == 'ADMIN') {
+            console.log("hola ")
+
+    if (user.rol == 'ADMIN') {
+        console.log("jola ")
         loadAdminDashboard()
-    } else if (user.Rol == 'USER') {
+        
+    } else if (user.rol == 'USER') {
         loadUserDashboard()
     }
 }
@@ -177,6 +182,6 @@ function loadControls() {
 }
 
 // Funcion principal para cargar los controladores del sistema
-// loadIndexControls()
+ loadIndexControls()
 // TODO: Funcion de prueba, eliminar cuando se termine de probar el apartado del dashboard
-loadAdminDashboard()
+//loadAdminDashboard()

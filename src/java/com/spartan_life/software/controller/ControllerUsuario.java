@@ -161,15 +161,16 @@ public class ControllerUsuario {
    
     }
 
-    public Usuario traerUsuario(int id_usuario) throws SQLException {
-        ConexionMysql conexionMysql = new ConexionMysql();
+    public Usuario traerUsuario(String nombreUsuario) throws SQLException {
+        try {
+              ConexionMysql conexionMysql = new ConexionMysql();
         Connection conn = conexionMysql.open();
         Usuario u = new Usuario();
-        String query = "SELECT * FROM usuario WHERE id_usuario = ?";
+        String query = "SELECT * FROM usuario WHERE nombre_usuario = ?";
 
         PreparedStatement pstmt = conn.prepareStatement(query);
 
-        pstmt.setInt(1, id_usuario);
+        pstmt.setString(1, nombreUsuario);
 
         ResultSet rs = pstmt.executeQuery();
 
@@ -180,10 +181,13 @@ public class ControllerUsuario {
             u.setToken(rs.getString("token"));
             u.setRol(rs.getString("rol"));
         }
-        rs.close();
-        pstmt.close();
-        conn.close();
+       
 
         return u;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return  null;
+        }
+      
     }
 }
