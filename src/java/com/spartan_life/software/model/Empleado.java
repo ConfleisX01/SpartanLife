@@ -91,6 +91,4 @@ public class Empleado {
     public void setAntiguedad(String antiguedad) {
         this.antiguedad = antiguedad;
     }
-    
-    
 }

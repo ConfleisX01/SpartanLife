@@ -174,6 +174,7 @@ private Empleado fill(ResultSet rs) throws SQLException {
     persona.setRfc(rs.getString("rfc"));
     persona.setCurp(rs.getString("curp"));
     persona.setNss(rs.getString("nss"));
+    persona.setIdPersona(rs.getInt("id_persona"));
 
     // Datos de la sucursal
     sucursal.setIdSucursal(rs.getInt("id_sucursal"));
@@ -186,6 +187,7 @@ private Empleado fill(ResultSet rs) throws SQLException {
     // Datos del empleado
     empleado.setIdEmpleado(rs.getInt("id_empleado"));
     empleado.setSalarioDia(rs.getFloat("salario_dia"));
+    empleado.setPagoExtra(rs.getFloat("pago_extra"));
     empleado.setFoto(rs.getString("foto"));
     empleado.setAntiguedad(rs.getString("antiguedad"));
 

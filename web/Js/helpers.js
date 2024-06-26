@@ -57,3 +57,39 @@ export function imageToBase64(file) {
         reader.readAsDataURL(file)
     })
 }
+
+export async function getInputValues(inputs) {
+    let data = {}
+
+    for (const input of inputs) {
+        const element = document.querySelector(input.selector)
+
+        if (element) {
+            const value = await verifyInputValue(element)
+
+            if (value) {
+                data[input.key] = value
+            } else {
+                return null
+            }
+        }
+    }
+
+    return data
+}
+
+async function verifyInputValue(input) {
+    if (input.type === 'file') {
+        if (input.files.length > 0) {
+            return await imageToBase64(input.files[0])
+        } else {
+            return false
+        }
+    } else {
+        if (input.value != '') {
+            return input.value
+        } else {
+            return false
+        }
+    }
+}

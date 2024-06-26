@@ -1,13 +1,20 @@
 import * as msg from './messages.js'
 import * as hlp from './helpers.js'
 import * as APIhlp from './APIHelpers.js'
+import { URL_BASE } from './config.js'
 
 // ? Funcion para cargar el modulo entero desde el menu
-export function loadModule(content) {
+export async function loadModule(content) {
+    const BRANCH_URL = URL_BASE + '/sucursal/getAll'
+    const JOB_URL = URL_BASE + '/puesto/getAll'
+    const URL = URL_BASE + '/empleado/getAll'
+    const branchs = await APIhlp.getAllData(BRANCH_URL)
+    const jobs = await APIhlp.getAllData(JOB_URL)
+    const data = await APIhlp.getAllData(URL)
     applyContentOnModule(content)
 
-    loadControls()
-    loadTable()
+    loadControls(branchs, jobs)
+    loadTable(data, branchs, jobs)
 }
 
 function applyContentOnModule(content = null) {
@@ -21,13 +28,13 @@ function applyContentOnModule(content = null) {
 }
 
 // ? Funcion para cargar los controles principales del modulo
-async function loadControls() {
+async function loadControls(branchs, jobs) {
     const buttonNewEmployee = document.querySelector('#btnAddNew')
     const form = document.querySelector('.form-container')
 
     buttonNewEmployee.addEventListener('click', async () => {
         if (!form.classList.contains('form-active') && !form.classList.contains('form-edit')) {
-            loadEmptyForm()
+            loadEmptyForm(branchs, jobs)
         } else {
             const response = await msg.confirmMessage("No se puede realizar esta accion", "Ciera el formulario antes de acceder a otro", "Cerrar Formulario")
             if (response) {
@@ -38,7 +45,7 @@ async function loadControls() {
 }
 
 // ? Funcion para cargar la tabla de empleados con la informacion de los empleados
-async function loadTable(data = null) {
+async function loadTable(data = null, branchs, jobs) {
     const tableBody = document.querySelector('#table-body')
     const form = document.querySelector('.form-container')
 
@@ -46,6 +53,7 @@ async function loadTable(data = null) {
         data.forEach((employee, index) => {
             let employeeItem = document.createElement('tr')
             let photo = document.createElement('th')
+            let image = document.createElement('img')
             let name = document.createElement('th')
             let born = document.createElement('th')
             let age = document.createElement('th')
@@ -56,16 +64,18 @@ async function loadTable(data = null) {
             let old = document.createElement('th')
             let position = document.createElement('th')
 
-            photo.textContent = employee.Foto
-            name.textContent = employee.Nombre + " " + employee.Apellidos
-            born.textContent = employee.Nacimiento
-            age.textContent = employee.Edad
-            job.textContent = employee.Puesto
-            rfc.textContent = employee.RFC
-            curp.textContent = employee.CURP
-            nss.textContent = employee.NSS
-            old.textContent = employee.Antiguedad
-            position.textContent = employee.Sucursal
+            image.src = employee.foto
+            image.classList.add('employe-table-image')
+            photo.appendChild(image)
+            name.textContent = `${employee.persona.nombre} ${employee.persona.apellidoPaterno} ${employee.persona.apellidoMaterno}`
+            born.textContent = employee.persona.fechaNacimiento
+            age.textContent = employee.persona.edad
+            job.textContent = employee.puesto.nombrePuesto
+            rfc.textContent = employee.persona.rfc
+            curp.textContent = employee.persona.curp
+            nss.textContent = employee.persona.nss
+            old.textContent = employee.antiguedad
+            position.textContent = employee.sucursal.nombreSucursal
 
             employeeItem.appendChild(photo)
             employeeItem.appendChild(name)
@@ -80,7 +90,7 @@ async function loadTable(data = null) {
 
             employeeItem.addEventListener('click', async () => {
                 if (!form.classList.contains('form-active') || !form.classList.contains('form-empty')) {
-                    loadEmployeeData(index)
+                    loadEmployeeData(data, index, branchs, jobs)
                 } else {
                     const response = await msg.confirmMessage("No se puede realizar esta accion", "Ciera el formulario antes de acceder a otro", "Cerrar Formulario")
                     if (response) {
@@ -95,15 +105,15 @@ async function loadTable(data = null) {
 }
 
 // ? Funcion para cargar el empleado al formulario
-function loadEmployeeData(index) {
+function loadEmployeeData(employees, index, branchs, jobs) {
     const employee = employees[index]
 
-    loadDataOnForm(employee)
+    loadDataOnForm(employee, branchs, jobs)
 }
 
 // ? Funcion para cargar el formulario con los datos del empleado seleccionado
-function loadDataOnForm(employee) {
-    let inputs = document.querySelectorAll('.form-container-inputs input')
+function loadDataOnForm(employee, branchs, jobs) {
+    let inputs = getAllInputs()
     let form = document.querySelector('.form-container')
     let buttonsContainer = document.querySelector('.buttons-container')
     let buttonSave = document.createElement('button')
@@ -113,6 +123,8 @@ function loadDataOnForm(employee) {
     buttonSave.classList.add('button_update')
     buttonSave.id = 'btnUpdate'
     buttonSave.innerHTML = "Guardar Cambios"
+
+    loadOptionsOnSelects(branchs, jobs)
 
     // * Condicionamos a que solamente se agregue el boton si se abrio por primera vez el formulario
     if (!form.classList.contains('form-active')) {
@@ -124,32 +136,33 @@ function loadDataOnForm(employee) {
     }
 
     // * Cargamos los datos del empleado en el formulario para modificarlos
-    inputs[0].value = employee.Nombre
-    inputs[1].value = employee.Apellidos
-    inputs[2].value = setFormatedDate(employee.Nacimiento)
-    inputs[3].value = employee.Edad
-    inputs[4].value = employee.Puesto
-    inputs[5].value = employee.RFC
-    inputs[6].value = employee.CURP
-    inputs[7].value = employee.NSS
-    inputs[8].value = employee.Antiguedad
-    inputs[9].value = employee.Sucursal
+    let object = objectToFillForm(employee)
+
+    fillFormWithData(inputs, object)
 
     form.classList.add('form-active')
     form.classList.add('form-edit')
 
-    loadControlsForm()
+    loadControlsForm(employee)
+}
+
+function fillFormWithData(inputs, data) {
+    inputs.forEach(input => {
+        const element = document.querySelector(input.selector)
+        if (element) {
+            element.value = data[input.key] || ''
+        }
+    })
 }
 
 // ? Funcion para mostrar un formulario vacio para agregar un empleado nuevo
-async function loadEmptyForm() {
-    const BRANCH_URL = ''
-    const JOB_URL = ''
+async function loadEmptyForm(branchs, jobs) {
     const form = document.querySelector('.form-container')
     const formDangerZone = document.querySelector('.form-danger-zone')
-    const branchs = 
 
     cleanForm()
+
+    loadOptionsOnSelects(branchs, jobs)
 
     if (!form.classList.contains('form-active')) {
         const buttonSaveNew = document.createElement('button')
@@ -174,21 +187,30 @@ async function loadEmptyForm() {
     form.classList.add('form-empty')
 }
 
-// ? Funcion para formatear una fecha DD/MM/YYYY al formato de los inptus tipo DATE
-function setFormatedDate(dateString) {
-    const parts = dateString.split('/')
-    const day = parts[0]
-    const month = parts[1]
-    const year = parts[2]
+function loadOptionsOnSelects(branchs = null, jobs = null) {
+    const branchSelect = document.querySelector('#txtBranch')
+    const jobSelect = document.querySelector('#txtJob')
 
-    const formatedDate = `${year}-${month}-${day}`
+    branchs.forEach(branch => {
+        let option = document.createElement('option')
+        option.value = branch.idSucursal
+        option.text = branch.nombreSucursal
 
-    return formatedDate
+        branchSelect.appendChild(option)
+    })
+
+    jobs.forEach(job => {
+        let option = document.createElement('option')
+        option.value = job.idPuesto
+        option.text = job.nombrePuesto
+
+        jobSelect.appendChild(option)
+    })
 }
 
 // ? Funcion para cargar los controles del formulario de edicion
-function loadControlsForm() {
-    const form = document.querySelector('.form-container')
+function loadControlsForm(employee = null) {
+    //const form = document.querySelector('.form-container')
     const btnBack = document.querySelector('#btnBack')
     const btnSave = document.querySelector('#btnSave')
     const btnUpdate = document.querySelector('#btnUpdate')
@@ -198,8 +220,8 @@ function loadControlsForm() {
     btnBack.addEventListener('click', closeForm)
 
     if (btnUpdate != null) {
-        btnUpdate.removeEventListener('click', updateEmployee)
-        btnUpdate.addEventListener('click', updateEmployee)
+        btnUpdate.removeEventListener('click', () => updateEmployee(employee))
+        btnUpdate.addEventListener('click', () => updateEmployee(employee))
     }
 
     if (btnSave != null) {
@@ -207,8 +229,8 @@ function loadControlsForm() {
         btnSave.addEventListener('click', saveEmployee)
     }
 
-    btnDelete.removeEventListener('click', deleteEmployee)
-    btnDelete.addEventListener('click', deleteEmployee)
+    btnDelete.removeEventListener('click', () => deleteEmployee(employee))
+    btnDelete.addEventListener('click', () => deleteEmployee(employee))
 }
 
 // ? Funcion para limpiar el formulario en caso de ser necesario
@@ -231,99 +253,172 @@ function closeForm() {
     form.classList.remove('form-empty')
 }
 
-function updateEmployee() {
-    alert("Actualizando los datos...")
+async function updateEmployee(employee) {
+    const data = await hlp.getInputValues(getAllInputs())
+    const URL = URL_BASE + '/empleado/modificarEmpleado'
+    
+    let newEmployee = createEmployeeJsonToUpdate(data, employee.persona.idPersona, employee.idEmpleado)
+
+    if (newEmployee != null) {
+        const response = await APIhlp.saveObjectApiData(URL, "empleado", newEmployee)
+        msg.successMessage("Empleado Actualizado", "El empelado ha sido actualizado con éxito")
+        console.log(response)
+    } else {
+        msg.errorMessage("Error", "Hubo un error al actualizar el empleado", "Por favor, vuelve a intentarlo.")
+    }
 }
 
-function deleteEmployee() {
-    alert("Borrando empleado...")
+async function deleteEmployee(employee) {
+    const data = await hlp.getInputValues(getAllInputs())
+    const URL = URL_BASE + '/empleado/eliminarEmpleado'
+
+    let newEmployee = createEmployeeJsonToUpdate(data, employee.persona.idPersona, employee.idEmpleado)
+    const response = await msg.confirmMessage("Estas Seguro?", "La eliminacion de un empleado no se puede revertir", "Eliminar Empleado")
+
+    if (response) {
+        APIhlp.saveObjectApiData(URL, "empleado", newEmployee)
+        msg.successMessage("Empleado Eliminado", "El emplado ha sido eliminado con éxito")
+    } else {
+        msg.errorMessage("Error", "Hubo un error al eliminar el empleado", "Por favor, vuelve a intentarlo.")
+    }
 }
 
 async function saveEmployee() {
-    const data = await getInputValues(getAllInputs())
-    const URL = 'http://localhost:8080/SpartanLife/api/empleado/insertEmpleado'
+    const data = await hlp.getInputValues(getAllInputs())
+    const URL = URL_BASE + '/empleado/insertEmpleado'
 
     let employee = createEmployeeJson(data)
 
-    console.log(employee)
-
-    APIhlp.saveObjectApiData(URL, 'empleado', employee)
-}
-
-async function getInputValues(inputs) {
-    let data = {}
-
-    for (const input of inputs) {
-        const element = document.querySelector(input.selector)
-
-        if (element) {
-            const value = await verifyInputValue(element)
-
-            if (value) {
-                data[input.key] = value
-            } else {
-                alert("Formulario incompleto...")
-            }
-        }
-    }
-
-    return data
-}
-
-async function verifyInputValue(input) {
-    if (input.type === 'file') {
-        if (input.files.length > 0) {
-            return await hlp.imageToBase64(input.files[0])
-        } else {
-            return false
-        }
+    if (employee != null) {
+        APIhlp.saveObjectApiData(URL, 'empleado', employee)
+        msg.successMessage("Empleado Creado", "El empleado ha sido creado con éxito.")
+        cleanForm()
     } else {
-        if (input.value != '') {
-            return input.value
-        } else {
-            return false
-        }
+        msg.errorMessage("Error", "Hubo un error al crear el empleado", "Por favor, vuelve a intentarlo.")
     }
 }
+
+// async function getInputValues(inputs) {
+//     let data = {}
+
+//     for (const input of inputs) {
+//         const element = document.querySelector(input.selector)
+
+//         if (element) {
+//             const value = await verifyInputValue(element)
+
+//             if (value) {
+//                 data[input.key] = value
+//             } else {
+//                 alert("Formulario incompleto...")
+//             }
+//         }
+//     }
+
+//     return data
+// }
+
+// async function verifyInputValue(input) {
+//     if (input.type === 'file') {
+//         if (input.files.length > 0) {
+//             return await hlp.imageToBase64(input.files[0])
+//         } else {
+//             return false
+//         }
+//     } else {
+//         if (input.value != '') {
+//             return input.value
+//         } else {
+//             return false
+//         }
+//     }
+// }
 
 function createEmployeeJson(data) {
+    console.log(data)
     const employee = {
         persona: {
             "nombre": data.nombre,
-            "apellidoPaterno": data.apellidos,
-            "apellidoMaterno": data.apellidos, // ! Separar los apellidos
+            "apellidoPaterno": data.apellidoPaterno,
+            "apellidoMaterno": data.apellidoMaterno,
+            "fechaNacimiento": data.fechaNacimiento,
+            "rfc": data.rfc,
+            "curp": data.curp,
+            "nss": data.nss
+        },
+        sucursal: {
+            "idSucursal": data.sucursal
+        },
+        puesto: {
+            "idPuesto": data.puesto
+        },
+        "salarioDia": data.salarioDia,
+        "foto": data.foto,
+        "pagoExtra": data.salarioExtra,
+    }
+
+    return employee
+}
+
+function createEmployeeJsonToUpdate(data, idPerson, idEmployee) {
+    const employee = {
+        persona: {
+            "nombre": data.nombre,
+            "apellidoPaterno": data.apellidoPaterno,
+            "apellidoMaterno": data.apellidoMaterno,
             "fechaNacimiento": data.fechaNacimiento,
             "rfc": data.rfc,
             "curp": data.curp,
             "nss": data.nss,
+            "idPersona": idPerson
         },
         sucursal: {
-            "idSucursal": 1 // ! Obtener el id de la sucursal
+            "idSucursal": data.sucursal
         },
         puesto: {
-            "idPuesto": 1
+            "idPuesto": data.puesto
         },
-        "salarioDia": "500",
+        "salarioDia": data.salarioDia,
         "foto": data.foto,
-        "pagoExtra": "500"
+        "pagoExtra": data.salarioExtra,
+        "idEmpleado": idEmployee
     }
 
     return employee
+}
+
+function objectToFillForm(data) {
+    const newObject = {
+        nombre: data.persona.nombre,
+        apellidoPaterno: data.persona.apellidoPaterno,
+        apellidoMaterno: data.persona.apellidoMaterno,
+        fechaNacimiento: data.persona.fechaNacimiento,
+        puesto: data.puesto.idPuesto,
+        rfc: data.persona.rfc,
+        curp: data.persona.curp,
+        nss: data.persona.nss,
+        salarioDia: data.salarioDia,
+        salarioExtra: data.pagoExtra,
+        sucursal: data.sucursal.idSucursal
+    }
+
+    return newObject
 }
 
 function getAllInputs() {
     const inputs = [
         { selector: '#txtFoto', key: 'foto' },
         { selector: '#txtName', key: 'nombre' },
-        { selector: '#txtLastName', key: 'apellidos' },
+        { selector: '#txtFirstLastName', key: 'apellidoPaterno' },
+        { selector: '#txtSecondLastName', key: 'apellidoMaterno' },
         { selector: '#txtBornDate', key: 'fechaNacimiento' },
-        { selector: '#txtAge', key: 'edad' },
         { selector: '#txtJob', key: 'puesto' },
         { selector: '#txtRFC', key: 'rfc' },
         { selector: '#txtCURP', key: 'curp' },
         { selector: '#txtNSS', key: 'nss' },
-        { selector: '#txtOld', key: 'antiguedad' },
-        { selector: '#txtPosition', key: 'sucursal' },
+        { selector: '#txtSalaryDay', key: 'salarioDia' },
+        { selector: '#txtSalaryExtra', key: 'salarioExtra' },
+        { selector: '#txtBranch', key: 'sucursal' },
     ]
     return inputs
 }
