@@ -78,10 +78,18 @@ export async function getInputValues(inputs) {
     return data
 }
 
-function verifyInputValue(input) {
-    if (input.value != '') {
-        return input.value
+async function verifyInputValue(input) {
+    if (input.type === 'file') {
+        if (input.files.length > 0) {
+            return await imageToBase64(input.files[0])
+        } else {
+            return false
+        }
     } else {
-        return false
+        if (input.value != '') {
+            return input.value
+        } else {
+            return false
+        }
     }
 }

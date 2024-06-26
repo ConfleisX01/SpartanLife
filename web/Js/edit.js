@@ -210,7 +210,7 @@ function loadOptionsOnSelects(branchs = null, jobs = null) {
 
 // ? Funcion para cargar los controles del formulario de edicion
 function loadControlsForm(employee = null) {
-    const form = document.querySelector('.form-container')
+    //const form = document.querySelector('.form-container')
     const btnBack = document.querySelector('#btnBack')
     const btnSave = document.querySelector('#btnSave')
     const btnUpdate = document.querySelector('#btnUpdate')
@@ -229,8 +229,8 @@ function loadControlsForm(employee = null) {
         btnSave.addEventListener('click', saveEmployee)
     }
 
-    btnDelete.removeEventListener('click', deleteEmployee)
-    btnDelete.addEventListener('click', deleteEmployee)
+    btnDelete.removeEventListener('click', () => deleteEmployee(employee))
+    btnDelete.addEventListener('click', () => deleteEmployee(employee))
 }
 
 // ? Funcion para limpiar el formulario en caso de ser necesario
@@ -254,17 +254,37 @@ function closeForm() {
 }
 
 async function updateEmployee(employee) {
-    const data = await getInputValues(getAllInputs())
-    console.log(data)
+    const data = await hlp.getInputValues(getAllInputs())
+    const URL = URL_BASE + '/empleado/modificarEmpleado'
+    
     let newEmployee = createEmployeeJsonToUpdate(data, employee.persona.idPersona, employee.idEmpleado)
+
+    if (newEmployee != null) {
+        const response = await APIhlp.saveObjectApiData(URL, "empleado", newEmployee)
+        msg.successMessage("Empleado Actualizado", "El empelado ha sido actualizado con éxito")
+        console.log(response)
+    } else {
+        msg.errorMessage("Error", "Hubo un error al actualizar el empleado", "Por favor, vuelve a intentarlo.")
+    }
 }
 
-function deleteEmployee(index) {
-    alert("Borrando empleado...")
+async function deleteEmployee(employee) {
+    const data = await hlp.getInputValues(getAllInputs())
+    const URL = URL_BASE + '/empleado/eliminarEmpleado'
+
+    let newEmployee = createEmployeeJsonToUpdate(data, employee.persona.idPersona, employee.idEmpleado)
+    const response = await msg.confirmMessage("Estas Seguro?", "La eliminacion de un empleado no se puede revertir", "Eliminar Empleado")
+
+    if (response) {
+        APIhlp.saveObjectApiData(URL, "empleado", newEmployee)
+        msg.successMessage("Empleado Eliminado", "El emplado ha sido eliminado con éxito")
+    } else {
+        msg.errorMessage("Error", "Hubo un error al eliminar el empleado", "Por favor, vuelve a intentarlo.")
+    }
 }
 
 async function saveEmployee() {
-    const data = await getInputValues(getAllInputs())
+    const data = await hlp.getInputValues(getAllInputs())
     const URL = URL_BASE + '/empleado/insertEmpleado'
 
     let employee = createEmployeeJson(data)
@@ -278,41 +298,41 @@ async function saveEmployee() {
     }
 }
 
-async function getInputValues(inputs) {
-    let data = {}
+// async function getInputValues(inputs) {
+//     let data = {}
 
-    for (const input of inputs) {
-        const element = document.querySelector(input.selector)
+//     for (const input of inputs) {
+//         const element = document.querySelector(input.selector)
 
-        if (element) {
-            const value = await verifyInputValue(element)
+//         if (element) {
+//             const value = await verifyInputValue(element)
 
-            if (value) {
-                data[input.key] = value
-            } else {
-                alert("Formulario incompleto...")
-            }
-        }
-    }
+//             if (value) {
+//                 data[input.key] = value
+//             } else {
+//                 alert("Formulario incompleto...")
+//             }
+//         }
+//     }
 
-    return data
-}
+//     return data
+// }
 
-async function verifyInputValue(input) {
-    if (input.type === 'file') {
-        if (input.files.length > 0) {
-            return await hlp.imageToBase64(input.files[0])
-        } else {
-            return false
-        }
-    } else {
-        if (input.value != '') {
-            return input.value
-        } else {
-            return false
-        }
-    }
-}
+// async function verifyInputValue(input) {
+//     if (input.type === 'file') {
+//         if (input.files.length > 0) {
+//             return await hlp.imageToBase64(input.files[0])
+//         } else {
+//             return false
+//         }
+//     } else {
+//         if (input.value != '') {
+//             return input.value
+//         } else {
+//             return false
+//         }
+//     }
+// }
 
 function createEmployeeJson(data) {
     console.log(data)
