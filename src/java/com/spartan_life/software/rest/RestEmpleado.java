@@ -69,20 +69,20 @@ public class RestEmpleado {
                 out = """
                  {"response" : "operacion exitosa"}
                  """;
-                out = String.format(out, e);
+//                out = String.format(out, e);
             } else {
                 out = """
-                  {"response" : "Error en la transacción"}
+                  {"Error" : "Error en la transacción"}
                   """;
-                out = String.format(out, e);
+//                out = String.format(out, e);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
             out = """
-                  {"response" : "Error en la transacción"}
+                  {"Error" : "Error en la transacción"}
                   """;
         }
-        return Response.status(Response.Status.CREATED).entity(out).build();
+        return Response.ok(out).build();
     }
 
     @Path("eliminarEmpleado")

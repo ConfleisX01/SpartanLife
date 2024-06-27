@@ -6,7 +6,7 @@ export async function getModule(url) {
         const response = await fetch(url)
 
         const html = await response.text()
-        
+
         return html
     } catch (error) {
         alert("Error al obtener el contenido, intentelo nuevamente")
@@ -23,7 +23,7 @@ export function applyContent(content, id) {
 // Verificar que los inputs que se pasen por el parametro tengan algun valor
 export function verifyInputs(inputs) {
     for (let input of inputs) {
-        if(input.value.trim() === '') {
+        if (input.value.trim() === '') {
             return false
         }
     }
@@ -60,6 +60,7 @@ export function imageToBase64(file) {
 
 export async function getInputValues(inputs) {
     let data = {}
+    let info = { Type: 'INFORMATION_INCOMPLETE', MisingFields: [] }
 
     for (const input of inputs) {
         const element = document.querySelector(input.selector)
@@ -70,9 +71,15 @@ export async function getInputValues(inputs) {
             if (value) {
                 data[input.key] = value
             } else {
-                return null
+                info.MisingFields.push(input.name)
             }
+        } else {
+            info.MisingFields.push(input.name)
         }
+    }
+
+    if (info.MisingFields.length > 0) {
+        return info
     }
 
     return data
@@ -93,3 +100,38 @@ async function verifyInputValue(input) {
         }
     }
 }
+
+export function errorHandler(error) {
+    if (!error || typeof error !== 'object' || !error.Type || !Object.values(ErrorTypes).includes(error.Type)) { 
+        return error
+    }
+    
+    let message
+
+    switch (error.Type) {
+        case ErrorTypes.INFORMATION_INCOMPLETE: {
+            message = {
+                Header: "Formulario Incompleto", 
+                Body: "Uno o más campos están vacíos", 
+                Content: error.MisingFields
+            }
+            break
+        }
+        default: {
+            message = {
+                Headers: "Error Desconocido",
+                Body: "Hubo un error, vuelva a intentarlo"
+            }
+            break
+        }
+    }
+
+    return message
+}
+
+const ErrorTypes = Object.freeze({
+    INFORMATION_INCOMPLETE: 'INFORMATION_INCOMPLETE',
+    INVALID_FILE_TYPE: 'INVALID_FILE_TYPE',
+    FILE_TOO_LARGE: 'FILE_TOO_LARGE',
+    UNKNOWN_ERROR: 'UNKNOWN_ERROR'
+})

@@ -115,17 +115,21 @@ async function getAllEmployees() {
     return employees
 }
 
-// ! Funcion por terminar (Joel no ha terminado el REST de las solicitudes de trabajo, pinche vato mariwano)
+async function updateVacationsData(employeeSelected) {
+
+}
+
 async function saveVacationsData(employeeSelected) {
+    const URL = URL_BASE + '/vacacion/insertSolicitud'
     const inputsValues = await hlp.getInputValues(getAllInputs())
-    const URL = '' // Agregar URL para agregar el objeto
     
     if (inputsValues != null) {
         let vacation = createVacationsJson(inputsValues, employeeSelected)
+        console.log(vacation)
         APIhlp.saveObjectApiData(URL, 'vacacion', vacation)
-        msg.successMessage() // Mostrar mensaje de exito
+        msg.successMessage("Solicitud Creada", "La solicitud de vacaciones se creo con exito")
     } else {
-        msg.errorMessage() // Mostrar mensaje de error
+        msg.errorMessage("Error", "Hubo un error al crear la solicitud", "Por favor, vuelve a intentarlo.")
     }
 }
 
@@ -140,15 +144,13 @@ function getAllInputs() {
 
 function createVacationsJson(data, employeeSelected) {
     const object = {
-        "idEmpleado": employeeSelected,
-        "inicioSemana": data.weekStart,
-        "finSemana": data.weekEnd,
-        "estatus": 1
+        empleado: {
+            "idEmpleado": employeeSelected
+        },
+        "fechaInicio": data.weekStart,
+        "fechaFin": data.weekEnd,
+        "estatus": "Pendiente"
     }
 
     return object
 }
-
-// * Notas futuras * ///
-// * Necesitamos enviar el objeto a la API pero el REST aun no esta hecho
-// * Esperemos que Joel lo haga pronto para poder seguir avanzando porque esto se esta haciendo eterno

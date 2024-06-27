@@ -29,7 +29,9 @@ export async function saveObjectApiData(url, param, object) {
     try {
         const response = await fetch(url, requestOptions)
 
-        return response ? true : false;
+        const jsonResponse = await response.json()
+
+        return jsonResponse
     } catch (error) {
         alert("Error al guardar los datos, intentelo nuevamente")
     }

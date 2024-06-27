@@ -71,7 +71,10 @@ public class SolicitudVacaciones {
     public void setFechaFin(String fechaFin) {
         this.fechaFin = fechaFin;
     }
-    
-    
+
+    @Override
+    public String toString() {
+        return "SolicitudVacaciones{" + "idVacaciones=" + idVacaciones + ", empleado=" + empleado + ", fechaSolicitud=" + fechaSolicitud + ", fechaInicio=" + fechaInicio + ", fechaFin=" + fechaFin + ", estatus=" + estatus + '}';
+    }
     
 }

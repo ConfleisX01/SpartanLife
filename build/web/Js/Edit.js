@@ -256,15 +256,21 @@ function closeForm() {
 async function updateEmployee(employee) {
     const data = await hlp.getInputValues(getAllInputs())
     const URL = URL_BASE + '/empleado/modificarEmpleado'
-    
-    let newEmployee = createEmployeeJsonToUpdate(data, employee.persona.idPersona, employee.idEmpleado)
 
-    if (newEmployee != null) {
-        const response = await APIhlp.saveObjectApiData(URL, "empleado", newEmployee)
-        msg.successMessage("Empleado Actualizado", "El empelado ha sido actualizado con éxito")
-        console.log(response)
+    let response = hlp.errorHandler(data)
+
+    if (response.Header) {
+        msg.errorMessage(response.Header, response.Body, response.Content ? response.Content.join(', ') : "")
     } else {
-        msg.errorMessage("Error", "Hubo un error al actualizar el empleado", "Por favor, vuelve a intentarlo.")
+        let newEmployee = createEmployeeJsonToUpdate(data, employee.persona.idPersona, employee.idEmpleado)
+
+        const apiResponse = await APIhlp.saveObjectApiData(URL, "empleado", newEmployee)
+
+        if (apiResponse.response) {
+            msg.successMessage("Empleado Actualizado", "El empelado ha sido actualizado con éxito")
+        } else {
+            msg.errorMessage("Error", "Hubo un error al actualizar el empleado", "Por favor, vuelve a intentarlo.")
+        }
     }
 }
 
@@ -287,55 +293,24 @@ async function saveEmployee() {
     const data = await hlp.getInputValues(getAllInputs())
     const URL = URL_BASE + '/empleado/insertEmpleado'
 
-    let employee = createEmployeeJson(data)
+    let response = hlp.errorHandler(data)
 
-    if (employee != null) {
-        APIhlp.saveObjectApiData(URL, 'empleado', employee)
-        msg.successMessage("Empleado Creado", "El empleado ha sido creado con éxito.")
-        cleanForm()
+    if (response.Header) {
+        msg.errorMessage(response.Header, response.Body, response.Content ? response.Content.join(', ') : "")
     } else {
-        msg.errorMessage("Error", "Hubo un error al crear el empleado", "Por favor, vuelve a intentarlo.")
+        let newEmployee = createEmployeeJson(response)
+
+        let apiResponse = await APIhlp.saveObjectApiData(URL, 'empleado', newEmployee)
+
+        if (apiResponse.response) {
+            msg.successMessage("Empleado Creado", "El empleado ha sido creado con éxito.")
+        } else {
+            msg.errorMessage("Error", "Hubo un error al crear el empleado", "Por favor, vuelve a intentarlo.")
+        }
     }
 }
 
-// async function getInputValues(inputs) {
-//     let data = {}
-
-//     for (const input of inputs) {
-//         const element = document.querySelector(input.selector)
-
-//         if (element) {
-//             const value = await verifyInputValue(element)
-
-//             if (value) {
-//                 data[input.key] = value
-//             } else {
-//                 alert("Formulario incompleto...")
-//             }
-//         }
-//     }
-
-//     return data
-// }
-
-// async function verifyInputValue(input) {
-//     if (input.type === 'file') {
-//         if (input.files.length > 0) {
-//             return await hlp.imageToBase64(input.files[0])
-//         } else {
-//             return false
-//         }
-//     } else {
-//         if (input.value != '') {
-//             return input.value
-//         } else {
-//             return false
-//         }
-//     }
-// }
-
 function createEmployeeJson(data) {
-    console.log(data)
     const employee = {
         persona: {
             "nombre": data.nombre,
@@ -407,18 +382,18 @@ function objectToFillForm(data) {
 
 function getAllInputs() {
     const inputs = [
-        { selector: '#txtFoto', key: 'foto' },
-        { selector: '#txtName', key: 'nombre' },
-        { selector: '#txtFirstLastName', key: 'apellidoPaterno' },
-        { selector: '#txtSecondLastName', key: 'apellidoMaterno' },
-        { selector: '#txtBornDate', key: 'fechaNacimiento' },
-        { selector: '#txtJob', key: 'puesto' },
-        { selector: '#txtRFC', key: 'rfc' },
-        { selector: '#txtCURP', key: 'curp' },
-        { selector: '#txtNSS', key: 'nss' },
-        { selector: '#txtSalaryDay', key: 'salarioDia' },
-        { selector: '#txtSalaryExtra', key: 'salarioExtra' },
-        { selector: '#txtBranch', key: 'sucursal' },
+        { selector: '#txtFoto', key: 'foto', name: "Foto" },
+        { selector: '#txtName', key: 'nombre', name: "Nombre" },
+        { selector: '#txtFirstLastName', key: 'apellidoPaterno', name: "Apellido Paterno" },
+        { selector: '#txtSecondLastName', key: 'apellidoMaterno', name: "Apellido Materno" },
+        { selector: '#txtBornDate', key: 'fechaNacimiento', name: "Fecha de Nacimiento" },
+        { selector: '#txtJob', key: 'puesto', name: "Puesto" },
+        { selector: '#txtRFC', key: 'rfc', name: "RFC" },
+        { selector: '#txtCURP', key: 'curp', name: "CURP" },
+        { selector: '#txtNSS', key: 'nss', name: "NSS" },
+        { selector: '#txtSalaryDay', key: 'salarioDia', name: "Salario por dia" },
+        { selector: '#txtSalaryExtra', key: 'salarioExtra', name: "Salario extra" },
+        { selector: '#txtBranch', key: 'sucursal', name: "Sucursal" },
     ]
     return inputs
 }

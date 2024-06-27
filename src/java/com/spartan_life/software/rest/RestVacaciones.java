@@ -26,6 +26,7 @@ public class RestVacaciones {
         try {
             // formao json
             SolicitudVacaciones solicitud = gson.fromJson(sv, SolicitudVacaciones.class);
+            System.out.println(solicitud.toString());
             SolicitudVacaciones local = cv.insertSolicitud(solicitud);
 
             if (local != null) {

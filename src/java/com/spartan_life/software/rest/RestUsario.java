@@ -29,20 +29,20 @@ public class RestUsario {
 
             Usuario usuario = gson.fromJson(u, Usuario.class);
             //para poder compar datos
-            Usuario usuarioLocal =      cu.insertarUsuario(usuario);
-        if (usuarioLocal != null) {
-            out = """
+            Usuario usuarioLocal = cu.insertarUsuario(usuario);
+            if (usuarioLocal != null) {
+                out = """
                   {"response" : "operacion exitosa"}
                   """;
-            out = String.format(out, u);
+                out = String.format(out, u);
 
-        }else{
-              out = """
+            } else {
+                out = """
                   {"response" : "Error en la transacción"}
                   """;
-                 out = String.format(out, u);
-        }
-        }catch (Exception ex) {
+                out = String.format(out, u);
+            }
+        } catch (Exception ex) {
             ex.printStackTrace();
             out = """
                   {"response" : "Error en la transacción"}
@@ -55,35 +55,32 @@ public class RestUsario {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response loginUser(@QueryParam("nombre") String nombre,
-            @QueryParam("contrasenia") String contrasenia){
-        
-            ControllerUsuario cu = new ControllerUsuario();
-            Usuario u = cu.loginUser(nombre, contrasenia);
-            Gson gson = new Gson();
-            
-            String out = "";
-            out = gson.toJson(u);
-            System.out.println("Hola desde Login : " + out);
-            
-           return  Response.status(Response.Status.OK).entity(out).build();
+            @QueryParam("contrasenia") String contrasenia) {
+
+        ControllerUsuario cu = new ControllerUsuario();
+        Usuario u = cu.loginUser(nombre, contrasenia);
+        Gson gson = new Gson();
+
+        String out = "";
+        out = gson.toJson(u);
+        System.out.println("Hola desde Login : " + out);
+
+        return Response.status(Response.Status.OK).entity(out).build();
     }
-    
-       @Path("traerUusuario")
+
+    @Path("traerUusuario")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response traerUusuario(@QueryParam("nombre") String nombre) throws SQLException{
-        
-            ControllerUsuario cu = new ControllerUsuario();
-            Usuario u = cu.traerUsuario(nombre);
-            Gson gson = new Gson();
-            
-            String out = "";
-            out = gson.toJson(u);
-            System.out.println("Hola desde Login : " + out);
-            
-           return  Response.status(Response.Status.OK).entity(out).build();
-    }
-    
-    
+    public Response traerUusuario(@QueryParam("nombre") String nombre) throws SQLException {
 
+        ControllerUsuario cu = new ControllerUsuario();
+        Usuario u = cu.traerUsuario(nombre);
+        Gson gson = new Gson();
+
+        String out = "";
+        out = gson.toJson(u);
+        System.out.println("Hola desde Login : " + out);
+
+        return Response.status(Response.Status.OK).entity(out).build();
+    }
 }
