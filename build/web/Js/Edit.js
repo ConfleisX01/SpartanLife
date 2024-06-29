@@ -3,8 +3,11 @@ import * as hlp from './helpers.js'
 import * as APIhlp from './APIHelpers.js'
 import { URL_BASE } from './config.js'
 
+let html = null
+
 // ? Funcion para cargar el modulo entero desde el menu
 export async function loadModule(content) {
+    html = content
     const BRANCH_URL = URL_BASE + '/sucursal/getAll'
     const JOB_URL = URL_BASE + '/puesto/getAll'
     const URL = URL_BASE + '/empleado/getAll'
@@ -191,6 +194,9 @@ function loadOptionsOnSelects(branchs = null, jobs = null) {
     const branchSelect = document.querySelector('#txtBranch')
     const jobSelect = document.querySelector('#txtJob')
 
+    branchSelect.innerHTML = ''
+    jobSelect.innerHTML = ''
+
     branchs.forEach(branch => {
         let option = document.createElement('option')
         option.value = branch.idSucursal
@@ -268,6 +274,7 @@ async function updateEmployee(employee) {
 
         if (apiResponse.response) {
             msg.successMessage("Empleado Actualizado", "El empelado ha sido actualizado con éxito")
+            loadModule(html)
         } else {
             msg.errorMessage("Error", "Hubo un error al actualizar el empleado", "Por favor, vuelve a intentarlo.")
         }
@@ -278,14 +285,19 @@ async function deleteEmployee(employee) {
     const data = await hlp.getInputValues(getAllInputs())
     const URL = URL_BASE + '/empleado/eliminarEmpleado'
 
-    let newEmployee = createEmployeeJsonToUpdate(data, employee.persona.idPersona, employee.idEmpleado)
     const response = await msg.confirmMessage("Estas Seguro?", "La eliminacion de un empleado no se puede revertir", "Eliminar Empleado")
 
     if (response) {
-        APIhlp.saveObjectApiData(URL, "empleado", newEmployee)
-        msg.successMessage("Empleado Eliminado", "El emplado ha sido eliminado con éxito")
-    } else {
-        msg.errorMessage("Error", "Hubo un error al eliminar el empleado", "Por favor, vuelve a intentarlo.")
+        let newEmployee = createEmployeeJsonToUpdate(data, employee.persona.idPersona, employee.idEmpleado)
+
+        let apiResponse = await APIhlp.saveObjectApiData(URL, "empleado", newEmployee)
+
+        if (apiResponse.response) {
+            msg.successMessage("Empleado Eliminado", "El emplado ha sido eliminado con éxito")
+            loadModule(html)
+        } else {
+            msg.errorMessage("Error", "Hubo un error al eliminar el empleado", "Por favor, vuelve a intentarlo.")
+        }
     }
 }
 
@@ -304,6 +316,7 @@ async function saveEmployee() {
 
         if (apiResponse.response) {
             msg.successMessage("Empleado Creado", "El empleado ha sido creado con éxito.")
+            loadModule(html)
         } else {
             msg.errorMessage("Error", "Hubo un error al crear el empleado", "Por favor, vuelve a intentarlo.")
         }

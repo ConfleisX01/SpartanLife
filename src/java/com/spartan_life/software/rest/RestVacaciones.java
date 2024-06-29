@@ -5,11 +5,14 @@ import com.spartan_life.software.controller.ControllerVacacion;
 import com.spartan_life.software.model.SolicitudVacaciones;
 import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.FormParam;
+import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import java.util.ArrayList;
+import java.util.List;
 
 @Path("vacacion")
 public class RestVacaciones {
@@ -49,7 +52,7 @@ public class RestVacaciones {
         }
         return Response.status(Response.Status.CREATED).entity(out).build();
     }
-    
+
     @Path("modificarSolicitud")
     @Produces(MediaType.APPLICATION_JSON)
     @POST
@@ -83,4 +86,32 @@ public class RestVacaciones {
         return Response.status(Response.Status.CREATED).entity(out).build();
     }
 
+    @Path("getAllSolicitudes")
+    @Produces(MediaType.APPLICATION_JSON)
+    @GET
+    public Response getAllSolicitudes() {
+        String out = "";
+
+        ControllerVacacion cv = new ControllerVacacion();
+
+        try {
+            Gson gson = new Gson();
+            List<SolicitudVacaciones> solicitudes = new ArrayList<>();
+            solicitudes = cv.getAllVacaciones();
+
+            if (solicitudes.isEmpty()) {
+                out = """
+                      {"response" : "No hay solicitudes de vacaciones"}
+                      """;
+            } else {
+                out = gson.toJson(solicitudes);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            out = """
+                  {"error" : "Error al obtener los datos"}
+                  """;
+        }
+        return Response.status(Response.Status.CREATED).entity(out).build();
+    }
 }

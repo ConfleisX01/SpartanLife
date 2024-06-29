@@ -18,7 +18,8 @@ public class ConexionMysql {
             conn = DriverManager.getConnection(url + parametros, user, password);
             return conn;
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            System.out.println("Error al conectar con el servidor, Inicie el servidor de la base de datos");
+            return null;
         }
     }
 

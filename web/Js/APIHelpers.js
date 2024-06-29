@@ -1,19 +1,24 @@
+import * as hlp from './helpers.js'
+
 /// Funciones de ayuda para obtencion de datos en las APIS
 
-// -- EXPERIMENTAL (AUN NO SE USA) --
 // Funcion que obtiene todos los datos de un API, pasando como parametro la URL de la API
 export async function getAllData(url) {
     try {
         const response = await fetch(url)
         const json = await response.json()
-        return json;
+
+        if (json.error) {
+            return error = { Type: hlp.ErrorTypes.SERVER_ERROR }
+        } else {
+            return json;
+        }
     } catch (error) {
-        alert("Error al obtener la informacion, intentelo nuevamente")
+        return error = { Type: hlp.ErrorTypes.SERVER_ERROR }
     }
 }
 
-// -- EXPERIMENTAL (AUN NO SE USA) --
-// Funcion para guardar los datos a una API mandando el contenido por el cuerpo, pasando como parametros la URL de la api, el nombre del parametro que recive, y el objeto Json con los datos
+// Funcion para guardar los datos a una API mandando el contenido por el cuerpo, pasando como parametros la URL de la api, el nombre del parametro que recibe, y el objeto Json con los datos
 export async function saveObjectApiData(url, param, object) {
     const formData = new URLSearchParams()
     formData.append(param, JSON.stringify(object))
@@ -47,4 +52,3 @@ export async function makePeticion(url) {
         throw error;
     }
 }
-

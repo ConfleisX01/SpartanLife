@@ -13,18 +13,22 @@ export function loadUserViewTable(content) {
 
 async function loadTable() {
   const URL = URL_BASE + '/empleado/getAll'
-  const table = document.getElementById('table-employe-container');
+  const table = document.getElementById('table-employe-container')
 
   const employees = await APIhlp.getAllData(URL)
 
-  employees.forEach(employee => {
-    let item = loadItem(employee);
-    let template = document.createElement('template');
-    template.innerHTML = item.trim();
-    table.appendChild(template.content.firstChild);
-  });
+  if (employees.Type) {
+    msg.errorMessage("Error", "Se produjo un error al cargar los datos de la tabla.", "Por favor, verifique que el servidor esté funcionando correctamente.")
+  } else {
+    employees.forEach(employee => {
+      let item = loadItem(employee)
+      let template = document.createElement('template')
+      template.innerHTML = item.trim()
+      table.appendChild(template.content.firstChild)
+    })
+  }
 
-  addClickEventToHiddenInfo();
+  addClickEventToHiddenInfo()
 }
 
 function loadItem(employee) {

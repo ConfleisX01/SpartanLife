@@ -2,6 +2,7 @@ import * as msg from './messages.js'
 import * as hlp from './helpers.js'
 import * as APIhlp from './APIHelpers.js'
 import { URL_BASE } from './config.js'
+import { createTable } from './components.js'
 
 export function loadVacationsModule(content) {
     const moduleContainer = document.querySelector('#module-container')
@@ -20,6 +21,7 @@ async function loadModuleControls() {
     const btnSelectEmployee = document.querySelector('#btnSelectEmployee')
     const btnShowSelected = document.querySelector('#btnShowSelected')
     const btnSaveData = document.querySelector('#btnSave')
+    const btnUpdate = document.querySelector('#btnUpdate')
     let employees = await getAllEmployees()
 
     let employeeSelected = null
@@ -27,6 +29,7 @@ async function loadModuleControls() {
     addFunctionToElement(() => openPanel(index => { employeeSelected = index }, employees), btnSelectEmployee)
     addFunctionToElement(() => showEmployeeSelected(employeeSelected, employees), btnShowSelected)
     addFunctionToElement(() => saveVacationsData(employeeSelected), btnSaveData)
+    addFunctionToElement(() => createTableOnPanel(), btnUpdate)
 }
 
 function addFunctionToElement(event, element) {
@@ -51,6 +54,18 @@ function togglePanelVisibility() {
     }
 }
 
+function loadContentOnPanel(content) {
+    const container = document.querySelector('#panel-container')
+
+    container.innerHTML = ''
+
+    if (!container.contains(content)) {
+        container.appendChild(content)
+    } else {
+        alert("Ya lo tiene")
+    }
+}
+
 function loadPanelControls() {
     const btnClosePanel = document.querySelector('#btnClosePanel')
 
@@ -58,6 +73,16 @@ function loadPanelControls() {
 }
 
 async function loadEmployeeTable(onSelectEmployee, employees) {
+    const tableData = {
+        Caption: "Tabla de empleados",
+        Headers: ["Nombre", "Apellidos", "RFC", "NSS"],
+        Id: "employees-table"
+    }
+
+    let table = createTable(tableData)
+
+    loadContentOnPanel(table)
+
     const tableBody = document.querySelector('#employees-table')
 
     if (tableBody) {
@@ -116,41 +141,93 @@ async function getAllEmployees() {
 }
 
 async function updateVacationsData(employeeSelected) {
+    const URL = URL_BASE + '/vacacion/modificarSolicitud'
+    const data = await hlp.getInputValues(getAllInputs())
 
+    let response = hlp.errorHandler(data)
+
+    if (response.Header) {
+        msg.errorMessage(response.Header, response.Body, response.Content ? response.Content.join(', ') : "")
+    } else {
+        let newVacations = createVacationsJson(response, employeeSelected, "Aceptada")
+
+        let apiResponse = await APIhlp.saveObjectApiData(URL, 'vacacion', newVacations)
+
+        if (apiResponse.response) {
+            msg.successMessage("Solicitud Creada", "La solicitud de vacaciones se creo con exito")
+        } else {
+            msg.errorMessage("Error", "Hubo un error al crear la solicitud", "Por favor, vuelve a intentarlo.")
+        }
+    }
 }
 
 async function saveVacationsData(employeeSelected) {
     const URL = URL_BASE + '/vacacion/insertSolicitud'
-    const inputsValues = await hlp.getInputValues(getAllInputs())
-    
-    if (inputsValues != null) {
-        let vacation = createVacationsJson(inputsValues, employeeSelected)
-        console.log(vacation)
-        APIhlp.saveObjectApiData(URL, 'vacacion', vacation)
-        msg.successMessage("Solicitud Creada", "La solicitud de vacaciones se creo con exito")
+    const data = await hlp.getInputValues(getAllInputs())
+
+    let response = hlp.errorHandler(data)
+
+    if (employeeSelected != null) {
+        if (response.Header) {
+            msg.errorMessage(response.Header, response.Body, response.Content ? response.Content.join(', ') : "")
+        } else {
+            let newVacations = createVacationsJson(response, employeeSelected, "Pendiente")
+
+            let apiResponse = await APIhlp.saveObjectApiData(URL, 'vacacion', newVacations)
+
+            if (apiResponse.response) {
+                msg.successMessage("Solicitud Creada", "La solicitud de vacaciones se creo con exito")
+            } else {
+                msg.errorMessage("Error", "Hubo un error al crear la solicitud", "Por favor, vuelve a intentarlo.")
+            }
+        }
     } else {
-        msg.errorMessage("Error", "Hubo un error al crear la solicitud", "Por favor, vuelve a intentarlo.")
+        msg.errorMessage("Ningún empleado seleccionado", "Por favor, selecciona un empleado.", "Presiona el botón 'Seleccionar Empleado'.");
     }
 }
 
 function getAllInputs() {
     const inputs = [
-        { selector: '#txtWeekStart', key: 'weekStart' },
-        { selector: '#txtWeekEnd', key: 'weekEnd' }
+        { selector: '#txtWeekStart', key: 'weekStart', name: "Inicio de Semana" },
+        { selector: '#txtWeekEnd', key: 'weekEnd', name: "Fin de Semana" }
     ]
 
     return inputs
 }
 
-function createVacationsJson(data, employeeSelected) {
+async function getAllVacations() {
+    const URL = URL_BASE + '/vacacion/getAllSolicitudes'
+    const response = await APIhlp.getAllData(URL)
+}
+
+function createTableOnPanel() {
+    const tableData = {
+        Caption: "Tabla de solicitudes de vacaciones",
+        Headers: ["Nombre", "Fecha de Solicitud", "Fecha de Inicio", "Fecha de Fin", "Estatus"],
+        Id: "vacationsContainer"
+    }
+
+    let newTable = createTable(tableData)
+
+    togglePanelVisibility()
+    loadPanelControls()
+
+    loadContentOnPanel(newTable)
+}
+
+function createVacationsJson(data, employeeSelected, status) {
     const object = {
         empleado: {
             "idEmpleado": employeeSelected
         },
         "fechaInicio": data.weekStart,
         "fechaFin": data.weekEnd,
-        "estatus": "Pendiente"
+        "estatus": status
     }
 
     return object
 }
+
+
+// * Notas futuras
+// * Hacer que el panel no contenga la tabla desde el HTML, cambiarlo a que se agregue dinamicamente para evitar conflictos de contenido que desaparece

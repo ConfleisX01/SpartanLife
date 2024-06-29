@@ -120,38 +120,53 @@ function addUpdateButton(employeeSelected) {
 async function updateLastAttendance(employeeSelected) {
     const URL = URL_BASE + '/asistencia/modificarAsistencia'
     const URL_EMPLOYEES = URL_BASE + '/empleado/getAll'
-    const inputsValues = await hlp.getInputValues(getAllInputs())
+    const data = await hlp.getInputValues(getAllInputs())
     const employees = await APIhlp.getAllData(URL_EMPLOYEES)
     let idEmployee = employees[employeeSelected].idEmpleado
 
-    if (inputsValues != null) {
-        let attendance = createAttendaceJson(inputsValues, idEmployee)
-        const response = await APIhlp.saveObjectApiData(URL, "asistencia", attendance)
+    let response = hlp.errorHandler(data)
 
-        console.log(response)
+    if (response.Header) {
+        msg.errorMessage(response.Header, response.Body, response.Content ? response.Content.join(', ') : "")
     } else {
-        msg.errorMessage("Error", "Hubo un error al registrar la asistencia", "Por favor, vuelva a intentarlo.")
+        let newAttendance = createAttendaceJson(response, idEmployee)
+
+        let apiResponse = await APIhlp.saveObjectApiData(URL, "asistencia", newAttendance)
+
+        if (apiResponse.response) {
+            msg.successMessage("Asistencia Actualizada", "La asistencia se actualizo con éxito.")
+        } else {
+            msg.errorMessage("Error", "Hubo un error al actualizar la asistencia", "Por favor, vuelva a intentarlo.")
+        }
     }
 }
 
 async function sendAttendanceInformation(employeeSelected) {
     const URL = URL_BASE + '/asistencia/registrarAsistencia'
-    const inputsValues = await hlp.getInputValues(getAllInputs())
+    const data = await hlp.getInputValues(getAllInputs())
 
-    if (inputsValues != null) {
-        let attendance = createAttendaceJson(inputsValues, employeeSelected)
-        APIhlp.saveObjectApiData(URL, "asistencia", attendance)
-        msg.successMessage("Asistencia Registrada", "La asistencia se registro con éxito.")
+    let response = hlp.errorHandler(data)
+
+    if (response.Header) {
+        msg.errorMessage(response.Header, response.Body, response.Content ? response.Content.join(', ') : "")
     } else {
-        msg.errorMessage("Error", "Hubo un error al registrar la asistencia", "Por favor, vuelva a intentarlo.")
+        let newAttendance = createAttendaceJson(response, employeeSelected)
+
+        let apiResponse = await APIhlp.saveObjectApiData(URL, "asistencia", newAttendance)
+
+        if (apiResponse.response) {
+            msg.successMessage("Asistencia Registrada", "La asistencia se registro con éxito.")
+        } else {
+            msg.errorMessage("Error", "Hubo un error al registrar la asistencia", "Por favor, vuelva a intentarlo.")
+        }
     }
 }
 
 function getAllInputs() {
     const inputs = [
-        { selector: '#txtWeekStart', key: 'inicioSemana' },
-        { selector: '#txtWeekEnd', key: 'finSemana' },
-        { selector: '#txtDays', key: 'diasAsistidos' },
+        { selector: '#txtWeekStart', key: 'inicioSemana', name: "Inicio de Semana" },
+        { selector: '#txtWeekEnd', key: 'finSemana', name: "Fin de Semana" },
+        { selector: '#txtDays', key: 'diasAsistidos', name: "Dias Asistidos" },
     ]
     return inputs
 }

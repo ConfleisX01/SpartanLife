@@ -129,9 +129,10 @@ export function errorHandler(error) {
     return message
 }
 
-const ErrorTypes = Object.freeze({
+export const ErrorTypes = Object.freeze({
     INFORMATION_INCOMPLETE: 'INFORMATION_INCOMPLETE',
     INVALID_FILE_TYPE: 'INVALID_FILE_TYPE',
     FILE_TOO_LARGE: 'FILE_TOO_LARGE',
-    UNKNOWN_ERROR: 'UNKNOWN_ERROR'
+    UNKNOWN_ERROR: 'UNKNOWN_ERROR',
+    SERVER_ERROR: 'SERVER_ERROR'
 })

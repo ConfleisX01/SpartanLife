@@ -3,7 +3,10 @@ import * as hlp from './helpers.js'
 import * as APIhlp from './APIHelpers.js'
 import { URL_BASE } from './config.js'
 
+let html = null
+
 export function loadEnterpriseConfigurationModule(content) {
+    html = content
     applyContentOnModule(content)
 
     loadConfigControls()
@@ -39,33 +42,51 @@ function loadConfigControls() {
 async function createNewBranch() {
     const URL = URL_BASE + '/sucursal/insertarSucursal'
     const inputsSelectors = [
-        { selector: "#txtBranchName", key: "BranchName" },
-        { selector: "#txtBranchAddress", key: "BranchAdress" }
+        { selector: "#txtBranchName", key: "BranchName", name: "Nombre de Sucursal" },
+        { selector: "#txtBranchAddress", key: "BranchAdress", name: "Dirección de la sucursal" }
     ]
 
-    const inputsValues = await hlp.getInputValues(inputsSelectors)
+    const data = await hlp.getInputValues(inputsSelectors)
 
-    if (inputsValues != null) {
-        let branch = createBranchJson(inputsValues)
-        APIhlp.saveObjectApiData(URL, "sucursal", branch)
-        msg.successMessage("Sucursal Creada", "La nueva sucursal ha sido creada con éxito.")
+    let response = hlp.errorHandler(data)
+
+    if (response.Header) {
+        msg.errorMessage(response.Header, response.Body, response.Content ? response.Content.join(', ') : "")
     } else {
-        msg.errorMessage("Error", "Hubo un error al crear la sucursal", "Por favor, vuelve a intentarlo.")
+        let newBranch = createBranchJson(response)
+
+        let apiResponse = await APIhlp.saveObjectApiData(URL, "sucursal", newBranch)
+
+        if (apiResponse.response) {
+            msg.successMessage("Sucursal Creada", "La nueva sucursal ha sido creada con éxito.")
+            loadEnterpriseConfigurationModule(html)
+        } else {
+            msg.errorMessage("Error", "Hubo un error al crear la sucursal", "Por favor, vuelve a intentarlo.")
+        }
     }
 }
 
 async function createNewJob() {
     const URL = URL_BASE + '/puesto/insertarPuesto'
-    const inputsSelectors = [{ selector: "#txtJobName", key : "jobName" }]
+    const inputsSelectors = [{ selector: "#txtJobName", key: "jobName", name: "Nombre del Puesto" }]
 
-    const inputsValues = await hlp.getInputValues(inputsSelectors)
+    const data = await hlp.getInputValues(inputsSelectors)
 
-    if (inputsValues != null) {
-        let job = createJobJson(inputsValues)
-        APIhlp.saveObjectApiData(URL, "puesto", job)
-        msg.successMessage("Puesto Creado", "El nuevo puesto ha sido creada con éxito.")
+    let response = hlp.errorHandler(data)
+
+    if (response.Header) {
+        msg.errorMessage(response.Header, response.Body, response.Content ? response.Content.join(', ') : "")
     } else {
-        msg.errorMessage("Error", "Hubo un error al crear el puesto", "Por favor, vuelve a intentarlo.")
+        let newJob = createBranchJson(response)
+
+        let apiResponse = await APIhlp.saveObjectApiData(URL, "puesto", newJob)
+
+        if (apiResponse.response) {
+            msg.successMessage("Puesto Creado", "El nuevo puesto ha sido creada con éxito.")
+            loadEnterpriseConfigurationModule(html)
+        } else {
+            msg.errorMessage("Error", "Hubo un error al crear el puesto", "Por favor, vuelve a intentarlo.")
+        }
     }
 }
 
@@ -80,7 +101,7 @@ function createBranchJson(branch) {
 
 function createJobJson(job) {
     const newJob = {
-        "nombrePuesto" : job.jobName
+        "nombrePuesto": job.jobName
     }
 
     return newJob
