@@ -16,8 +16,6 @@ public class ControllerVacacion {
     public SolicitudVacaciones insertSolicitud(SolicitudVacaciones sv) {
         String query = "CALL solicitarVacaciones(?, ?, ?, ?)";
 
-        System.out.println(sv.toString());
-
         try {
             ConexionMysql conexionMysql = new ConexionMysql();
             Connection conn = conexionMysql.open();

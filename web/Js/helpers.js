@@ -129,6 +129,23 @@ export function errorHandler(error) {
     return message
 }
 
+export function loadNewPanel(panel) {
+    const container = document.querySelector('#module-container')
+    const thisPanel = document.querySelector('.form-container')
+
+    if (!thisPanel) {
+        container.appendChild(panel)
+    }
+}
+
+export function togglePanelVisibility() {
+    const sidePanel = document.querySelector('.form-container')
+
+    if (sidePanel) {
+        sidePanel.classList.toggle('form-active')
+    }
+}
+
 export const ErrorTypes = Object.freeze({
     INFORMATION_INCOMPLETE: 'INFORMATION_INCOMPLETE',
     INVALID_FILE_TYPE: 'INVALID_FILE_TYPE',
