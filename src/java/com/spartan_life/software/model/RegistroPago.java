@@ -8,30 +8,28 @@ public class RegistroPago {
     private String fechaPago;
     private Float cantidadPago;
     private int diaTrabajado;
+    private int horaTrabajada;
     private Float salarioDia;
     private Float salarioExtra;
+    
+    // solo se usa en la vista
+    private Float total_salarios;
 
     public RegistroPago(){
         
     }   
 
-    public RegistroPago(int idPago, Empleado empleado, HoraExtra horaExtra, String fechaPago, Float cantidadPago, int diaTrabajado, Float salarioDia, Float salarioExtra) {
+    public RegistroPago(int idPago, Empleado empleado, HoraExtra horaExtra, String fechaPago, Float cantidadPago, int diaTrabajado, int horaTrabajada, Float salarioDia, Float salarioExtra, Float total_salarios) {
         this.idPago = idPago;
         this.empleado = empleado;
         this.horaExtra = horaExtra;
         this.fechaPago = fechaPago;
         this.cantidadPago = cantidadPago;
         this.diaTrabajado = diaTrabajado;
+        this.horaTrabajada = horaTrabajada;
         this.salarioDia = salarioDia;
         this.salarioExtra = salarioExtra;
-    }
-
-    public Float getSalarioExtra() {
-        return salarioExtra;
-    }
-
-    public void setSalarioExtra(Float salarioExtra) {
-        this.salarioExtra = salarioExtra;
+        this.total_salarios = total_salarios;
     }
 
     public int getIdPago() {
@@ -82,6 +80,14 @@ public class RegistroPago {
         this.diaTrabajado = diaTrabajado;
     }
 
+    public int getHoraTrabajada() {
+        return horaTrabajada;
+    }
+
+    public void setHoraTrabajada(int horaTrabajada) {
+        this.horaTrabajada = horaTrabajada;
+    }
+
     public Float getSalarioDia() {
         return salarioDia;
     }
@@ -89,5 +95,23 @@ public class RegistroPago {
     public void setSalarioDia(Float salarioDia) {
         this.salarioDia = salarioDia;
     }
+
+    public Float getSalarioExtra() {
+        return salarioExtra;
+    }
+
+    public void setSalarioExtra(Float salarioExtra) {
+        this.salarioExtra = salarioExtra;
+    }
+
+    public Float getTotal_salarios() {
+        return total_salarios;
+    }
+
+    public void setTotal_salarios(Float total_salarios) {
+        this.total_salarios = total_salarios;
+    }
+
+ 
     
 }

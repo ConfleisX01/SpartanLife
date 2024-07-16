@@ -12,6 +12,8 @@ import * as emp from './Edit.js'
 import * as atn from './attendance.js'
 // Objeto para el control de solicitudes de vacaciones
 import * as vcs from './vacations.js'
+// Objeto para el control de solicitudes de pagos
+import * as pay from './pays.js'
 // Objeto para el control de configuraciones de la sucursal
 import * as entConfig from './enterprise.js'
 //Objeto para debugear
@@ -171,8 +173,9 @@ function loadControls() {
         vcs.loadVacationsModule(content)
     })
 
-    btnPay.addEventListener('click', () => {
-        // * Agregar la logica de carga de modulo
+    btnPay.addEventListener('click', async () => {
+       const content = await hlp.getModule('Html/Pago/Salario.html')
+        pay.loadPaysModule(content)
     })
 
     btnEnterpriseConfiguration.addEventListener('click', async () => {
