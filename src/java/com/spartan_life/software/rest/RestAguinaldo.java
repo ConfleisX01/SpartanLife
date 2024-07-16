@@ -5,11 +5,14 @@ import com.spartan_life.software.controller.ControllerAguinaldo;
 import com.spartan_life.software.model.Aguinaldo;
 import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.FormParam;
+import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import java.util.List;
 
 @Path("aguinaldo")
 public class RestAguinaldo {
@@ -47,5 +50,43 @@ public class RestAguinaldo {
         
         return Response.ok(out).build();
 
+    }
+    
+    @Path("getAllTotal")
+    @Produces(MediaType.APPLICATION_JSON)
+    @GET
+    public Response getAllTotal() {
+        String out = null;
+        List<Aguinaldo> pagos = null;
+        ControllerAguinaldo cs = new ControllerAguinaldo();
+        try {
+            pagos = cs.getAllTotal();
+            out = new Gson().toJson(pagos);
+        } catch (Exception e) {
+            e.printStackTrace();
+            out = """
+                  {"error" : "Ocurrió un error, intente más tarde."}
+                  """;
+        }
+        return Response.ok(out).build();
+    }
+    
+     @Path("getAll")
+    @Produces(MediaType.APPLICATION_JSON)
+    @GET
+    public Response getAll(@QueryParam("idEmpleado") @DefaultValue("0") int idEmpleado) {
+        String out = null;
+        List<Aguinaldo> pagos = null;
+        ControllerAguinaldo cs = new ControllerAguinaldo();
+        try {
+            pagos = cs.getAllUltimo(idEmpleado);
+            out = new Gson().toJson(pagos);
+        } catch (Exception e) {
+            e.printStackTrace();
+            out = """
+              {"error" : "Ocurrió un error, intente más tarde."}
+              """;
+        }
+        return Response.ok(out).build();
     }
 }

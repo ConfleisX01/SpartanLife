@@ -13,13 +13,13 @@ public class RegistroPago {
     private Float salarioExtra;
     
     // solo se usa en la vista
-    private Float total_salarios;
+    private Float total;
 
     public RegistroPago(){
         
     }   
 
-    public RegistroPago(int idPago, Empleado empleado, HoraExtra horaExtra, String fechaPago, Float cantidadPago, int diaTrabajado, int horaTrabajada, Float salarioDia, Float salarioExtra, Float total_salarios) {
+    public RegistroPago(int idPago, Empleado empleado, HoraExtra horaExtra, String fechaPago, Float cantidadPago, int diaTrabajado, int horaTrabajada, Float salarioDia, Float salarioExtra, Float total) {
         this.idPago = idPago;
         this.empleado = empleado;
         this.horaExtra = horaExtra;
@@ -29,7 +29,7 @@ public class RegistroPago {
         this.horaTrabajada = horaTrabajada;
         this.salarioDia = salarioDia;
         this.salarioExtra = salarioExtra;
-        this.total_salarios = total_salarios;
+        this.total = total;
     }
 
     public int getIdPago() {
@@ -104,12 +104,12 @@ public class RegistroPago {
         this.salarioExtra = salarioExtra;
     }
 
-    public Float getTotal_salarios() {
-        return total_salarios;
+    public Float getTotal() {
+        return total;
     }
 
-    public void setTotal_salarios(Float total_salarios) {
-        this.total_salarios = total_salarios;
+    public void setTotal(Float total) {
+        this.total = total;
     }
 
  

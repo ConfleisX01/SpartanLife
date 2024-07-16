@@ -80,7 +80,7 @@ public class ControllerSalario {
     private RegistroPago fill(ResultSet rs) throws SQLException {
         RegistroPago registroPago = new RegistroPago();
 
-        registroPago.setTotal_salarios(rs.getFloat("total_salarios"));
+        registroPago.setTotal(rs.getFloat("total_salarios"));
 
         return registroPago;
     }

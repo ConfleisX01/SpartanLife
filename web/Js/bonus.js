@@ -3,7 +3,7 @@ import * as hlp from './helpers.js'
 import * as APIhlp from './APIHelpers.js'
 import { URL_BASE } from './config.js'
 
-export function loadPaysModule(content) {
+export function loadBonusModule(content) {
     const moduleContainer = document.querySelector('#module-container')
 
     clearContainer(moduleContainer)
@@ -21,7 +21,6 @@ async function loadModuleControls() {
     const btnShowSelected = document.querySelector('#btnShowSelected')
     const btnShowPay = document.querySelector('#btnShowPay')
     const btnSaveData = document.querySelector('#btnSave')
-    const btnUpdateData = document.querySelector('#btnUpdate')
     let employees = await getAllEmployees()
     await getAllTotal();
 
@@ -30,8 +29,7 @@ async function loadModuleControls() {
     addFunctionToElement(() => openPanel(index => { employeeSelected = index }, employees), btnSelectEmployee)
     addFunctionToElement(() => showEmployeeSelected(employeeSelected, employees), btnShowSelected)
     addFunctionToElement(() => showPaySelected(employeeSelected, employees), btnShowPay)
-    addFunctionToElement(() => savePayData(employeeSelected), btnSaveData)
-    addFunctionToElement(() => updatePayData(employeeSelected), btnUpdateData)
+    addFunctionToElement(() => saveBonusData(employeeSelected), btnSaveData)
 }
 
 function addFunctionToElement(event, element) {
@@ -118,9 +116,9 @@ async function showPaySelected(employeeSelected, employees) {
 
         if (employeeInfo.length > 0) {
             try {
-                let pagos = await getAllPay(employeeSelected);
-                let resultadoSalario = pagos[0].cantidadPago;
-                msg.questionMessage("Ultimo pago", `${employeeInfo[0].persona.nombre} ${employeeInfo[0].persona.apellidoPaterno} ${employeeInfo[0].persona.apellidoMaterno} El total es: ${resultadoSalario}`);
+                let pagos = await getAllBonus(employeeSelected);
+                let resultadoAguialdo = pagos[0].cantidadAguinaldo;
+                msg.questionMessage("Ultimo pago", `${employeeInfo[0].persona.nombre} ${employeeInfo[0].persona.apellidoPaterno} ${employeeInfo[0].persona.apellidoMaterno} El total es: ${resultadoAguialdo}`);
             } catch (error) {
                 console.error('Error al obtener los pagos:', error);
                 msg.errorMessage("Error al obtener pagos", "Hubo un problema al obtener los pagos del empleado.", "Intenta nuevamente más tarde.");
@@ -145,110 +143,53 @@ async function showPaySelected(employeeSelected, employees) {
 
 
 
-  async function savePayData(employeeSelected) {
+  async function saveBonusData(employeeSelected) {
     if (!employeeSelected) {
         msg.errorMessage("Error", "No se ha seleccionado un empleado", "Por favor, seleccione un empleado antes de registrar el pago.");
         return;
     }
 
-    const URL = URL_BASE + '/salario/calcularSalario';
-    const inputsValues = await hlp.getInputValues(getAllInputs());
+    const URL = URL_BASE + '/aguinaldo/calcularAguinaldo';
 
-    if (validarNumerosEnteros()) {
+
         try {
-            if (inputsValues != null) {
-                let pay = createPayJson(inputsValues, employeeSelected);
+          
+                let pay = createBonusJson( employeeSelected);
                 
-                let resultado = await APIhlp.saveObjectApiData(URL, "pago", pay);
+                let resultado = await APIhlp.saveObjectApiData(URL, "aguinaldo", pay);
                 
                 if (resultado) {
                     msg.successMessage("Pago Registrado", "El pago se registró con éxito.");
                     
                     // Obtener los pagos del empleado seleccionado
-                    let pagos = await getAllPay(employeeSelected);
-                    let resultadoSalario = pagos[0].cantidadPago;
+                    let pagos = await getAllBonus(employeeSelected);
+                    let resultadoAguinaldo = pagos[0].cantidadAguinaldo;
 
                     // Mostrar el total a pagar
-                    msg.questionMessage("Total a pagar", `El total a pagar es: ${resultadoSalario}`);
+                    msg.questionMessage("Total a pagar", `El total a pagar es: ${resultadoAguinaldo}`);
 
-                    await getAllTotal();
                 } else {
                     msg.errorMessage("Error", "Hubo un error al registrar el pago", "Por favor, vuelva a intentarlo.");
                 }
-            } else {
-                msg.errorMessage("Error", "Hubo un error al obtener los valores de los inputs", "Por favor, vuelva a intentarlo.");
-            }
+            
         } catch (error) {
             console.error('Error en la solicitud:', error);
             msg.errorMessage("Error", "Error al procesar la solicitud", "Por favor, vuelva a intentarlo más tarde.");
         }
-    } else {
-        msg.errorMessage("Error", "Datos erróneos, solo se permiten números enteros", "Por favor, vuelva a intentarlo.");
-    }
+                    await getAllTotal();
+   
 }
 
     
-   async function updatePayData(employeeSelected) {
-    if (!employeeSelected) {
-        msg.errorMessage("Error", "No se ha seleccionado un empleado", "Por favor, seleccione un empleado antes de modificar el pago.");
-        return;
-    }
-
-    const URL = URL_BASE + '/salario/modificarSalario';
-    const inputsValues = await hlp.getInputValues(getAllInputs());
-    if (validarNumerosEnteros()) {
-        try {
-            if (inputsValues != null) {
-                let pay = createPayJson(inputsValues, employeeSelected);
-                
-                let resultado = await APIhlp.saveObjectApiData(URL, "pago", pay);
-                
-                if (resultado) {
-                    msg.successMessage("Pago Modificado", "El pago se modificó con éxito.");
-                    
-                    // Obtener los pagos del empleado seleccionado
-                    let pagos = await getAllPay(employeeSelected);
-                    let resultadoSalario = pagos[0].cantidadPago;
-
-                    // Mostrar el total a pagar
-                    msg.questionMessage("Total a pagar", `El total a pagar es: ${resultadoSalario}`);
-
-                await getAllTotal();
-                } else {
-                    msg.errorMessage("Error", "Hubo un error al modificar el pago", "Por favor, vuelva a intentarlo.");
-                }
-            } else {
-                msg.errorMessage("Error", "Hubo un error al obtener los valores de los inputs", "Por favor, vuelva a intentarlo.");
-            }
-        } catch (error) {
-            console.error('Error en la solicitud:', error);
-            msg.errorMessage("Error", "Error al procesar la solicitud", "Por favor, vuelva a intentarlo más tarde.");
-        }
-    } else {
-        msg.errorMessage("Error", "Datos erróneos, solo se permiten números enteros", "Por favor, vuelva a intentarlo.");
-    }
-}
+   
 
 
-    
 
-    function getAllInputs() {
-        const inputs = [
-            { selector: '#txtHoraNormal', key: 'horaNormal' },
-            { selector: '#txtHoraExtra', key: 'horaExtra' }
-        ]
-        return inputs
-    }
-
-    function createPayJson(data, employeeSelected) {
+    function createBonusJson(employeeSelected) {
         const object = {
             empleado: {
                 "idEmpleado": employeeSelected,
-            },
-            "horaExtra": {
-                "cantidadHora": parseInt(data.horaExtra)
-            },
-              "horaTrabajada": parseInt(data.horaNormal)
+            }
         };
 
         return object;
@@ -256,8 +197,8 @@ async function showPaySelected(employeeSelected, employees) {
 
     // funcion para mostrar en la alerta despues de pulsar
 
-    async function getAllPay(employeeSelected) {
-        const URL = URL_BASE + '/salario/getAll?idEmpleado=' + employeeSelected;
+    async function getAllBonus(employeeSelected) {
+        const URL = URL_BASE + '/aguinaldo/getAll?idEmpleado=' + employeeSelected;
 
         const pagos = await APIhlp.getAllData(URL);
 
@@ -268,7 +209,7 @@ async function showPaySelected(employeeSelected, employees) {
   // getAll para todos lo pagos:
   
  async function getAllTotal() {
-    const URL = URL_BASE + '/salario/getAllTotal';
+    const URL = URL_BASE + '/aguinaldo/getAllTotal';
 
     try {
         let total = await APIhlp.getAllData(URL);
@@ -280,16 +221,4 @@ async function showPaySelected(employeeSelected, employees) {
 }
 
 
-// eliminar todo lo que no sea numeros en hora extra con expresiones regulares
-function validarNumerosEnteros() {
-    
-    let datoNormal = document.getElementById('txtHoraNormal').value;
-    let datoExtra = document.getElementById('txtHoraExtra').value;
-    let revisar = /^\d+$/;
 
-    if (revisar.test(datoNormal) && revisar.test(datoExtra)) {
-        return true;
-    } else {
-        return false;
-    }
-}

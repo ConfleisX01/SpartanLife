@@ -14,6 +14,8 @@ import * as atn from './attendance.js'
 import * as vcs from './vacations.js'
 // Objeto para el control de solicitudes de pagos
 import * as pay from './pays.js'
+// Objeto para el control de solicitudes de aguinaldos
+import * as bon from './bonus.js'
 // Objeto para el control de configuraciones de la sucursal
 import * as entConfig from './enterprise.js'
 //Objeto para debugear
@@ -141,6 +143,7 @@ function loadControls() {
     const btnListEmployee = document.querySelector('#btnListEmployee')
     const btnEditEmployee = document.querySelector('#btnEditEmployee')
     const btnAttendance = document.querySelector('#btnAttendance')
+    const btnBonus = document.querySelector('#btnBonus')
     const btnVacations = document.querySelector('#btnVacations')
     const btnPay = document.querySelector('#btnPay')
     const btnExpand = document.querySelector('#btnExpand')
@@ -166,6 +169,11 @@ function loadControls() {
     btnAttendance.addEventListener('click', async () => {
         const content = await hlp.getModule('Html/Asistencias/Registro.html')
         atn.load(content)
+    })
+
+      btnBonus.addEventListener('click', async () => {
+       const content = await hlp.getModule('Html/Pago/Aguinaldo.html')
+        bon.loadBonusModule(content)
     })
 
     btnVacations.addEventListener('click', async () => {

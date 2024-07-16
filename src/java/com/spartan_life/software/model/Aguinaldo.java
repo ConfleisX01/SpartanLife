@@ -9,23 +9,19 @@ public class Aguinaldo {
     private Float cantidadAguinaldo;
     private String fechaPago;
 
+   // solo sirve para las vistas
+    private Float total;
+   
    public Aguinaldo(){
        
    }
-   
-    public Aguinaldo(int idAguinaldo, Empleado empleado, Float cantidadAguinaldo, String fechaPago) {
+
+    public Aguinaldo(int idAguinaldo, Empleado empleado, Float cantidadAguinaldo, String fechaPago, Float total) {
         this.idAguinaldo = idAguinaldo;
         this.empleado = empleado;
         this.cantidadAguinaldo = cantidadAguinaldo;
         this.fechaPago = fechaPago;
-    }
-
-    public String getFechaPago() {
-        return fechaPago;
-    }
-
-    public void setFechaPago(String fechaPago) {
-        this.fechaPago = fechaPago;
+        this.total = total;
     }
 
     public int getIdAguinaldo() {
@@ -51,7 +47,22 @@ public class Aguinaldo {
     public void setCantidadAguinaldo(Float cantidadAguinaldo) {
         this.cantidadAguinaldo = cantidadAguinaldo;
     }
-    
-    
-    
+
+    public String getFechaPago() {
+        return fechaPago;
+    }
+
+    public void setFechaPago(String fechaPago) {
+        this.fechaPago = fechaPago;
+    }
+
+    public Float getTotal() {
+        return total;
+    }
+
+    public void setTotal(Float total) {
+        this.total = total;
+    }
+   
+   
 }

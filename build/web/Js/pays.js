@@ -213,7 +213,7 @@ async function showPaySelected(employeeSelected, employees) {
                     // Mostrar el total a pagar
                     msg.questionMessage("Total a pagar", `El total a pagar es: ${resultadoSalario}`);
 
-               //     await getAllTotal();
+                await getAllTotal();
                 } else {
                     msg.errorMessage("Error", "Hubo un error al modificar el pago", "Por favor, vuelva a intentarlo.");
                 }
@@ -272,7 +272,7 @@ async function showPaySelected(employeeSelected, employees) {
 
     try {
         let total = await APIhlp.getAllData(URL);
-        document.getElementById('txtTotal').value = total[0].total_salarios;
+        document.getElementById('txtTotal').value = total[0].total;
     } catch (error) {
         console.error('Error al obtener el total:', error);
         alert('Hubo un problema al obtener el total. Por favor, inténtalo nuevamente.');
