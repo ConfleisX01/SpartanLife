@@ -13,9 +13,7 @@
                     </div>
                 </div>
                 <div class="container-fluid p-2 m-2 separator">
-                    <div class="alert alert-warning" role="alert" id="selectionAlert">
-                        Ningún empleado seleccionado.
-                    </div>
+                    <div class="alert alert-warning" role="alert" id="selectionAlert"></div>
                 </div>
                 <div class="container-fluid p-2 m-2">
                     <h5>Formulario de Solicitud</h5>
@@ -32,6 +30,7 @@
                     </div>
                 </div>
                 <div class="container-fluid p-2 m-2 text-end">
+                    <button class="btn-base button_update" id="btnUpdate">Actualizar</button>
                     <button class="btn-base button_save" id="btnSave">Guardar</button>
                 </div>
             </div>
@@ -41,30 +40,9 @@
                 <div class="container-fluid p-2 m-2 separator">
                     <h5>Tabla de solicitudes</h5>
                     <p class="m-0">Tabla con los registros de todas las solicitudes aceptadas y pendientes.</p>
-                    <p class="fw-bold m-0">Haz clic en algun registro para modificarlo o actualizar su estatus.</p>
+                    <p class="fw-bold m-0">Haz clic en algún registro para modificarlo o actualizar su estatus.</p>
                 </div>
-                <div class="container-fluid p-2 m-2 table-responsive">
-                    <caption>Lista de solicitudes de vacaciones</caption>
-                    <table class="table table-hover caption-top">
-                        <thead class="table-dark">
-                            <tr>
-                                <th scope="col">Nombre del empleado</th>
-                                <th scope="col">Fecha de solicitud</th>
-                                <th scope="col">Fecha de inicio</th>
-                                <th scope="col">Fecha de fin</th>
-                                <th scope="col">Estatus</th>
-                              </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <th>Juan Pablo</th>
-                                <th>00-00-000</th>
-                                <th>00-00-000</th>
-                                <th>00-00-000</th>
-                                <th>Pendiente</th>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="container-fluid p-2 m-2 table-responsive" id="container-table-vacations">
                 </div>
             </div>
         </div>
@@ -76,6 +54,8 @@
             <button class="btn-base button_3" id="btnClosePanel"><i class="bi bi-arrow-bar-left"></i></button>
         </div>
         <div class="buttons-container">
+            <button class="btn-base button_3" id="btnPlus"><i class="bi bi-plus"></i></button>
+            <button class="btn-base button_3" id="btnMinus"><i class="bi bi-dash"></i></button>
         </div>
     </div>
     <div class="container-fluid py-3 separator">

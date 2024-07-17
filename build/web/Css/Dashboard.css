@@ -12,6 +12,7 @@
   --dark-text: #343A40;
   --white-200: #E2E8F0;
   --white-50: #F8FAFC;
+  --panel-width: 500px;
 }
 
 /* Estilos Principales */
@@ -135,13 +136,13 @@ th {
 }
 
 .form-container {
-  width: 500px;
+  width: var(--panel-width);
   height: 100%;
   background-color: var(--white);
   position: absolute;
   right: 0;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-  transform: translateX(500px);
+  transform: translateX(var(--panel-width));
   transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
   overflow-y: scroll;
 }
