@@ -333,3 +333,10 @@ ul li p {
 .sideBar.expanded .avatar div{
   display: block;
 }
+
+.preview-image {
+  width: 100%;
+  border-radius: 0.5rem;
+  padding: 0.8rem;
+  border: 1px solid var(--white-200);
+}

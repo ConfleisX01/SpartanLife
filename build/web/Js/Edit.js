@@ -18,6 +18,23 @@ export async function loadModule(content) {
 
     loadControls(branchs, jobs)
     loadTable(data, branchs, jobs)
+
+    asignPreviewEvent()
+}
+
+function asignPreviewEvent() {
+    document.querySelector("#txtFoto").addEventListener('change', function (event) {
+        const file = event.target.files[0]
+        if (file) {
+            const reader = new FileReader()
+            reader.onload = function (e) {
+                document.querySelector('#txtImageContainer').value = ''
+                document.querySelector('#txtImageContainer').value = e.target.result
+                loadPreviewImage(e.target.result)
+            }
+            reader.readAsDataURL(file)
+        }
+    })
 }
 
 function applyContentOnModule(content = null) {
@@ -37,6 +54,7 @@ async function loadControls(branchs, jobs) {
 
     buttonNewEmployee.addEventListener('click', async () => {
         if (!form.classList.contains('form-active') && !form.classList.contains('form-edit')) {
+            loadPreviewImage()
             loadEmptyForm(branchs, jobs)
         } else {
             const response = await msg.confirmMessage("No se puede realizar esta accion", "Ciera el formulario antes de acceder a otro", "Cerrar Formulario")
@@ -94,6 +112,8 @@ async function loadTable(data = null, branchs, jobs) {
             employeeItem.addEventListener('click', async () => {
                 if (!form.classList.contains('form-active') || !form.classList.contains('form-empty')) {
                     loadEmployeeData(data, index, branchs, jobs)
+                    document.querySelector('#txtImageContainer').value = ''
+                    document.querySelector('#txtImageContainer').value = data[index].foto
                 } else {
                     const response = await msg.confirmMessage("No se puede realizar esta accion", "Ciera el formulario antes de acceder a otro", "Cerrar Formulario")
                     if (response) {
@@ -129,6 +149,8 @@ function loadDataOnForm(employee, branchs, jobs) {
 
     loadOptionsOnSelects(branchs, jobs)
 
+    loadPreviewImage(employee.foto)
+
     // * Condicionamos a que solamente se agregue el boton si se abrio por primera vez el formulario
     if (!form.classList.contains('form-active')) {
         buttonsContainer.appendChild(buttonSave)
@@ -140,6 +162,7 @@ function loadDataOnForm(employee, branchs, jobs) {
 
     // * Cargamos los datos del empleado en el formulario para modificarlos
     let object = objectToFillForm(employee)
+
 
     fillFormWithData(inputs, object)
 
@@ -343,6 +366,7 @@ function createEmployeeJson(data) {
         "salarioDia": data.salarioDia,
         "foto": data.foto,
         "pagoExtra": data.salarioExtra,
+        "antiguedad": data.antiguedad
     }
 
     return employee
@@ -377,6 +401,7 @@ function createEmployeeJsonToUpdate(data, idPerson, idEmployee) {
 
 function objectToFillForm(data) {
     const newObject = {
+        image: data.foto,
         nombre: data.persona.nombre,
         apellidoPaterno: data.persona.apellidoPaterno,
         apellidoMaterno: data.persona.apellidoMaterno,
@@ -387,7 +412,8 @@ function objectToFillForm(data) {
         nss: data.persona.nss,
         salarioDia: data.salarioDia,
         salarioExtra: data.pagoExtra,
-        sucursal: data.sucursal.idSucursal
+        sucursal: data.sucursal.idSucursal,
+        antiguedad: data.antiguedad
     }
 
     return newObject
@@ -395,11 +421,11 @@ function objectToFillForm(data) {
 
 function getAllInputs() {
     const inputs = [
-        { selector: '#txtFoto', key: 'foto', name: "Foto" },
+        { selector: '#txtImageContainer', key: 'foto', name: "Foto" },
         { selector: '#txtName', key: 'nombre', name: "Nombre" },
         { selector: '#txtFirstLastName', key: 'apellidoPaterno', name: "Apellido Paterno" },
         { selector: '#txtSecondLastName', key: 'apellidoMaterno', name: "Apellido Materno" },
-        { selector: '#txtBornDate', key: 'fechaNacimiento', name: "Fecha de Nacimiento" },
+        { selector: '#txtBornDate', key: 'fechaNacimiento', name: "Fecha de nacimiento" },
         { selector: '#txtJob', key: 'puesto', name: "Puesto" },
         { selector: '#txtRFC', key: 'rfc', name: "RFC" },
         { selector: '#txtCURP', key: 'curp', name: "CURP" },
@@ -407,6 +433,20 @@ function getAllInputs() {
         { selector: '#txtSalaryDay', key: 'salarioDia', name: "Salario por dia" },
         { selector: '#txtSalaryExtra', key: 'salarioExtra', name: "Salario extra" },
         { selector: '#txtBranch', key: 'sucursal', name: "Sucursal" },
+        { selector: '#txtRegisterDate', key: 'antiguedad', name: "Fecha de registro" },
     ]
     return inputs
+}
+
+function loadPreviewImage(imageData) {
+    const container = document.querySelector('.preview-image')
+    const image = document.querySelector('#img-preview')
+
+    if (imageData != null) {
+        container.classList.remove('d-none')
+        image.src = imageData
+    } else {
+        container.classList.add('d-none')
+        image.src = ''
+    }
 }

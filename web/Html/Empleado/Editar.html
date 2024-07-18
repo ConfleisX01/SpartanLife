@@ -18,6 +18,15 @@
                 <p class="m-0 fw-light">Arrastra una foto o presiona para buscar una</p>
             </div>
         </div>
+        <div>
+            <input class="d-none" type="text" id="txtImageContainer">
+        </div>
+    </div>
+    <div class="container-fluid py-1 preview">
+        <div class="preview-image d-none d-flex justify-content-between align-items-center">
+            <img src="" alt="" width="64px" height="64px" id="img-preview" style="border-radius: 0.5rem;">
+            <h5 class="m-0">Imagen seleccionada</h5>
+        </div>
     </div>
     <div class="container-fluid separator form-container-inputs">
         <div class="row">
@@ -64,6 +73,10 @@
             <div class="col-md-6 p-2">
                 <label for="txtBranch" class="form-label">Sucursal</label>
                 <select name="txtBranch" id="txtBranch" class="form-select"></select>
+            </div>
+            <div class="col-md-12 p-2">
+                <label for="txtRegisterDate" class="form-label">Fecha de registro</label>
+                <input type="date" id="txtRegisterDate" class="form-control">
             </div>
         </div>
     </div>

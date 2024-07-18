@@ -40,7 +40,9 @@ async function loadModuleControls() {
 
     updateAlertStatus()
 
-    appendVacationsTable(vacations, updateVacationsPetition)
+    if (!vacations.response) {
+        appendVacationsTable(vacations, updateVacationsPetition)
+    }
 
     const buttonSelectEmployee = document.querySelector('#btnSelectEmployee')
     buttonSelectEmployee.addEventListener('click', () => selectEmployee(employees, updateEmployeeSelected))

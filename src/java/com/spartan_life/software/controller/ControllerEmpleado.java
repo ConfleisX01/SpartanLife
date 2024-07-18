@@ -18,7 +18,7 @@ public class ControllerEmpleado {
 
     public Empleado insertEmpleado(Empleado e) {
 
-        String query = "CALL insertarEmpleado(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String query = "CALL insertarEmpleado(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try {
             // preparamos la bada
@@ -44,6 +44,7 @@ public class ControllerEmpleado {
             cstmt.setFloat(10, e.getSalarioDia());
             cstmt.setFloat(11, e.getPagoExtra());
             cstmt.setString(12, e.getFoto());
+            cstmt.setString(13, e.getAntiguedad());
 
             cstmt.execute();
 
