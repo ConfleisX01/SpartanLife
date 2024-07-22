@@ -19,12 +19,12 @@
     --text-color: #6B7280;
 }
 
-span {
-    color: var(--color-rojo);
+header {
+    background-color: var(--light);
 }
 
-header {
-    background-color: var(--dark);
+span {
+    color: var(--color-rojo);
 }
 
 h1, h2, h3, h4, h5 {
@@ -115,7 +115,7 @@ ul li {
 .button {
     background-color: inherit;
     color: var(--light);
-    padding: 0rem 1.2rem;
+    padding: 0.4rem 1.5rem;
     border: inherit;
     transition: all 0.2s ease-in-out;
 }
@@ -125,8 +125,9 @@ ul li {
 }
 
 .button_1 {
-    border: 1px solid var(--light);
-    border-radius: 4px;
+    border-radius: 0.5rem;
+    color: var(--light);
+    background-color: var(--color-rojo);
 }
 
 .button_2 {

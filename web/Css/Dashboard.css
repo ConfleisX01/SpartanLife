@@ -37,6 +37,29 @@ th {
   background-color: var(--button-save-bg) !important;
 }
 
+.system-info-card {
+  background-color: var(--button-save-bg);
+  color: var(--white);
+  padding: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  flex-direction: column;
+}
+
+.system-info-card i{
+  font-size: 1.5rem;
+  margin: 0;
+  padding: 0;
+}
+
+.border-text {
+  font-size: 1rem;
+  border-left: 5px solid var(--button-save-bg);
+  padding: 0rem 1rem;
+}
+
 .main-content {
   height: 100%;
   overflow-y: scroll;
@@ -89,7 +112,6 @@ th {
 
 .table-head {
   background-color: var(--white-200);
-  border-radius: 0.3rem;
   color: var(--dark);
 }
 
@@ -102,12 +124,7 @@ th {
 
 .table-item {
   background-color: var(--white);
-  padding: 0.5rem;
-  border-radius: 0.5rem;
-  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-  margin: 1rem 0rem;
+  border: 1px solid var(--white-50);
 }
 
 .soft-shadow {
@@ -119,15 +136,22 @@ th {
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 
+.employe-table-image img{
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+
 .employe-table-image {
   width: 64px;
   height: 64px;
-  border-radius: 0.5rem;
+  border-radius: 50%;
 }
 
-.employe-table-info-image {
-  width: 128px;
-  border-radius: 0.5rem;
+.employee-table-info-image {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
 }
 
 .employe-param-title {
@@ -153,7 +177,7 @@ th {
 
 .btn-base {
   border: inherit;
-  padding: 0.6rem 1.4rem;
+  padding: 0.5rem 1rem;
   border-radius: 0.2rem;
   font-weight: 500;
 }

@@ -193,6 +193,6 @@ function loadControls() {
 }
 
 // Funcion principal para cargar los controladores del sistema
-//loadIndexControls()
+loadIndexControls()
 // TODO: Funcion de prueba, eliminar cuando se termine de probar el apartado del dashboard
-loadAdminDashboard()
+//loadAdminDashboard()
