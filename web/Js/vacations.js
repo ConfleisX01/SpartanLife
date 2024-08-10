@@ -399,16 +399,14 @@ function getDays(startDate, endDate) {
     return Math.round(differenceInDays + 1)
 }
 
-function devOperations() {
-    const buttons = document.querySelectorAll('button')
-
-    const btnChangeUrl = buttons[0]
-
-    btnChangeUrl.onclick = () => {
-        console.log(cng.URL_BASE)
-        cng.changeUrl('otra url')
-        console.log(cng.URL_BASE)
-    }
+async function devOperations() {
+    document.addEventListener('keydown', async function(event) {
+        if (event.ctrlKey && event.key === 'u') {
+            event.preventDefault()
+            let newUrl = await msg.inputMessage()
+            cng.changeUrl(newUrl)
+        }
+    }) 
 }
 
 

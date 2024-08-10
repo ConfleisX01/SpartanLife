@@ -60,7 +60,7 @@ export function showImage(url) {
         imageHeight: 500,
         imageAlt: "Image",
         padding: '1rem'
-      })
+    })
 }
 
 export function showFrame(url) {
@@ -69,5 +69,25 @@ export function showFrame(url) {
         html: `<iframe id="pdfViewer" src="${url}" width="750px" height="500px"></iframe>`,
         width: 800,
         showCloseButton: true,
+    })
+}
+
+export function inputMessage() {
+    return Swal.fire({
+        title: 'Ingresa la URL de la API (FUNCION DE DESARROLLADOR)',
+        input: 'text',
+        inputPlaceholder: 'Escribe aquí...',
+        showCancelButton: true,
+        confirmButtonText: 'Aceptar',
+        cancelButtonText: 'Cancelar',
+        inputValidator: (value) => {
+            if (!value) {
+                return 'Por favor, ingresa un valor.'
+            }
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            return result.value
+        }
     })
 }
