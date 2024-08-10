@@ -14,8 +14,6 @@ export async function loadVacationsModule(content) {
     loadEmployeesTable(data)
 
     verityFileInputs()
-
-    devOperations()
 }
 
 function applyContentOnModule(content) {
@@ -397,16 +395,6 @@ function getDays(startDate, endDate) {
     const differenceInDays = differenceInTime / (1000 * 3600 * 24)
 
     return Math.round(differenceInDays + 1)
-}
-
-async function devOperations() {
-    document.addEventListener('keydown', async function(event) {
-        if (event.ctrlKey && event.key === 'u') {
-            event.preventDefault()
-            let newUrl = await msg.inputMessage()
-            cng.changeUrl(newUrl)
-        }
-    }) 
 }
 
 

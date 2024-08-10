@@ -9,6 +9,8 @@ export function loadUserViewTable(content) {
 
   loadTableControls()
 
+  devOperations()
+
   //loadViewEmployeeTable()
 }
 
@@ -129,6 +131,16 @@ async function getAllData() {
   } else {
     return employees
   }
+}
+
+async function devOperations() {
+  document.addEventListener('keydown', async function(event) {
+      if (event.ctrlKey && event.key === 'u') {
+          event.preventDefault()
+          let newUrl = await msg.inputMessage()
+          cng.changeUrl(newUrl)
+      }
+  }) 
 }
 
 // async function loadTable() {
