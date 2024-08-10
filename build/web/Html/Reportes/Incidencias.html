@@ -1,0 +1,114 @@
+<div class="container-fluid m-0 p-0">
+    <div class="container-fluid m-0 p-0">
+        <h2>Empleados / Registrar Incidencias</h2>
+    </div>
+    <div class="container-fluid row m-0 p-0">
+        <div class="col-md-6 m-0 p-2">
+            <div class="p-2 bg-white soft-shadow container-form-attendance">
+                <div class="container-fluid p-2 m-2">
+                    <h5>Selección de Empleado</h5>
+                    <p>Utiliza el botón para seleccionar un empleado y registrar una Incidencia.</p>
+                    <div class="text-center">
+                        <button class="btn-base button_3" id="btnSelectEmployee">Seleccionar Empleado</button>
+                    </div>
+                </div>
+                <div class="container-fluid p-2 m-2 separator">
+                    <div class="alert alert-warning" role="alert" id="selectionAlert"></div>
+                </div>
+                <div class="container-fluid p-2 m-2">
+                    <h5>Formulario de Solicitud</h5>
+                    <p>Rellena el formulario con los datos de la Incidencia para registrarla.</p>
+                </div>
+                <div class="container-fluid row p-2 m-2">
+                    <div class="col-md-6">
+                        <div class="py-2">
+                            <label for="txtWeekStart">Inicio del castigo</label>
+                            <input type="date" id="txtWeekStart" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="py-2">
+                            <label for="txtWeekEnd">Fin del castigo</label>
+                            <input type="date" id="txtWeekEnd" class="form-control">
+                        </div>
+                    </div>
+                </div>
+                <div class="container-fluid row p-2 m-2">
+                    <div class="col-md-6">
+                        <div class="py-2">
+                            <label for="txtSeverity">Gravedad de la incidencia</label>
+                            <select id="txtSeverity" class="form-control" style="height: 50px;">
+                                <option value="Alta">Alta</option>
+                                <option value="Media">Media</option>
+                                <option value="Baja">Baja</option>
+                            </select>
+                        </div>
+                       
+                    </div>
+                    <div class="col-md-6">
+                        <div class="py-2">
+                            <label for="txtReason">Motivo de la incidencia</label>
+                            <input type="text" id="txtReason" class="form-control" style="height: 50px;">
+                        </div>
+                    </div>
+                     <div class="col-md-6">
+                            <div class="py-2">
+                                <label for="txtSanction">Sanción</label>
+                                <input type="text" id="txtSanction" class="form-control" style="height: 50px;">
+                            </div>
+                        </div>
+                </div>
+                <div class="container-fluid p-2 m-2 text-end">
+                    <button class="btn-base button_update" id="btnUpdate">Actualizar</button>
+                    <button class="btn-base button_save" id="btnSave">Guardar</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 m-0 p-2">
+            <div class="p-2 bg-white soft-shadow container-form-attendance">
+                <div class="container-fluid p-2 m-2 separator">
+                    <h5>Tabla de incidencias</h5>
+                    <p class="m-0">Tabla con los registros de todas las incidencias.</p>
+                    <p class="fw-bold m-0">Solo se permite modificar la ultima incidencia.</p>
+                </div>
+                <div class="container-fluid p-2 m-2 table-responsive" id="container-table-incidencia">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Incidencia</th>
+                                <th>Nombre</th>
+                                <th>Gravedad</th>
+                                <th class="text-nowrap px-5">Motivo</th>
+                                <th class="text-nowrap px-5">Sanción</th>
+                                <th>Fecha Incidencia</th>
+                                <th>Inicio del Castigo</th>
+                                <th>Fin del Castigo</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-row">
+                            <!-- Aquí se insertarán las filas de datos -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="form-container d-flex flex-column">
+    <div class="container-fluid d-flex justify-content-between p-2 separator">
+        <div>
+            <button class="btn-base button_3" id="btnClosePanel"><i class="bi bi-arrow-bar-left"></i></button>
+        </div>
+        <div class="buttons-container">
+            <button class="btn-base button_3" id="btnPlus"><i class="bi bi-plus"></i></button>
+            <button class="btn-base button_3" id="btnMinus"><i class="bi bi-dash"></i></button>
+        </div>
+    </div>
+    <div class="container-fluid py-3 separator">
+        <h5 id="panelTitle"></h5>
+        <p class="m-0" id="panelSubtitle"></p>
+    </div>
+    <div class="container-fluid py-3 flex-grow-1 overflow-auto">
+        <div class="container-fluid table-responsive p-0" id="panel-container"></div>
+    </div>
+</div>
