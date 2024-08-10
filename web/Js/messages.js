@@ -22,6 +22,7 @@ export async function confirmMessage(title, text, btnConfirmText) {
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
+        cancelButtonText: 'Cancelar',
         cancelButtonColor: "#d33",
         confirmButtonText: btnConfirmText
     });
@@ -49,5 +50,24 @@ export function successMessage(title, help) {
         footer: help,
         showConfirmButton: false,
         timer: 1500
+    })
+}
+
+export function showImage(url) {
+    Swal.fire({
+        title: 'Visualizador de Imagen',
+        imageUrl: url,
+        imageHeight: 500,
+        imageAlt: "Image",
+        padding: '1rem'
+      })
+}
+
+export function showFrame(url) {
+    Swal.fire({
+        title: 'Visualizador de PDF',
+        html: `<iframe id="pdfViewer" src="${url}" width="750px" height="500px"></iframe>`,
+        width: 800,
+        showCloseButton: true,
     })
 }

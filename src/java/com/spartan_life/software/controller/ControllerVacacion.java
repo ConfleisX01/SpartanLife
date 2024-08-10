@@ -13,8 +13,54 @@ import java.util.List;
 
 public class ControllerVacacion {
 
+        public Empleado updateVacationsLimit(Empleado e) {
+        String query = "CALL actualizarLimiteVacaciones(?, ?)";
+
+        try {
+            ConexionMysql conexionMysql = new ConexionMysql();
+            Connection conn = conexionMysql.open();
+            CallableStatement cstmt = (CallableStatement) conn.prepareCall(query);
+
+            cstmt.setInt(1, e.getIdEmpleado());
+            cstmt.setInt(2, e.getLimiteVacaciones());
+
+            cstmt.execute();
+
+            cstmt.close();
+            conn.close();
+            conexionMysql.close();
+            return e;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+    
+    public Empleado updateRemainingVacations(Empleado e) {
+        String query = "CALL actualizarVacacionesRestantes(?, ?)";
+        
+        try {
+            ConexionMysql conexionMysql = new ConexionMysql();
+            Connection conn = conexionMysql.open();
+            CallableStatement cstmt = (CallableStatement) conn.prepareCall(query);
+
+            cstmt.setInt(1, e.getIdEmpleado());
+            cstmt.setInt(2, e.getVacacionesRestantes());
+
+            cstmt.execute();
+
+            cstmt.close();
+            conn.close();
+            conexionMysql.close();
+            return e;
+        } catch(Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+    
     public SolicitudVacaciones insertSolicitud(SolicitudVacaciones sv) {
-        String query = "CALL solicitarVacaciones(?, ?, ?, ?)";
+        String query = "CALL crearSolicitudVacaciones(?, ?, ?, ?, ?, ?, ?, ?)";
 
         try {
             ConexionMysql conexionMysql = new ConexionMysql();
@@ -26,7 +72,11 @@ public class ControllerVacacion {
             cstmt.setInt(1, e.getIdEmpleado());
             cstmt.setString(2, sv.getFechaInicio());
             cstmt.setString(3, sv.getFechaFin());
-            cstmt.setString(4, sv.getEstatus());
+            cstmt.setInt(4, sv.getDiasSolicitados());
+            cstmt.setString(5, sv.getNombreCreador());
+            cstmt.setString(6, sv.getComentariosCreador());
+            cstmt.setString(7, sv.getComentariosEmpleado());
+            cstmt.setString(8, sv.getDocumentoSoporte());
 
             cstmt.execute();
 
@@ -68,7 +118,7 @@ public class ControllerVacacion {
 
     public List<SolicitudVacaciones> getAllVacaciones() {
         List<SolicitudVacaciones> solicitudes = new ArrayList<>();
-        String query = "SELECT * FROM vista_vacaciones";
+        String query = "SELECT * FROM view_solicitudes_empleados";
 
         try {
             ConexionMysql conexionMysql = new ConexionMysql();
@@ -85,14 +135,26 @@ public class ControllerVacacion {
                 sv.setEmpleado(e);
                 e.setPersona(p);
 
-                sv.setIdVacaciones(rs.getInt("id_vacaciones"));
-                e.setIdEmpleado(rs.getInt("id_empleado"));
                 p.setIdPersona(rs.getInt("id_persona"));
-                p.setNombre(rs.getString("nombre"));
+                p.setNss(rs.getString("nombre"));
+                p.setApellidoPaterno(rs.getString("apellido_paterno"));
+                p.setApellidoMaterno(rs.getString("apellido_materno"));
+                e.setIdEmpleado(rs.getInt("id_empleado"));
+                e.setAntiguedad(rs.getString("fecha_registro"));
+                e.setFoto(rs.getString("foto"));
+                e.setLimiteVacaciones(rs.getInt("limite_vacaciones"));
+                e.setVacacionesRestantes(rs.getInt("vacaciones_restantes"));
+                sv.setIdVacaciones(rs.getInt("id_vacaciones"));
                 sv.setFechaSolicitud(rs.getString("fecha_solicitud"));
+                sv.setNombreCreador(rs.getString("nombre_creador"));
                 sv.setFechaInicio(rs.getString("fecha_inicio"));
                 sv.setFechaFin(rs.getString("fecha_fin"));
                 sv.setEstatus(rs.getString("estatus"));
+                sv.setDiasSolicitados(rs.getInt("dias_solicitados"));
+                sv.setNombreAprobador(rs.getString("nombre_aprobador"));
+                sv.setComentariosCreador(rs.getString("comentarios_creador"));
+                sv.setComentariosEmpleado(rs.getString("comentarios_empleado"));
+                sv.setDocumentoSoporte(rs.getString("documento_soporte"));
 
                 solicitudes.add(sv);
             }
@@ -104,5 +166,4 @@ public class ControllerVacacion {
             return null;
         }
     }
-
 }

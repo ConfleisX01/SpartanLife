@@ -2,6 +2,7 @@ package com.spartan_life.software.rest;
 
 import com.google.gson.Gson;
 import com.spartan_life.software.controller.ControllerVacacion;
+import com.spartan_life.software.model.Empleado;
 import com.spartan_life.software.model.SolicitudVacaciones;
 import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.FormParam;
@@ -34,12 +35,12 @@ public class RestVacaciones {
 
             if (local != null) {
                 out = """
-                 {"response" : "operacion exitosa"}
+                 {"response" : "OK"}
                  """;
                 out = String.format(out, sv);
             } else {
                 out = """
-                  {"response" : "Error en la transacción"}
+                  {"response" : "ERROR"}
                   """;
                 out = String.format(out, sv);
             }
@@ -47,7 +48,7 @@ public class RestVacaciones {
         } catch (Exception ex) {
             ex.printStackTrace();
             out = """
-                  {"response" : "Error en la transacción"}
+                  {"response" : "SERVER_ERROR"}
                   """;
         }
         return Response.status(Response.Status.CREATED).entity(out).build();
@@ -113,5 +114,67 @@ public class RestVacaciones {
                   """;
         }
         return Response.status(Response.Status.CREATED).entity(out).build();
+    }
+
+    @Path("actualizarLimiteVacaciones")
+    @Produces(MediaType.APPLICATION_JSON)
+    @POST
+    public Response updateVacationsLimit(@FormParam("empleado") @DefaultValue("") String emp) {
+        String out = "";
+        ControllerVacacion cv = new ControllerVacacion();
+        Gson gson = new Gson();
+
+        try {
+            Empleado e = gson.fromJson(emp, Empleado.class);
+            Empleado eResponse = cv.updateRemainingVacations(e);
+
+            if (eResponse != null) {
+                out = """
+                  {"response" : "OK"}
+                  """;
+            } else {
+                out = """
+                  {"response" : "ERROR"}
+                  """;
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            out = """
+                  {"response" : "SERVER_ERROR"}
+                  """;
+        }
+        return Response.ok(out).build();
+    }
+
+    @Path("actualizarCantidadVacaciones")
+    @Produces(MediaType.APPLICATION_JSON)
+    @POST
+    public Response updateRemaningVacations(@FormParam("empleado") @DefaultValue("") String emp) {
+        String out = "";
+        ControllerVacacion cv = new ControllerVacacion();
+        Gson gson = new Gson();
+
+        try {
+            Empleado e = gson.fromJson(emp, Empleado.class);
+            Empleado eResponse = cv.updateRemainingVacations(e);
+
+            if (eResponse != null) {
+                out = """
+                      {"response" : "OK"}
+                      """;
+            } else {
+                out = """
+                      {"response" : "ERROR"}
+                      """;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            out = """
+                  {"response" : "SERVER_ERROR"}
+                  """;
+        }
+
+        return Response.ok(out).build();
     }
 }

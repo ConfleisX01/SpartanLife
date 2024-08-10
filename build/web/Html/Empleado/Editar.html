@@ -7,19 +7,101 @@
         </div>
     </div>
     <div class="container-fluid py-3 separator">
-        <h5>Editar Campos del Empleado</h5>
-        <p class="m-0">Edita los campos de un empleado para actualizar la información</p>
+        <h5>Gestión de Información del Empleado</h5>
+        <p class="m-0">Agrega o actualiza los detalles de un empleado en el sistema</p>
     </div>
-    <div class="container-fluid py-3">
-        <div class="file-input-custom">
-            <input type="file" class="input-file" id="txtFoto">
-            <div class="file-input-content">
-                <h4 class="m-0">Foto</h4>
-                <p class="m-0 fw-light">Arrastra una foto o presiona para buscar una</p>
+    <div class="container-fluid row py-2 g-2">
+        <div class="col-md-6">
+            <div class="file-input-custom">
+                <input type="file" class="input-file" id="txtFoto">
+                <div class="file-input-content">
+                    <p class="m-0">Selecciona o arrasta una <span class="input-require">Foto</span></p>
+                    <i class="bi bi-upload"></i>
+                </div>
+            </div>
+            <div>
+                <input class="d-none" type="text" id="txtFileConvertedPhoto">
+            </div>
+            <div>
             </div>
         </div>
-        <div>
-            <input class="d-none" type="text" id="txtImageContainer">
+        <div class="col-md-6">
+            <div class="file-input-custom">
+                <input type="file" class="input-file" id="txtDocumentINE">
+                <div class="file-input-content">
+                    <p class="m-0">Selecciona o arrasta el <span class="input-require">Documento INE</span></p>
+                    <i class="bi bi-upload"></i>
+                </div>
+            </div>
+            <div>
+                <input class="d-none" type="text" id="txtFileConvertedIne">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="file-input-custom">
+                <input type="file" class="input-file" id="txtDocumentHouse">
+                <div class="file-input-content">
+                    <p class="m-0">Selecciona o arrasta el <span class="input-require">Comprobante de domicilio</span>
+                    </p>
+                    <i class="bi bi-upload"></i>
+                </div>
+            </div>
+            <div>
+                <input class="d-none" type="text" id="txtFileConvertedHouse">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="file-input-custom">
+                <input type="file" class="input-file" id="txtDocumentCURP">
+                <div class="file-input-content">
+                    <p class="m-0">Selecciona o arrasta el <span class="input-require">Documento CURP</span></p>
+                    <i class="bi bi-upload"></i>
+                </div>
+            </div>
+            <div>
+                <input class="d-none" type="text" id="txtFileConvertedCurp">
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="file-input-custom">
+                <input type="file" class="input-file" id="txtDocumentWork">
+                <div class="file-input-content">
+                    <p class="m-0">Selecciona o arrasta el <span class="input-require">Contrato Laboral</span></p>
+                    <i class="bi bi-upload"></i>
+                </div>
+            </div>
+            <div>
+                <input class="d-none" type="text" id="txtFileConvertedWork">
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid p-2">
+        <div class="row g-2 text-center border rounded" id="file-buttons-container">
+            <div class="col item-added_form m-0 p-1">
+                <div class="file-button">
+                    <i class="bi bi-filetype-jpg"></i>
+                </div>
+            </div>
+            <div class="col item-added_form m-0 p-1">
+                <div class="file-button">
+                    <i class="bi bi-filetype-pdf"></i>
+                </div>
+            </div>
+            <div class="col item-added_form m-0 p-1">
+                <div class="file-button">
+                    <i class="bi bi-filetype-pdf"></i>
+                </div>
+            </div>
+            <div class="col item-added_form m-0 p-1">
+                <div class="file-button">
+                    <i class="bi bi-filetype-pdf"></i>
+                </div>
+            </div>
+            <div class="col item-added_form m-0 p-1">
+                <div class="file-button">
+                    <i class="bi bi-filetype-pdf"></i>
+                </div>
+            </div>
         </div>
     </div>
     <div class="container-fluid py-1 preview">
@@ -63,20 +145,16 @@
                 <input type="text" placeholder="Ingresa el NSS" class="form-control" id="txtNSS">
             </div>
             <div class="col-md-6 p-2">
-                <label for="txtOld" class="form-label">Salario al Dia</label>
-                <input type="number" placeholder="Ingresa el salario" class="form-control" id="txtSalaryDay">
-            </div>
-            <div class="col-md-6 p-2">
-                <label for="txtOld" class="form-label">Salario Extra</label>
-                <input type="number" placeholder="Ingresa el salario" class="form-control" id="txtSalaryExtra">
-            </div>
-            <div class="col-md-6 p-2">
                 <label for="txtBranch" class="form-label">Sucursal</label>
                 <select name="txtBranch" id="txtBranch" class="form-select"></select>
             </div>
-            <div class="col-md-12 p-2">
+            <div class="col-md-6 p-2">
                 <label for="txtRegisterDate" class="form-label">Fecha de registro</label>
                 <input type="date" id="txtRegisterDate" class="form-control">
+            </div>
+            <div class="col-md-6 p-2">
+                <label for="txtVacationsLimit" class="form-label">Limite de vacaciones</label>
+                <input type="number" id="txtVacationsLimit" class="form-control" placeholder="Ingrese el limite de vacaciones">
             </div>
         </div>
     </div>
@@ -86,8 +164,8 @@
         <button class="btn-base button_danger" id="btnDelete">Eliminar Empleado</button>
     </div>
 </div>
-<div class="container-fluid p-0">
-    <h2>Empleados / Editar Empleados</h2>
+<div class="container-fluid m-0 p-0">
+    <p class="m-2">Empleados / <b class="text-dark">Gestión de empleados</b></p>
 </div>
 <div class="container-fluid">
     <button class="btn-base button_save my-2" id="btnAddNew"><i class="bi bi-person-add"></i></button>

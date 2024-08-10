@@ -19,22 +19,7 @@ export async function loadModule(content) {
     loadControls(branchs, jobs)
     loadTable(data, branchs, jobs)
 
-    asignPreviewEvent()
-}
-
-function asignPreviewEvent() {
-    document.querySelector("#txtFoto").addEventListener('change', function (event) {
-        const file = event.target.files[0]
-        if (file) {
-            const reader = new FileReader()
-            reader.onload = function (e) {
-                document.querySelector('#txtImageContainer').value = ''
-                document.querySelector('#txtImageContainer').value = e.target.result
-                loadPreviewImage(e.target.result)
-            }
-            reader.readAsDataURL(file)
-        }
-    })
+    verifyInputFiles()
 }
 
 function applyContentOnModule(content = null) {
@@ -54,7 +39,6 @@ async function loadControls(branchs, jobs) {
 
     buttonNewEmployee.addEventListener('click', async () => {
         if (!form.classList.contains('form-active') && !form.classList.contains('form-edit')) {
-            loadPreviewImage()
             loadEmptyForm(branchs, jobs)
         } else {
             const response = await msg.confirmMessage("No se puede realizar esta accion", "Ciera el formulario antes de acceder a otro", "Cerrar Formulario")
@@ -112,8 +96,6 @@ async function loadTable(data = null, branchs, jobs) {
             employeeItem.addEventListener('click', async () => {
                 if (!form.classList.contains('form-active') || !form.classList.contains('form-empty')) {
                     loadEmployeeData(data, index, branchs, jobs)
-                    document.querySelector('#txtImageContainer').value = ''
-                    document.querySelector('#txtImageContainer').value = data[index].foto
                 } else {
                     const response = await msg.confirmMessage("No se puede realizar esta accion", "Ciera el formulario antes de acceder a otro", "Cerrar Formulario")
                     if (response) {
@@ -141,6 +123,7 @@ function loadDataOnForm(employee, branchs, jobs) {
     let buttonsContainer = document.querySelector('.buttons-container')
     let buttonSave = document.createElement('button')
     const formDangerZone = document.querySelector('.form-danger-zone')
+    // const fileButtons = document.querySelectorAll('.item-added_form')
 
     buttonSave.classList.add('btn-base')
     buttonSave.classList.add('button_update')
@@ -148,8 +131,6 @@ function loadDataOnForm(employee, branchs, jobs) {
     buttonSave.innerHTML = "Guardar Cambios"
 
     loadOptionsOnSelects(branchs, jobs)
-
-    loadPreviewImage(employee.foto)
 
     // * Condicionamos a que solamente se agregue el boton si se abrio por primera vez el formulario
     if (!form.classList.contains('form-active')) {
@@ -160,9 +141,26 @@ function loadDataOnForm(employee, branchs, jobs) {
         formDangerZone.classList.remove('d-none')
     }
 
+    // const fileDocuments = {
+    //     "photo": employee.foto,
+    //     "ine": employee.documento.documentoIne,
+    //     "comprobante": employee.documento.documentoDomicilio,
+    //     "curp": employee.documento.documentoCurp,
+    //     "contrato": employee.documento.documentoContrato
+    // }
+
+    // let arrayDocuments = Object.values(fileDocuments)
+
     // * Cargamos los datos del empleado en el formulario para modificarlos
+    updateFileButton()
+
     let object = objectToFillForm(employee)
 
+    // for (let i = 0; i < fileButtons.length; i++) {
+    //     let type = arrayDocuments[i].startsWith('data:image') ? 'image/*' : 'application/pdf'
+
+    //     setFileViewer(arrayDocuments[i], fileButtons[i], type, true)
+    // }
 
     fillFormWithData(inputs, object)
 
@@ -187,6 +185,7 @@ async function loadEmptyForm(branchs, jobs) {
     const formDangerZone = document.querySelector('.form-danger-zone')
 
     cleanForm()
+    updateFileButton()
 
     loadOptionsOnSelects(branchs, jobs)
 
@@ -264,7 +263,7 @@ function loadControlsForm(employee = null) {
 
 // ? Funcion para limpiar el formulario en caso de ser necesario
 function cleanForm() {
-    let inputs = document.querySelectorAll('.form-container-inputs input')
+    let inputs = document.querySelectorAll('input')
 
     inputs.forEach(input => {
         input.value = ''
@@ -363,9 +362,14 @@ function createEmployeeJson(data) {
         puesto: {
             "idPuesto": data.puesto
         },
-        "salarioDia": data.salarioDia,
+        documento: {
+            "documentoIne": data.documentoIne,
+            "documentoDomicilio": data.documentoDomicilio,
+            "documentoCurp": data.documentoCurp,
+            "documentoContrato": data.documentoContrato
+        },
         "foto": data.foto,
-        "pagoExtra": data.salarioExtra,
+        "limiteVacaciones": data.limiteVacaciones,
         "antiguedad": data.antiguedad
     }
 
@@ -390,10 +394,16 @@ function createEmployeeJsonToUpdate(data, idPerson, idEmployee) {
         puesto: {
             "idPuesto": data.puesto
         },
-        "salarioDia": data.salarioDia,
+        documento: {
+            "documentoIne": data.documentoIne,
+            "documentoDomicilio": data.documentoDomicilio,
+            "documentoCurp": data.documentoCurp,
+            "documentoContrato": data.documentoContrato
+        },
         "foto": data.foto,
-        "pagoExtra": data.salarioExtra,
-        "idEmpleado": idEmployee
+        "limiteVacaciones": data.limiteVacaciones,
+        "idEmpleado": idEmployee,
+        "antiguedad": data.antiguedad
     }
 
     return employee
@@ -401,7 +411,11 @@ function createEmployeeJsonToUpdate(data, idPerson, idEmployee) {
 
 function objectToFillForm(data) {
     const newObject = {
-        image: data.foto,
+        foto: data.foto,
+        documentoIne: data.documento.documentoIne,
+        documentoDomicilio: data.documento.documentoDomicilio,
+        documentoCurp: data.documento.documentoCurp,
+        documentoContrato: data.documento.documentoContrato,
         nombre: data.persona.nombre,
         apellidoPaterno: data.persona.apellidoPaterno,
         apellidoMaterno: data.persona.apellidoMaterno,
@@ -410,10 +424,9 @@ function objectToFillForm(data) {
         rfc: data.persona.rfc,
         curp: data.persona.curp,
         nss: data.persona.nss,
-        salarioDia: data.salarioDia,
-        salarioExtra: data.pagoExtra,
         sucursal: data.sucursal.idSucursal,
-        antiguedad: data.antiguedad
+        antiguedad: data.antiguedad,
+        limiteVacaciones: data.limiteVacaciones
     }
 
     return newObject
@@ -421,7 +434,11 @@ function objectToFillForm(data) {
 
 function getAllInputs() {
     const inputs = [
-        { selector: '#txtImageContainer', key: 'foto', name: "Foto" },
+        { selector: '#txtFileConvertedPhoto', key: 'foto', name: "Foto" },
+        { selector: '#txtFileConvertedIne', key: 'documentoIne', name: "Documento INE" },
+        { selector: '#txtFileConvertedHouse', key: 'documentoDomicilio', name: "Comprobante de Domicilio" },
+        { selector: '#txtFileConvertedCurp', key: 'documentoCurp', name: "Documento CURP" },
+        { selector: '#txtFileConvertedWork', key: 'documentoContrato', name: "Contrato Laboral" },
         { selector: '#txtName', key: 'nombre', name: "Nombre" },
         { selector: '#txtFirstLastName', key: 'apellidoPaterno', name: "Apellido Paterno" },
         { selector: '#txtSecondLastName', key: 'apellidoMaterno', name: "Apellido Materno" },
@@ -430,23 +447,156 @@ function getAllInputs() {
         { selector: '#txtRFC', key: 'rfc', name: "RFC" },
         { selector: '#txtCURP', key: 'curp', name: "CURP" },
         { selector: '#txtNSS', key: 'nss', name: "NSS" },
-        { selector: '#txtSalaryDay', key: 'salarioDia', name: "Salario por dia" },
-        { selector: '#txtSalaryExtra', key: 'salarioExtra', name: "Salario extra" },
         { selector: '#txtBranch', key: 'sucursal', name: "Sucursal" },
         { selector: '#txtRegisterDate', key: 'antiguedad', name: "Fecha de registro" },
+        { selector: '#txtVacationsLimit', key: 'limiteVacaciones', name: "Limite de vacaciones" }
     ]
     return inputs
 }
 
-function loadPreviewImage(imageData) {
-    const container = document.querySelector('.preview-image')
-    const image = document.querySelector('#img-preview')
+function verifyInputFiles() {
+    const FIRST_FILE = 0
+    const MAX_FILE_SIZE = 5
 
-    if (imageData != null) {
-        container.classList.remove('d-none')
-        image.src = imageData
+    let inputPhoto = document.querySelector('#txtFoto').addEventListener('change', function (event) {
+        const PHOTO_ITEM_INDEX = 0
+        const file = event.target.files[FIRST_FILE]
+
+        vefiryFile(file, 'image/*', PHOTO_ITEM_INDEX)
+    })
+
+    let inputIne = document.querySelector('#txtDocumentINE').addEventListener('change', function (event) {
+        const INE_ITEM_INDEX = 1
+        const file = event.target.files[FIRST_FILE]
+
+        vefiryFile(file, 'application/pdf', INE_ITEM_INDEX)
+    })
+
+    let inputHouse = document.querySelector('#txtDocumentHouse').addEventListener('change', function (event) {
+        const HOUSE_ITEM_INDEX = 2
+        const file = event.target.files[FIRST_FILE]
+
+        vefiryFile(file, 'application/pdf', HOUSE_ITEM_INDEX)
+    })
+
+    let inputCurp = document.querySelector('#txtDocumentCURP').addEventListener('change', function (event) {
+        const CURP_ITEM_INDEX = 3
+        const file = event.target.files[FIRST_FILE]
+
+        vefiryFile(file, 'application/pdf', CURP_ITEM_INDEX)
+    })
+
+    let inputWork = document.querySelector('#txtDocumentWork').addEventListener('change', function (event) {
+        const WORK_ITEM_INDEX = 4
+        const file = event.target.files[FIRST_FILE]
+
+        vefiryFile(file, 'application/pdf', WORK_ITEM_INDEX)
+    })
+
+}
+
+function vefiryFile(file, mime, indexItem) {
+    const MAX_FILE_SIZE = 5
+
+    if (file.type === mime || file.type.match(mime)) {
+        if (hlp.getFileSize(file) <= MAX_FILE_SIZE) {
+            asingFileDataInHolders(file, indexItem)
+        } else {
+            msg.errorMessage('Archivo demasiado grande', 'El archivo excede el límite de 5MB.', 'Por favor, cargue un archivo de menor tamaño.');
+        }
     } else {
-        container.classList.add('d-none')
-        image.src = ''
+        let fileType = mime === 'image/*' ? 'imagen' : 'PDF'
+        msg.errorMessage('Tipo de archivo no soportado', 'El archivo seleccionado no esta soportado para este campo', 'Por favor, cargue un archivo en formato de ' + fileType);
     }
+}
+
+async function asingFileDataInHolders(file, indexHolder) {
+    let fileConverted = await getBase64FileData(file)
+
+    setDataToFileDataHolder(fileConverted, indexHolder)
+}
+
+async function setDataToFileDataHolder(baseData, indexHolder) {
+    const holders = getAllFileHolders()
+
+    if (holders[indexHolder].value == '') {
+        updateFileButton()
+        holders[indexHolder].value = baseData
+    } else {
+        const userResponse = await msg.confirmMessage('Remplazar archivo?', "Quieres remplazar el archivo guardado por uno nuevo?", 'Reemplazar')
+        if (userResponse) {
+            updateFileButton()
+            holders[indexHolder].value = baseData
+        }
+    }
+}
+
+async function updateFileButton() {
+    const holders = getAllFileHolders()
+    const buttons = document.querySelectorAll('.file-button')
+    let index = 0
+
+    for (const holder of holders) {
+        let value = await holder.value // COMENTARIOS DEL PROGRAMADOR Confleis: La verdad no se porque funciona esto, pero al obtener los valores en base64, la imagen es retornada como cadena vacia
+        value = await holder.value // COMENTARIOS DEL PROGRMADOR Confleis: Me quedo sin tiempo pero al hacer esto se soluciona el problema, la verdad no se porque pero funciona!!!!! :)
+        changeButtonsState(value, buttons[index])
+        index++
+    }
+
+    setFileViewer()
+}
+
+function changeButtonsState(value, button) {
+    if (value != '') {
+        button.classList.add('item-added_fill')
+    } else {
+        button.classList.remove('item-added_fill')
+    }
+}
+
+function setFileViewer() {
+    const buttons = document.querySelectorAll('.file-button')
+
+    buttons.forEach((button, index) => {
+        button.removeEventListener('click', () => showFileViewer(index))
+        button.addEventListener('click', () => showFileViewer(index))
+    })
+}
+
+function getAllFileHolders() {
+    const photoHolder = document.querySelector('#txtFileConvertedPhoto')
+    const ineHolder = document.querySelector('#txtFileConvertedIne')
+    const houseHolder = document.querySelector('#txtFileConvertedHouse')
+    const curpHolder = document.querySelector('#txtFileConvertedCurp')
+    const workHolder = document.querySelector('#txtFileConvertedWork')
+    const inputsArray = []
+
+    inputsArray.push(photoHolder)
+    inputsArray.push(ineHolder)
+    inputsArray.push(houseHolder)
+    inputsArray.push(curpHolder)
+    inputsArray.push(workHolder)
+
+    return inputsArray
+}
+
+function showFileViewer(index) {
+    const holders = getAllFileHolders()
+    const holdersValues = []
+
+    holders.forEach(holder => {
+        holdersValues.push(holder.value)
+    })
+
+    let data = holdersValues[index]
+
+    if (data.startsWith('data:image')) {
+        msg.showImage(data)
+    } else if (data.startsWith('data:application/pdf')) {
+        msg.showFrame(data)
+    }
+}
+
+async function getBase64FileData(file) {
+    return await hlp.fileToBase64(file)
 }

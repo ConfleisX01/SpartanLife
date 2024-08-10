@@ -1,125 +1,195 @@
 <div class="container-fluid m-0 p-0">
     <div class="container-fluid m-0 p-0">
-        <h2>Empleados / Registrar Vacaciones</h2>
+        <p class="m-2">Empleados / <b class="text-dark">Vacaciones</b></p>
     </div>
-    <div class="container-fluid row m-0 p-0">
-        <div class="col-md-6 m-0 p-2">
-            <div class="p-2 bg-white soft-shadow container-form-attendance">
-                <div class="container-fluid p-2 m-2">
-                    <h5>Selección de Empleado</h5>
-                    <p>Utiliza el botón para seleccionar un empleado y registrar una solicitud de vacaciones.</p>
-                    <div class="text-center">
-                        <button class="btn-base button_3" id="btnSelectEmployee">Seleccionar Empleado</button>
+    <div class="container-fluid" style="height: 25rem;">
+        <div class="row h-100 g-2">
+            <div class="col-md-9 h-100">
+                <div class="p-2 bg-white rounded shadow-sm h-100 overflow-hidden">
+                    <div class="container-fluid">
+                        <h5>🌴 Vacaciones</h5>
+                    </div>
+                    <div class="container-fluid h-100">
+                        <div class="row h-100">
+                            <div class="col-6 p-2">
+                                <div class="container-fluid d-flex align-items-center justify-content-center py-4">
+                                    <div class="circle-vacations-info">
+                                        <img src="https://htmlcolorcodes.com/assets/images/colors/blue-color-solid-background-1920x1080.png"
+                                            class="rounded-circle" style="width: 4rem; height: 4rem;">
+                                        <div class="container-fluid text-center">
+                                            <small>Vacaciones disponibles</small>
+                                            <h2 class="text-bg-primary-light"><b class="fs-1"></b><smallclass="m-0 fs-5"></small></h2>
+                                            <small>Nada Seleccionado</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="container-fluid text-end">
+                                    <button class="btn-base button_update">Actualizar solicitud</button>
+                                </div>
+                            </div>
+                            <div class="col-6 p-2 overflow-hidden overflow-y-scroll h-100">
+                                <p>Historial de solicitudes</p>
+                                <div class="container-fluid p-0" id="vacations-info_list">
+                                    <p>No hay solicitudes</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="container-fluid p-2 m-2 separator">
-                    <div class="alert alert-warning" role="alert" id="selectionAlert"></div>
-                </div>
-                <div class="container-fluid p-2 m-2">
-                    <h5>Formulario de Solicitud</h5>
-                    <p>Rellena el formulario con los datos de la solicitud para registrarla.</p>
-                </div>
-                <div class="container-fluid p-2 m-2">
-                    <div class="py-2">
-                        <label for="txtWeekStart">Inicio de las vacaciones</label>
-                        <input type="date" id="txtWeekStart" class="form-control">
-                    </div>
-                    <div class="py-2">
-                        <label for="txtWeekEnd">Fin de las vacaciones</label>
-                        <input type="date" id="txtWeekEnd" class="form-control">
+            </div>
+            <div class="col-md-3 h-100">
+                <div class="p-2 bg-white rounded shadow-sm h-100 overflow-hidden overflow-y-scroll">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col row d-flex justify-content-between">
+                                <div class="col-12">
+                                    <h5 class="mx-2">Empleados</h5>
+                                </div>
+                            </div>
+                            <div class="col-12 container-fluid py-2" id="employee-list-container">
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="container-fluid p-2 m-2 text-end">
-                    <button class="btn-base button_update" id="btnUpdate">Actualizar</button>
-                    <button class="btn-base button_save" id="btnSave">Guardar</button>
+            </div>
+            <div class="col-md-4">
+                <div class="p-2 bg-white rounded shadow-sm">
+                    <div class="container-fluid">
+                        <h5>Crear nueva solicitud de vacaciones</h5>
+                    </div>
+                    <div class="container-fluid">
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <label for="txtStartVacations" class="form-label">Inicio de las vacaciones</label>
+                                <input type="date" name="txtStartVacations" id="txtStartVacations" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="txtEndVacations" class="form-label">Fin de las vacaciones</label>
+                                <input type="date" name="txtEndVacations" id="txtEndVacations" class="form-control">
+                            </div>
+                            <div class="col-md-12 py-2">
+                                <label for="txtCreadtedBy" class="form-label">Creada por</label>
+                                <input type="text" name="txtCreadtedBy" id="txtCreadtedBy" class="form-control"
+                                    placeholder="Nombre del creador de la solicitud">
+                            </div>
+                            <div class="col-md-6 py-2">
+                                <label class="form-label mx-2" for="txtCommentsC">Comentarios del administrador</label>
+                                <textarea class="form-control" placeholder="Escribe el comentario" id="txtCommentsC"
+                                    style="height: 8rem;"></textarea>
+                            </div>
+                            <div class="col-md-6 py-2">
+                                <label class="form-label mx-2" for="txtCommentsE">Comentarios del empleado</label>
+                                <textarea class="form-control" placeholder="Escribe el comentario del empleado"
+                                    id="txtCommentsE" style="height: 8rem;"></textarea>
+                            </div>
+                            <div class="col-md-12">
+                                <label for="txtFileSupport" class="form-label">Documento de soporte (Opcional)</label>
+                                <div class="file-input-custom">
+                                    <input type="file" class="input-file" id="txtFileSupport">
+                                    <div class="file-input-content">
+                                        <p class="m-0">Selecciona o arrasta el <span class="input-require">Documento de
+                                                soporte</span></p>
+                                        <i class="bi bi-upload"></i>
+                                    </div>
+                                </div>
+                                <div class="py-2">
+                                    <input class="d-none" type="text" id="txtFileSupportData">
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="row g-2 text-center border rounded" id="file-buttons-container">
+                                    <div class="col item-added_form m-0 p-1">
+                                        <div class="file-button">
+                                            <i class="bi bi-filetype-pdf"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 text-end py-2">
+                                <button class="btn-base button_save" id="btnCreateRequest">Crear solicitud</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-2 bg-white rounded shadow-sm">
+                    <div class="container-fluid">
+                        <h5>Parametros del empleado</h5>
+                    </div>
+                    <div class="container-fluid py-2">
+                        <p class="m-0">Actualizar limite de vacaciones</p>
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text">Nuevo limite</span>
+                            <input type="text" name="" id="" class="form-control" placeholder="Ingresa el nuevo limite">
+                            <button class="btn-base button_update btn-outline-secondary">Actualizar limite</button>
+                        </div>
+                    </div>
+                    <div class="container-fluid py-2">
+                        <p class="m-0">Actualizar cantidad de vacaciones</p>
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text">Nueva cantidad</span>
+                            <input type="text" name="" id="" class="form-control" placeholder="Ingresa la cantidad">
+                            <button class="btn-base button_update btn-outline-secondary">Actualizar cantidad</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-2 bg-white rounded shadow-sm">
+                    <div class="container-fluid">
+                        <h5>Informacion general</h5>
+                    </div>
+                    <div class="container-fluid">
+                        <div class="row border-bottom py-2">
+                            <div class="col-md-12">
+                                <p>Informacion del empleado</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p class="text-dark">Antiguedad</p>
+                                <small>22-02-2020 (4 años 8 meses)</small>
+                            </div>
+                            <div class="col-md-6">
+                                <p class="text-dark">Ultima solicitud creada</p>
+                                <small>22-02-2024 (Hace 5 dias)</small>
+                            </div>
+                        </div>
+                        <div class="row py-2">
+                            <div class="col-md-12">
+                                <p>Informacion de la solicitud</p>
+                            </div>
+                            <div class="col-md-6 py-2">
+                                <p class="text-dark m-0">Fecha de la solicitud</p>
+                                <small>22-02-2024</small>
+                            </div>
+                            <div class="col-md-6 py-2">
+                                <p class="text-dark m-0">Inicio y fin de las vacaciones</p>
+                                <small>22-02-2024 -> 27-02-2024 (6 dias)</small>
+                            </div>
+                            <div class="col-md-6 py-2">
+                                <p class="text-dark m-0">Creada por</p>
+                                <small>Ashley Graham</small>
+                            </div>
+                            <div class="col-md-6 py-2">
+                                <p class="text-dark m-0">Atendida por</p>
+                                <small>(Leon S. Kennedy) el 20-02-2024 </small>
+                            </div>
+                            <div class="col-md-6 py-2">
+                                <p class="text-dark m-0">Comentarios del administrador</p>
+                                <small>Las vacaciones se esperan que esten dentro del periodo</small>
+                            </div>
+                            <div class="col-md-6 py-2">
+                                <p class="text-dark m-0">Comentarios del solicitante</p>
+                                <small>Necesito las vacaciones debido a una emergencia sanitaria</small>
+                            </div>
+                            <div class="col-md-12 py-2 d-flex align-items-center justify-content-between">
+                                <p class="text-dark m-0">Documento de respaldo</p>
+                                <button class="btn-base btn-outline-secondary">Ver documento</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-6 m-0 p-2">
-            <div class="p-2 bg-white soft-shadow container-form-attendance">
-                <div class="container-fluid p-2 m-2 separator">
-                    <h5>Tabla de solicitudes</h5>
-                    <p class="m-0">Tabla con los registros de todas las solicitudes aceptadas y pendientes.</p>
-                    <p class="fw-bold m-0">Haz clic en algún registro para modificarlo o actualizar su estatus.</p>
-                </div>
-                <div class="container-fluid p-2 m-2 table-responsive" id="container-table-vacations">
-                </div>
-            </div>
-        </div>
     </div>
 </div>
-<div class="form-container d-flex flex-column">
-    <div class="container-fluid d-flex justify-content-between p-2 separator">
-        <div>
-            <button class="btn-base button_3" id="btnClosePanel"><i class="bi bi-arrow-bar-left"></i></button>
-        </div>
-        <div class="buttons-container">
-            <button class="btn-base button_3" id="btnPlus"><i class="bi bi-plus"></i></button>
-            <button class="btn-base button_3" id="btnMinus"><i class="bi bi-dash"></i></button>
-        </div>
-    </div>
-    <div class="container-fluid py-3 separator">
-        <h5 id="panelTitle"></h5>
-        <p class="m-0" id="panelSubtitle"></p>
-    </div>
-    <div class="container-fluid py-3 flex-grow-1 overflow-auto">
-        <div class="container-fluid table-responsive p-0" id="panel-container"></div>
-    </div>
-</div>
-
-<!-- <div class="form-container d-flex flex-column">
-    <div class="container-fluid d-flex justify-content-between p-2 separator">
-        <div>
-            <button class="btn-base button_3" id="btnClosePanel"><i class="bi bi-arrow-bar-left"></i></button>
-        </div>
-        <div class="buttons-container">
-        </div>
-    </div>
-    <div class="container-fluid py-3 separator">
-        <h5>Panel de Seleccion</h5>
-        <p class="m-0">Selecciona el elemento</p>
-    </div>
-    <div class="container-fluid py-3 flex-grow-1 overflow-auto">
-        <div class="container-fluid table-responsive p-0" id="panel-container"></div>
-    </div>
-</div>
-
-<div class="container-fluid m-0 p-0">
-    <h2>Empleados / Registrar Vacaciones</h2>
-</div>
-<div class="container-fluid container-form-attendance py-2 soft-shadow">
-    <div class="container-fluid separator">
-        <h4>Seleccionar Empleado</h4>
-    </div>
-    <div class="container-fluid d-flex aling-items-center justify-content-center py-2">
-        <button class="btn-base button_3" id="btnSelectEmployee">Seleccionar Empleado</button>
-    </div>
-    <div class="container-fluid separator">
-        <h4>Registrar Vacaciones</h4>
-    </div>
-    <div class="container-fluid d-flex aling-items-center justify-content-center">
-        <div class="container-fluid form w-75 row">
-            <div class="col-md-6 p-2">
-                <label for="txtWeekStart">Inicio</label>
-                <input type="date" id="txtWeekStart" class="form-control">
-            </div>
-            <div class="col-md-6 p-2">
-                <label for="txtWeekEnd">Fin</label>
-                <input type="date" id="txtWeekEnd" class="form-control">
-            </div>
-        </div>
-    </div>
-    <div class="container-fluid d-flex justify-content-between">
-        <div>
-            <button class="btn-base button_3" id="btnShowSelected">Mostrar Seleccionado</button>
-        </div>
-        <div id="button-container-vacations">
-            <button class="btn-base button_update" id="btnUpdate">Actualizar Solicitudes</button>
-            <button class="btn-base button_save" id="btnSave">Guardar</button>
-        </div>
-    </div>
-</div>
-
-<div class="container-fluid" id="table-test">
-    
-</div> -->
