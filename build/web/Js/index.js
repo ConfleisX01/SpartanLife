@@ -99,12 +99,12 @@ function switchAccountMode(position) {
 
 // Funcion para cargar el DashBoard
 function loadDashboad(user) {
-            console.log("hola ")
+    console.log("hola ")
 
     if (user.rol == 'ADMIN') {
         console.log("jola ")
         loadAdminDashboard()
-        
+
     } else if (user.rol == 'USER') {
         loadUserDashboard()
     }
@@ -142,10 +142,10 @@ function fixDashboard() {
 function loadControls() {
     const btnListEmployee = document.querySelector('#btnListEmployee')
     const btnEditEmployee = document.querySelector('#btnEditEmployee')
-    const btnAttendance = document.querySelector('#btnAttendance')
-    const btnBonus = document.querySelector('#btnBonus')
+    //const btnAttendance = document.querySelector('#btnAttendance')
+    //const btnBonus = document.querySelector('#btnBonus')
     const btnVacations = document.querySelector('#btnVacations')
-    const btnPay = document.querySelector('#btnPay')
+    //const btnPay = document.querySelector('#btnPay')
     const btnExpand = document.querySelector('#btnExpand')
     const btnEnterpriseConfiguration = document.querySelector('#btnEnterpriseConfiguration')
     const btnConfig = document.querySelector('#btnConfig')
@@ -166,25 +166,25 @@ function loadControls() {
         emp.loadModule(content)
     })
 
-    btnAttendance.addEventListener('click', async () => {
-        const content = await hlp.getModule('Html/Asistencias/Registro.html')
-        atn.load(content)
-    })
+    // btnAttendance.addEventListener('click', async () => {
+    //     const content = await hlp.getModule('Html/Asistencias/Registro.html')
+    //     atn.load(content)
+    // })
 
-      btnBonus.addEventListener('click', async () => {
-       const content = await hlp.getModule('Html/Pago/Aguinaldo.html')
-        bon.loadBonusModule(content)
-    })
+    // btnBonus.addEventListener('click', async () => {
+    //     const content = await hlp.getModule('Html/Pago/Aguinaldo.html')
+    //     bon.loadBonusModule(content)
+    // })
 
     btnVacations.addEventListener('click', async () => {
         const content = await hlp.getModule('Html/Vacaciones/Solicitudes.html')
         vcs.loadVacationsModule(content)
     })
 
-    btnPay.addEventListener('click', async () => {
-       const content = await hlp.getModule('Html/Pago/Salario.html')
-        pay.loadPaysModule(content)
-    })
+    // btnPay.addEventListener('click', async () => {
+    //     const content = await hlp.getModule('Html/Pago/Salario.html')
+    //     pay.loadPaysModule(content)
+    // })
 
     btnEnterpriseConfiguration.addEventListener('click', async () => {
         const content = await hlp.getModule('Html/Empresa/Configuraciones.html')

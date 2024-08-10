@@ -93,6 +93,17 @@ async function loadTable(data = null, branchs, jobs) {
             employeeItem.appendChild(old)
             employeeItem.appendChild(position)
 
+            employeeItem.removeEventListener('click', async () => {
+                if (!form.classList.contains('form-active') || !form.classList.contains('form-empty')) {
+                    loadEmployeeData(data, index, branchs, jobs)
+                } else {
+                    const response = await msg.confirmMessage("No se puede realizar esta accion", "Ciera el formulario antes de acceder a otro", "Cerrar Formulario")
+                    if (response) {
+                        closeForm()
+                    }
+                }
+            })
+
             employeeItem.addEventListener('click', async () => {
                 if (!form.classList.contains('form-active') || !form.classList.contains('form-empty')) {
                     loadEmployeeData(data, index, branchs, jobs)
@@ -244,21 +255,27 @@ function loadControlsForm(employee = null) {
     const btnUpdate = document.querySelector('#btnUpdate')
     const btnDelete = document.querySelector('#btnDelete')
 
-    btnBack.removeEventListener('click', closeForm)
-    btnBack.addEventListener('click', closeForm)
+    //btnBack.removeEventListener('click', closeForm)
+    //btnBack.addEventListener('click', closeForm)
+    btnBack.onclick = () => closeForm
 
     if (btnUpdate != null) {
-        btnUpdate.removeEventListener('click', () => updateEmployee(employee))
-        btnUpdate.addEventListener('click', () => updateEmployee(employee))
+        //btnUpdate.removeEventListener('click', () => updateEmployee(employee))
+        //btnUpdate.addEventListener('click', () => updateEmployee(employee))
+        btnUpdate.onclick = () => updateEmployee(employee)
     }
 
     if (btnSave != null) {
-        btnSave.removeEventListener('click', saveEmployee)
-        btnSave.addEventListener('click', saveEmployee)
+        //btnSave.removeEventListener('click', saveEmployee)
+        //btnSave.addEventListener('click', saveEmployee)
+        btnSave.onclick = saveEmployee
     }
 
-    btnDelete.removeEventListener('click', () => deleteEmployee(employee))
-    btnDelete.addEventListener('click', () => deleteEmployee(employee))
+    //btnDelete.removeEventListener('click', () => deleteEmployee(employee))
+    //btnDelete.addEventListener('click', () => deleteEmployee(employee))
+    btnDelete.onclick = () => deleteEmployee(employee)
+
+    console.log("Nuevas funciones corregidas")
 }
 
 // ? Funcion para limpiar el formulario en caso de ser necesario
@@ -411,6 +428,7 @@ function createEmployeeJsonToUpdate(data, idPerson, idEmployee) {
 
 function objectToFillForm(data) {
     const newObject = {
+        idEmpleado: data.idEmpleado,
         foto: data.foto,
         documentoIne: data.documento.documentoIne,
         documentoDomicilio: data.documento.documentoDomicilio,
@@ -434,6 +452,7 @@ function objectToFillForm(data) {
 
 function getAllInputs() {
     const inputs = [
+        { selector: '#txtIdEmployee', key: 'idEmpleado', name: "ID" },
         { selector: '#txtFileConvertedPhoto', key: 'foto', name: "Foto" },
         { selector: '#txtFileConvertedIne', key: 'documentoIne', name: "Documento INE" },
         { selector: '#txtFileConvertedHouse', key: 'documentoDomicilio', name: "Comprobante de Domicilio" },
