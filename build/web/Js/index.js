@@ -79,6 +79,7 @@ async function loadSesionControls() {
             Dbg.addUser(URL, "usuario" ,user);
             msg.successMessage("Usuario Creado", "Se ha creado el usuario con éxito");
             Dbg.viewUsers();
+            switchAccountMode(1)
         } else {
             msg.errorMessage("Entradas Vacías", "Error al crear el usuario", "Rellene todos los campos solicitados del formulario");
         }
