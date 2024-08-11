@@ -12,10 +12,10 @@ import * as emp from './Edit.js'
 import * as atn from './attendance.js'
 // Objeto para el control de solicitudes de vacaciones
 import * as vcs from './vacations.js'
-// Objeto para el control de solicitudes de pagos
-import * as pay from './pays.js'
-// Objeto para el control de solicitudes de aguinaldos
-import * as bon from './bonus.js'
+// Objeto para el control de solicitudes de Permisos
+import * as per from './permisos.js'
+// Objeto para el control de solicitudes de Incidencias
+import * as inc from './incidencia.js'
 // Objeto para el control de configuraciones de la sucursal
 import * as entConfig from './enterprise.js'
 //Objeto para debugear
@@ -143,7 +143,8 @@ function loadControls() {
     const btnListEmployee = document.querySelector('#btnListEmployee')
     const btnEditEmployee = document.querySelector('#btnEditEmployee')
     //const btnAttendance = document.querySelector('#btnAttendance')
-    //const btnBonus = document.querySelector('#btnBonus')
+    const btnPermiso = document.querySelector('#btnPermiso')
+    const btnIncidencia = document.querySelector('#btnIncidencia')
     const btnVacations = document.querySelector('#btnVacations')
     //const btnPay = document.querySelector('#btnPay')
     const btnExpand = document.querySelector('#btnExpand')
@@ -181,10 +182,15 @@ function loadControls() {
         vcs.loadVacationsModule(content)
     })
 
-    // btnPay.addEventListener('click', async () => {
-    //     const content = await hlp.getModule('Html/Pago/Salario.html')
-    //     pay.loadPaysModule(content)
-    // })
+     btnPermiso.addEventListener('click', async () => {
+         const content = await hlp.getModule('Html/Reportes/Permisos.html')
+        per.loadPermisosModule(content)
+     })
+     
+     btnIncidencia.addEventListener('click', async () => {
+         const content = await hlp.getModule('Html/Reportes/Incidencias.html')
+        inc.loadIncidenciasModule(content)
+     })
 
     btnEnterpriseConfiguration.addEventListener('click', async () => {
         const content = await hlp.getModule('Html/Empresa/Configuraciones.html')
