@@ -14,8 +14,12 @@ import * as atn from './attendance.js'
 import * as vcs from './vacations.js'
 // Objeto para el control de solicitudes de Permisos
 import * as per from './permisos.js'
+// Objeto para el control de solicitudes de Permisos User
+import * as per2 from './permisosUser.js'
 // Objeto para el control de solicitudes de Incidencias
 import * as inc from './incidencia.js'
+// Objeto para el control de solicitudes de Incidencias
+import * as inc2 from './incidenciaUser.js'
 // Objeto para el control de configuraciones de la sucursal
 import * as entConfig from './enterprise.js'
 //Objeto para debugear
@@ -110,7 +114,9 @@ function loadDashboad(user) {
         loadAdminDashboard()
 
     } else if (user.rol == 'USER') {
+                console.log("adios ")
         loadUserDashboard()
+
     }
 }
 
@@ -133,7 +139,21 @@ async function loadAdminDashboard() {
 }
 
 // Funcion para loguear al usuario tipo USER
-function loadUserDashboard() {
+async  function loadUserDashboard() {
+        const container = document.querySelector('body')
+
+    const contentMenu = await hlp.getModule('Html/Dashboard/dashboardUser.html')
+
+    container.innerHTML = ""
+    container.innerHTML = contentMenu
+
+    loadControlsUser()
+
+    // Cargamos por defecto el modulo vista de empleados
+    const moduleViewEmployee = await hlp.getModule('Html/Empleado/Vista.html')
+    dsh.loadUserViewTable(moduleViewEmployee)
+
+    fixDashboard()
 
 }
 
@@ -202,7 +222,67 @@ function loadControls() {
     })
 }
 
+function loadControlsUser() {
+    const btnListEmployee = document.querySelector('#btnListEmployee')
+    const btnEditEmployee = document.querySelector('#btnEditEmployee')
+    //const btnAttendance = document.querySelector('#btnAttendance')
+    const btnPermiso = document.querySelector('#btnPermiso')
+    const btnIncidencia = document.querySelector('#btnIncidencia')
+    const btnVacations = document.querySelector('#btnVacations')
+    //const btnPay = document.querySelector('#btnPay')
+    const btnExpand = document.querySelector('#btnExpand')
+    const btnEnterpriseConfiguration = document.querySelector('#btnEnterpriseConfiguration')
+    const btnConfig = document.querySelector('#btnConfig')
+    const btnLogout = document.querySelector('#btnLogout')
+    const sideMenu = document.querySelector('#sideBar')
+
+    btnExpand.onclick = function () {
+        sideMenu.classList.toggle('expanded')
+    }
+
+    btnListEmployee.addEventListener('click', async () => {
+        const moduleViewEmployee = await hlp.getModule('Html/Empleado/Vista.html')
+        dsh.loadUserViewTable(moduleViewEmployee)
+    })
+
+    btnEditEmployee.addEventListener('click', async () => {
+        const content = await hlp.getModule('Html/Empleado/Editar.html')
+        emp.loadModule(content)
+    })
+
+    // btnAttendance.addEventListener('click', async () => {
+    //     const content = await hlp.getModule('Html/Asistencias/Registro.html')
+    //     atn.load(content)
+    // })
+
+    // btnBonus.addEventListener('click', async () => {
+    //     const content = await hlp.getModule('Html/Pago/Aguinaldo.html')
+    //     bon.loadBonusModule(content)
+    // })
+
+    btnVacations.addEventListener('click', async () => {
+        const content = await hlp.getModule('Html/Vacaciones/Solicitudes.html')
+        vcs.loadVacationsModule(content)
+    })
+
+     btnPermiso.addEventListener('click', async () => {
+         const content = await hlp.getModule('Html/Reportes/PermisosUser.html')
+        per2.loadPermisosModule(content)
+     })
+     
+     btnIncidencia.addEventListener('click', async () => {
+         const content = await hlp.getModule('Html/Reportes/IncidenciasUser.html')
+        inc2.loadIncidenciasModule(content)
+     })
+
+    btnEnterpriseConfiguration.addEventListener('click', async () => {
+        const content = await hlp.getModule('Html/Empresa/Configuraciones.html')
+        entConfig.loadEnterpriseConfigurationModule(content)
+    })
+}
+
 // Funcion principal para cargar los controladores del sistema
-loadIndexControls()
+//loadIndexControls()
 // TODO: Funcion de prueba, eliminar cuando se termine de probar el apartado del dashboard
 //loadAdminDashboard()
+loadUserDashboard()

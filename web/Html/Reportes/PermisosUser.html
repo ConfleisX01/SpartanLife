@@ -1,0 +1,65 @@
+<div class="container-fluid m-0 p-0">
+    <div class="container-fluid m-0 p-0">
+        <h2>Empleados / Registrar Permisos</h2>
+    </div>
+    <div class="container-fluid p-2 m-2">
+        <div class="p-2 bg-white soft-shadow container-form-attendance">
+            <div class="container-fluid p-2">
+                <h5>Selección de Empleado</h5>
+                <p>Utiliza el botón para seleccionar un empleado y visualizar un Permiso.</p>
+                <div class="text-center">
+                    <button class="btn-base button_3" id="btnSelectEmployee">Seleccionar Empleado</button>
+                </div>
+            </div>
+            <div class="container-fluid p-2">
+                <div class="alert alert-warning" role="alert" id="selectionAlert"></div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid p-2 m-2">
+        <div class="p-2 bg-white soft-shadow container-form-attendance">
+            <div class="container-fluid p-2">
+                <h5>Tabla de Permisos</h5>
+                <p class="m-0">Tabla con los registros de todos los permisos.</p>
+                <p class="fw-bold m-0">Solo se permite modificar el ultimo permiso.</p>
+            </div>
+            <div class="container-fluid p-2 table-responsive" id="container-table-incidencia">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Permiso</th>
+                            <th>Nombre</th>
+                            <th class="text-nowrap px-5">Motivo</th>
+                            <th class="text-nowrap px-5">Explicación</th>
+                            <th>Fecha Permiso</th>
+                            <th>Inicio del Permiso</th>
+                            <th>Fin del Permiso</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-row">
+                        <!-- Aquí se insertarán las filas de datos -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="form-container d-flex flex-column">
+    <div class="container-fluid d-flex justify-content-between p-2">
+        <div>
+            <button class="btn-base button_3" id="btnClosePanel"><i class="bi bi-arrow-bar-left"></i></button>
+        </div>
+        <div class="buttons-container">
+            <button class="btn-base button_3" id="btnPlus"><i class="bi bi-plus"></i></button>
+            <button class="btn-base button_3" id="btnMinus"><i class="bi bi-dash"></i></button>
+        </div>
+    </div>
+    <div class="container-fluid py-3">
+        <h5 id="panelTitle"></h5>
+        <p class="m-0" id="panelSubtitle"></p>
+    </div>
+    <div class="container-fluid py-3 flex-grow-1 overflow-auto">
+        <div class="container-fluid table-responsive p-0" id="panel-container"></div>
+    </div>
+</div>
