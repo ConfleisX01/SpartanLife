@@ -5,9 +5,11 @@ import * as cng from './config.js'
 import * as cmp from './components.js'
 
 let html
-const data = await getAllData()
+let data = []
 
 export async function loadVacationsModule(content) {
+    data = await getAllData();
+    
     applyContentOnModule(content)
 
     loadEmployeesTable(data)
