@@ -2,6 +2,10 @@
 // importamos lo que necesitamos
 import { makePeticion } from './APIHelpers.js';
 
+import { URL_BASE } from './config.js';
+import * as APIhlp from './APIHelpers.js';
+
+
 // Funcion para cargar un modulo, usar para la creacion y uso de los modulos
 export function loadModule(content) {
     document.getElementById('container-body').innerHTML = ""
@@ -24,12 +28,38 @@ export async function verifyUser(userData) {
     }
 }
 
-export function addUser(user) {
-    users.push(user)
+export async function addUser(url, param, object) {
+    const formData = new URLSearchParams()
+    formData.append(param, JSON.stringify(object))
+
+    const requestOptions = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: formData
+    }
+
+    try {
+        const response = await fetch(url, requestOptions)
+
+        const jsonResponse = await response.json()
+
+        return jsonResponse
+    } catch (error) {
+        alert("Error al guardar los datos, intentelo nuevamente")
+    }
 }
 
 export function viewUsers() {
-    console.log(users)
+    getAllUsusario()
+}
+
+async function getAllUsusario(){
+     const URL = URL_BASE + '/usuario/traerUsuario';
+    const usuarios = await APIhlp.getAllData(URL);
+    console.log(usuarios)
+    return usuarios;
 }
 
 // Datos falsos

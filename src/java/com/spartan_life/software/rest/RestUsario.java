@@ -13,6 +13,7 @@ import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import java.sql.SQLException;
+import java.util.List;
 
 @Path("usuario")
 public class RestUsario {
@@ -68,17 +69,15 @@ public class RestUsario {
         return Response.status(Response.Status.OK).entity(out).build();
     }
 
-    @Path("traerUusuario")
+    @Path("traerUsuario")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response traerUusuario(@QueryParam("nombre") String nombre) throws SQLException {
-
+    public Response traerUsuario(@QueryParam("nombre") String nombre) throws SQLException {
         ControllerUsuario cu = new ControllerUsuario();
-        Usuario u = cu.traerUsuario(nombre);
+        List<Usuario> usuarios = cu.traerUsuario();
         Gson gson = new Gson();
 
-        String out = "";
-        out = gson.toJson(u);
+        String out = gson.toJson(usuarios);
         System.out.println("Hola desde Login : " + out);
 
         return Response.status(Response.Status.OK).entity(out).build();

@@ -11,6 +11,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 import javax.lang.model.util.Types;
 
 public class ControllerUsuario {
@@ -36,7 +38,7 @@ public class ControllerUsuario {
     }
 
     public Usuario insertarUsuario(Usuario u) {
-        String query = "CALL insertarUsuario(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String query = "CALL insertarUsuario(?, ?, ?, ?)";
 
         try {
             ConexionMysql conexionMysql = new ConexionMysql();
@@ -46,27 +48,17 @@ public class ControllerUsuario {
             // encriptar la contraseña del usuario con SHA-256
             String contraseniaEncriptada = calcularHashSHA256(u.getContrasenia());
 
-//datos que se usaran
-            Persona persona = u.getPersona();
 
             // datos de entrada
             csmt.setString(1, u.getNombreUsuario());
             csmt.setString(2, contraseniaEncriptada);
             csmt.setString(3, u.getRol());
-            csmt.setString(4, persona.getNombre());
-            csmt.setString(5, persona.getApellidoPaterno());
-            csmt.setString(6, persona.getApellidoMaterno());
-            csmt.setString(7, persona.getFechaNacimiento());
-            csmt.setString(8, persona.getRfc());
-            csmt.setString(9, persona.getCurp());
-            csmt.setString(10, persona.getNss());
-
             //salida
-            csmt.registerOutParameter(11, java.sql.Types.INTEGER);
+            csmt.registerOutParameter(4, java.sql.Types.INTEGER);
 
             csmt.execute();
             // resultado de la peticion
-            int resultado = csmt.getInt(11);
+            int resultado = csmt.getInt(4);
 
             if (resultado == -1) {
                 System.out.println("Error: El usuario ya existe.");
@@ -160,34 +152,45 @@ public class ControllerUsuario {
 
    
     }
+    
+    
+    private Usuario fill(ResultSet rs) throws SQLException {
+        Usuario usuario = new Usuario();
 
-    public Usuario traerUsuario(String nombreUsuario) throws SQLException {
-        try {
-              ConexionMysql conexionMysql = new ConexionMysql();
+        // Datos de la persona
+        usuario.setIdUusario(rs.getInt("id_usuario"));
+        usuario.setNombreUsuario(rs.getString("nombre_usuario"));
+        usuario.setContrasenia(rs.getString("contrasenia"));
+        usuario.setRol(rs.getString("rol"));
+
+
+
+        return usuario;
+    }
+
+    public List<Usuario> traerUsuario() throws SQLException {
+        String callGet = "SELECT * FROM usuario;";
+        
+        List<Usuario> usuarios = new ArrayList<>();
+        
+        try{
+        ConexionMysql conexionMysql = new ConexionMysql();
         Connection conn = conexionMysql.open();
-        Usuario u = new Usuario();
-        String query = "SELECT * FROM usuario WHERE nombre_usuario = ?";
-
-        PreparedStatement pstmt = conn.prepareStatement(query);
-
-        pstmt.setString(1, nombreUsuario);
-
-        ResultSet rs = pstmt.executeQuery();
-
-        if (rs.next()) {
-            u.setIdUusario(rs.getInt("id_usuario"));
-            u.setNombreUsuario(rs.getString("nombre_usuario"));
-            u.setContrasenia(rs.getString("contrasenia"));
-            u.setToken(rs.getString("token"));
-            u.setRol(rs.getString("rol"));
+        PreparedStatement pstmt = conn.prepareCall(callGet);
+        
+        ResultSet rs=   pstmt.executeQuery();
+        
+         while (rs.next()) {
+            usuarios.add(fill(rs));
         }
-       
-
-        return u;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return  null;
-        }
-      
+        
+        rs.close();
+        pstmt.close();
+        conn.close();
+    } catch (Exception ex) {
+        ex.printStackTrace();
+    }
+    
+    return usuarios;
     }
 }

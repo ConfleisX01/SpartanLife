@@ -20,6 +20,8 @@ import * as inc from './incidencia.js'
 import * as entConfig from './enterprise.js'
 //Objeto para debugear
 import * as Dbg from './Debug.js'
+// solo se ocupa en la creacion
+import { URL_BASE } from './config.js';
 
 async function loadIndexControls() {
     let btnLogin = document.getElementById('btnLogin')
@@ -39,13 +41,12 @@ async function loadSesionControls() {
     let lbUser = document.getElementById('txtUser');
     let lbPassword = document.getElementById('txtPassword');
     let chRemeberUser = document.getElementById('rememberUser');
-    let lbUserName = document.getElementById('txtNames');
-    let lbUserLastName = document.getElementById('txtLastNames');
+    let txtRol = document.getElementById('txtRol');
     let lbUserCreate = document.getElementById('txtUserCreate');
     let lbPasswordCreate = document.getElementById('txtPasswordCreate');
 
     const loginElements = [lbUser, lbPassword];
-    const signinElements = [lbUserName, lbUserLastName, lbUserCreate, lbPasswordCreate];
+    const signinElements = [txtRol , lbUserCreate, lbPasswordCreate];
 
     btnCreateAccount.addEventListener('click', () => {
         switchAccountMode(0);
@@ -73,8 +74,9 @@ async function loadSesionControls() {
 
     btnCreate.addEventListener('click', () => {
         if (hlp.verifyInputs(signinElements)) {
-            let user = { "Name": lbUserName.value, "LastName": lbUserLastName.value, "User": lbUserCreate.value, "Password": lbPasswordCreate.value, "Rol": "USER" };
-            Dbg.addUser(user);
+            let user = { "rol": txtRol.value, "nombreUsuario": lbUserCreate.value, "contrasenia": lbPasswordCreate.value };
+            const URL = URL_BASE + '/usuario/insertarUsuario';
+            Dbg.addUser(URL, "usuario" ,user);
             msg.successMessage("Usuario Creado", "Se ha creado el usuario con éxito");
             Dbg.viewUsers();
         } else {
@@ -82,6 +84,8 @@ async function loadSesionControls() {
         }
     });
 }
+
+
 
 
 function switchAccountMode(position) {
@@ -99,7 +103,6 @@ function switchAccountMode(position) {
 
 // Funcion para cargar el DashBoard
 function loadDashboad(user) {
-    console.log("hola ")
 
     if (user.rol == 'ADMIN') {
         console.log("jola ")
@@ -199,6 +202,6 @@ function loadControls() {
 }
 
 // Funcion principal para cargar los controladores del sistema
-//loadIndexControls()
+loadIndexControls()
 // TODO: Funcion de prueba, eliminar cuando se termine de probar el apartado del dashboard
-loadAdminDashboard()
+//loadAdminDashboard()
