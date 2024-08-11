@@ -72,6 +72,62 @@ export function showFrame(url) {
     })
 }
 
+export async function showForm(employeeList) {
+    const optionsHtml = employeeList.map(employee => {
+        const fullName = `${employee.persona.nombre} ${employee.persona.apellidoPaterno} ${employee.persona.apellidoMaterno}`;
+        return `<option value="${fullName}">${fullName}</option>`;
+    }).join('');
+
+    const result = await Swal.fire({
+        title: 'Actualizar Solicitud',
+        html: `
+        <div class="container-fluid row">
+            <div class="col-md-6">
+                <label class="form-label text-start" for="status">Estado:</label>
+                <div id="status">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="status" id="statusAprobada" value="aprobado">
+                        <label class="form-check-label" for="statusAprobada">Aprobada</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="status" id="statusDenegada" value="denegado">
+                        <label class="form-check-label" for="statusDenegada">Denegada</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label text-start" for="employeeList">Nombre del aprobador:</label>
+                <select class="form-select" id="employeeList">
+                    ${optionsHtml}
+                </select>
+            </div>
+        </div>`,
+        width: 800,
+        showCloseButton: true,
+        showConfirmButton: true,
+        preConfirm: () => {
+            const status = document.querySelector('input[name="status"]:checked');
+
+            if (!status) {
+                Swal.showValidationMessage('Por favor selecciona un estado');
+                return;
+            }
+
+            const employee = document.getElementById('employeeList').value;
+
+            return {
+                estado: status.value,
+                aprobador: employee
+            };
+        }
+    });
+
+    if (result.isConfirmed) {
+        return result.value;
+    }
+    return null;
+}
+
 export function inputMessage() {
     return Swal.fire({
         title: 'Ingresa la URL de la API (FUNCION DE DESARROLLADOR)',

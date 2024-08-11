@@ -67,9 +67,14 @@ public class RestVacaciones {
             SolicitudVacaciones local = cv.actualizarSolicitud(solicitud);
 
             if (local != null) {
-
+                out = """
+                      {"response": "OK"}
+                      """;
+            } else {
+                out = """
+                      {"response": "ERROR"}
+                      """;
             }
-
         } catch (Exception ex) {
             ex.printStackTrace();
             out = """
@@ -82,7 +87,9 @@ public class RestVacaciones {
     @Path("modificarSolicitud")
     @Produces(MediaType.APPLICATION_JSON)
     @POST
-    public Response modificarSolicitud(@FormParam("vacacion") @DefaultValue("") String sv) {
+    public Response modificarSolicitud(@FormParam("vacacion")
+            @DefaultValue("") String sv
+    ) {
         String out = "";
 
         ControllerVacacion cv = new ControllerVacacion();
@@ -142,7 +149,9 @@ public class RestVacaciones {
     @Path("actualizarLimiteVacaciones")
     @Produces(MediaType.APPLICATION_JSON)
     @POST
-    public Response updateVacationsLimit(@FormParam("empleado") @DefaultValue("") String emp) {
+    public Response updateVacationsLimit(@FormParam("empleado")
+            @DefaultValue("") String emp
+    ) {
         String out = "";
         ControllerVacacion cv = new ControllerVacacion();
         Gson gson = new Gson();
@@ -173,7 +182,9 @@ public class RestVacaciones {
     @Path("actualizarCantidadVacaciones")
     @Produces(MediaType.APPLICATION_JSON)
     @POST
-    public Response updateRemaningVacations(@FormParam("empleado") @DefaultValue("") String emp) {
+    public Response updateRemaningVacations(@FormParam("empleado")
+            @DefaultValue("") String emp
+    ) {
         String out = "";
         ControllerVacacion cv = new ControllerVacacion();
         Gson gson = new Gson();

@@ -110,7 +110,10 @@ function targetEmployeeData(idEmployee, vacationsData, employeeData) {
 
         vacationsData.forEach((vacation, index) => {
             const item = createVacationItem(vacation)
-            item.onclick = () => loadVacationInfo(vacation)
+            item.onclick = () => {
+                updateRequest(vacation)
+                loadVacationInfo(vacation)
+            }
             container.appendChild(item)
         })
     }
@@ -164,7 +167,7 @@ function changeDataFormInfo(employeeData, vacationsData) {
     if (request.length <= 0) {
         lastRequest.textContent = `No hay solicitudes`
     } else {
-        lastRequest.textContent = `${request[request.length - 1].fechaSolicitud} (Hace ${getDays(request[request.length - 1].fechaSolicitud, todayDate)} dias)`
+        lastRequest.textContent = `${request[request.length - 1].fechaSolicitud} (Hace ${getDays(request[0].fechaSolicitud, todayDate)} dias)`
     }
 
     function filterEmployeeVacations() {
@@ -185,10 +188,10 @@ function createVacationItem(data) {
 
     const spanInfo = document.createElement('span')
     spanInfo.classList.add('text-dark', 'mx-1')
-    spanInfo.textContent = `${data.fechaInicio} - ${data.fechaFin} (${getDays(data.fechaInicio, data.fechaFin)} dias)`
+    spanInfo.textContent = `${data.fechaInicio} - ${data.fechaFin} (${getDays(data.fechaInicio, data.fechaFin)} dias solicitados)`
 
     const spanStatus = document.createElement('span')
-    if (data.estatus == 'aprobada') {
+    if (data.estatus == 'aprobado') {
         spanStatus.textContent = 'Aprobada'
         spanStatus.classList.add('badge', 'text-bg-success')
     } else if (data.estatus == 'pendiente') {
@@ -205,6 +208,25 @@ function createVacationItem(data) {
     item.appendChild(firstRow)
 
     return item
+}
+
+async function updateRequest(vacationData) {
+    const URL = cng.URL_BASE + '/vacacion/actualizarEstatus'
+    const btnUpdateRequest = document.querySelector('#btnUpdateRequest')
+
+    btnUpdateRequest.onclick = async function () {
+        const response = await msg.showForm(data[0])
+        const object = { idVacaciones: vacationData.idVacaciones, estatus: response.estado, nombreAprobador: response.aprobador }
+
+        let apiResponse = await APIhlp.saveObjectApiData(URL, 'vacacion', object)
+        if (apiResponse.response == 'OK') {
+            msg.successMessage("Solicitud actualizada.")
+            //updateRequestOnEmployee(object.idVacaciones, object)
+        } else {
+            const serverMessage = hlp.handlerApiResponse(apiResponse, 'Error al actualizar la solicitud', 'Ocurrió un error. Por favor, vuelve a intentarlo más tarde.')
+            msg.errorMessage('Error al procesar la solicitud', serverMessage)
+        }
+    }
 }
 
 async function updateDaysLeft(idEmployee, employeeData) {
@@ -226,8 +248,8 @@ async function updateDaysLeft(idEmployee, employeeData) {
             if (parseFloat(data.vacacionesRestantes, 10) <= VACATIONS_LIMIT) {
                 const employeeObj = { idEmpleado: idEmployee, vacacionesRestantes: data.vacacionesRestantes }
                 const apiResponse = await APIhlp.saveObjectApiData(URL, 'empleado', employeeObj)
-            
-                if (apiResponse.response === 'OK') {
+
+                if (apiResponse.response == 'OK') {
                     msg.successMessage('La cantidad se actualizó correctamente.')
                     updateVacationsLeftOnEmployee(idEmployee, data.vacacionesRestantes)
                 } else {
@@ -255,8 +277,8 @@ async function updateDaysLimit(idEmployee) {
         } else {
             const employeeObj = { idEmpleado: idEmployee, limiteVacaciones: parseInt(data.limiteVacaciones, 10) }
             const apiResponse = await APIhlp.saveObjectApiData(URL, 'empleado', employeeObj)
-        
-            if (apiResponse.response === 'OK') {
+
+            if (apiResponse.response == 'OK') {
                 msg.successMessage('El límite se actualizó correctamente.')
                 updateVacationsLimitOnEmployee(idEmployee, data.limiteVacaciones)
             } else {
@@ -294,6 +316,7 @@ async function createNewVacationRequest(idEmpleado, employeeData) {
                 const apiResponse = await APIhlp.saveObjectApiData(URL, 'vacacion', newRequest)
                 if (apiResponse.response === 'OK') {
                     msg.successMessage('La solicitud se ha creado con éxito.')
+                    updateVacationsLeftOnEmployee(idEmpleado, VACATIONS_LEFT - newRequest.diasSolicitados)
                 } else {
                     const serverMessage = hlp.handlerApiResponse(apiResponse, 'Error al crear la solicitud', 'Ocurrió un error. Por favor, vuelve a intentarlo más tarde.')
                     msg.errorMessage('Error al procesar la solicitud', serverMessage)
@@ -573,6 +596,35 @@ function updateVacationsLimitOnEmployee(idEmployee, newVacationsLimit) {
             employee.limiteVacaciones = parseInt(newVacationsLimit, 10)
             loadEmployeesTable(data)
             changeEmployeeVacationsInfo(employee)
+        }
+    })
+}
+
+function updateRequestOnEmployee(idVacation, newInfo) {
+    const vacationData = data
+
+    vacationData[1].forEach(request => {
+        if (request.idVacaciones == idVacation) {
+            request.estatus = newInfo.estatus
+            request.nombreAprobador = newInfo.nombreAprobador
+
+            const employee = vacationData[0].filter(employee => {
+                return employee.idEmpleado == request.empleado.idEmpleado
+            })[0]; // Agregamos [0] para obtener el primer (y único) resultado del filter
+
+            let daysLeft = employee.vacacionesRestantes
+
+            if (request.estatus == 'aprobado') {
+                daysLeft -= request.diasSolicitados
+            }
+
+            if (request.estatus == 'denegado') {
+                daysLeft += request.diasSolicitados
+            }
+
+            loadEmployeesTable(data)
+            targetEmployeeData(request.empleado.idEmpleado, vacationData[1], employee)
+            updateVacationsLeftOnEmployee(employee.idEmpleado, daysLeft)
         }
     })
 }
