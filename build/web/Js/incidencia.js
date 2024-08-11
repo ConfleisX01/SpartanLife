@@ -186,7 +186,7 @@ async function saveIncidencia(employeeSelected) {
         return;
     }
     
-    const URL = URL_BASE + '/incidencia/insertIncidencia';
+        const URL = URL_BASE + '/incidencia/insertIncidencia';
     const data = await hlp.getInputValues(dataInputs());
     
     try {
@@ -267,11 +267,11 @@ async function getAllData() {
 
 function dataInputs() {
     const inputs = [
-        { selector: '#txtWeekStart', key: 'weekStart', name: "Inicio de Semana" },
-        { selector: '#txtWeekEnd', key: 'weekEnd', name: "Fin de Semana" },
-        { selector: '#txtSeverity', key: 'severity', name: "Gravedad de la incidencia" },
-        { selector: '#txtReason', key: 'reason', name: "Motivo de la incidencia" },
-        { selector: '#txtSanction', key: 'sanction', name: "Sanción" }
+        { selector: '#txtWeekStart', key: 'weekStart', name: "Inicio de Semana", required: true },
+        { selector: '#txtWeekEnd', key: 'weekEnd', name: "Fin de Semana", required: true},
+        { selector: '#txtSeverity', key: 'severity', name: "Gravedad de la incidencia", required: true },
+        { selector: '#txtReason', key: 'reason', name: "Motivo de la incidencia", required: true },
+        { selector: '#txtSanction', key: 'sanction', name: "Sanción", required: true }
     ];
 
     return inputs;
