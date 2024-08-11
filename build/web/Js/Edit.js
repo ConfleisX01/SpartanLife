@@ -15,7 +15,7 @@ export async function loadModule(content) {
     const jobs = await APIhlp.getAllData(JOB_URL)
     const data = await APIhlp.getAllData(URL)
     applyContentOnModule(content)
-
+    
     loadControls(branchs, jobs)
     loadTable(data, branchs, jobs)
 
@@ -257,7 +257,7 @@ function loadControlsForm(employee = null) {
 
     //btnBack.removeEventListener('click', closeForm)
     //btnBack.addEventListener('click', closeForm)
-    btnBack.onclick = () => closeForm
+    btnBack.onclick = () => closeForm()
 
     if (btnUpdate != null) {
         //btnUpdate.removeEventListener('click', () => updateEmployee(employee))
@@ -428,7 +428,6 @@ function createEmployeeJsonToUpdate(data, idPerson, idEmployee) {
 
 function objectToFillForm(data) {
     const newObject = {
-        idEmpleado: data.idEmpleado,
         foto: data.foto,
         documentoIne: data.documento.documentoIne,
         documentoDomicilio: data.documento.documentoDomicilio,
@@ -452,23 +451,22 @@ function objectToFillForm(data) {
 
 function getAllInputs() {
     const inputs = [
-        { selector: '#txtIdEmployee', key: 'idEmpleado', name: "ID" },
-        { selector: '#txtFileConvertedPhoto', key: 'foto', name: "Foto" },
-        { selector: '#txtFileConvertedIne', key: 'documentoIne', name: "Documento INE" },
-        { selector: '#txtFileConvertedHouse', key: 'documentoDomicilio', name: "Comprobante de Domicilio" },
-        { selector: '#txtFileConvertedCurp', key: 'documentoCurp', name: "Documento CURP" },
-        { selector: '#txtFileConvertedWork', key: 'documentoContrato', name: "Contrato Laboral" },
-        { selector: '#txtName', key: 'nombre', name: "Nombre" },
-        { selector: '#txtFirstLastName', key: 'apellidoPaterno', name: "Apellido Paterno" },
-        { selector: '#txtSecondLastName', key: 'apellidoMaterno', name: "Apellido Materno" },
-        { selector: '#txtBornDate', key: 'fechaNacimiento', name: "Fecha de nacimiento" },
-        { selector: '#txtJob', key: 'puesto', name: "Puesto" },
-        { selector: '#txtRFC', key: 'rfc', name: "RFC" },
-        { selector: '#txtCURP', key: 'curp', name: "CURP" },
-        { selector: '#txtNSS', key: 'nss', name: "NSS" },
-        { selector: '#txtBranch', key: 'sucursal', name: "Sucursal" },
-        { selector: '#txtRegisterDate', key: 'antiguedad', name: "Fecha de registro" },
-        { selector: '#txtVacationsLimit', key: 'limiteVacaciones', name: "Limite de vacaciones" }
+        { selector: '#txtFileConvertedPhoto', key: 'foto', name: "Foto", required: true },
+        { selector: '#txtFileConvertedIne', key: 'documentoIne', name: "Documento INE", required: true },
+        { selector: '#txtFileConvertedHouse', key: 'documentoDomicilio', name: "Comprobante de Domicilio", required: true },
+        { selector: '#txtFileConvertedCurp', key: 'documentoCurp', name: "Documento CURP", required: true },
+        { selector: '#txtFileConvertedWork', key: 'documentoContrato', name: "Contrato Laboral", required: true },
+        { selector: '#txtName', key: 'nombre', name: "Nombre", required: true },
+        { selector: '#txtFirstLastName', key: 'apellidoPaterno', name: "Apellido Paterno", required: true },
+        { selector: '#txtSecondLastName', key: 'apellidoMaterno', name: "Apellido Materno", required: true },
+        { selector: '#txtBornDate', key: 'fechaNacimiento', name: "Fecha de nacimiento", required: true },
+        { selector: '#txtJob', key: 'puesto', name: "Puesto", required: true },
+        { selector: '#txtRFC', key: 'rfc', name: "RFC", required: true },
+        { selector: '#txtCURP', key: 'curp', name: "CURP", required: true },
+        { selector: '#txtNSS', key: 'nss', name: "NSS", required: true },
+        { selector: '#txtBranch', key: 'sucursal', name: "Sucursal", required: true },
+        { selector: '#txtRegisterDate', key: 'antiguedad', name: "Fecha de registro", required: true },
+        { selector: '#txtVacationsLimit', key: 'limiteVacaciones', name: "Limite de vacaciones", required: true }
     ]
     return inputs
 }

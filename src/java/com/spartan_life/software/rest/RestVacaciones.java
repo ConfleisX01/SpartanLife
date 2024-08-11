@@ -54,6 +54,31 @@ public class RestVacaciones {
         return Response.status(Response.Status.CREATED).entity(out).build();
     }
 
+    @Path("actualizarEstatus")
+    @Produces(MediaType.APPLICATION_JSON)
+    @POST
+    public Response actualizarEstatus(@FormParam("vacacion") @DefaultValue("") String sv) {
+        String out = "";
+        ControllerVacacion cv = new ControllerVacacion();
+        Gson gson = new Gson();
+
+        try {
+            SolicitudVacaciones solicitud = gson.fromJson(sv, SolicitudVacaciones.class);
+            SolicitudVacaciones local = cv.actualizarSolicitud(solicitud);
+
+            if (local != null) {
+
+            }
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            out = """
+                  {"response" : "SERVER_ERROR"}
+                  """;
+        }
+        return Response.ok(out).build();
+    }
+
     @Path("modificarSolicitud")
     @Produces(MediaType.APPLICATION_JSON)
     @POST
@@ -65,18 +90,16 @@ public class RestVacaciones {
         try {
             // se formatea el objeto en json
             SolicitudVacaciones solicitud = gson.fromJson(sv, SolicitudVacaciones.class);
-            SolicitudVacaciones local = cv.modificarSolicitud(solicitud);
+            SolicitudVacaciones sResponse = cv.modificarSolicitud(solicitud);
 
-            if (local != null) {
+            if (sResponse != null) {
                 out = """
-                 {"response" : "operacion exitosa"}
-                 """;
-                out = String.format(out, sv);
+                  {"response" : "OK"}
+                  """;
             } else {
                 out = """
-                  {"response" : "Error en la transacción"}
+                  {"response" : "ERROR"}
                   """;
-                out = String.format(out, sv);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -126,7 +149,8 @@ public class RestVacaciones {
 
         try {
             Empleado e = gson.fromJson(emp, Empleado.class);
-            Empleado eResponse = cv.updateRemainingVacations(e);
+            Empleado eResponse = cv.updateVacationsLimit(e);
+            System.out.println(e.getIdEmpleado() + " " + e.getLimiteVacaciones());
 
             if (eResponse != null) {
                 out = """

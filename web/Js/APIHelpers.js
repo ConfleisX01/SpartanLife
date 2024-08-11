@@ -14,6 +14,7 @@ export async function getAllData(url) {
             return json;
         }
     } catch (error) {
+        console.log(error)
         return error = { Type: hlp.ErrorTypes.SERVER_ERROR }
     }
 }

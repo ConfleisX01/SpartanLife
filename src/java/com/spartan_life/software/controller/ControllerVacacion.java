@@ -37,7 +37,7 @@ public class ControllerVacacion {
     }
     
     public Empleado updateRemainingVacations(Empleado e) {
-        String query = "CALL actualizarVacacionesRestantes(?, ?)";
+        String query = "CALL actualizarCantidadVacaciones(?, ?)";
         
         try {
             ConexionMysql conexionMysql = new ConexionMysql();
@@ -53,6 +53,31 @@ public class ControllerVacacion {
             conn.close();
             conexionMysql.close();
             return e;
+        } catch(Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+    
+    public SolicitudVacaciones actualizarSolicitud(SolicitudVacaciones sv) {
+        String query = "CALL actualizarSolicitudVacaciones(?, ?, ?)";
+        
+        try {
+            ConexionMysql conexionMysql = new ConexionMysql();
+            Connection conn = conexionMysql.open();
+            CallableStatement cstmt = (CallableStatement) conn.prepareCall(query);
+            
+            cstmt.setInt(1, sv.getIdVacaciones());
+            cstmt.setString(2, sv.getEstatus());
+            cstmt.setString(3, sv.getNombreAprobador());
+            
+            cstmt.execute();
+
+            cstmt.close();
+            conn.close();
+            conexionMysql.close();
+            
+            return sv;
         } catch(Exception ex) {
             ex.printStackTrace();
             return null;
@@ -118,7 +143,7 @@ public class ControllerVacacion {
 
     public List<SolicitudVacaciones> getAllVacaciones() {
         List<SolicitudVacaciones> solicitudes = new ArrayList<>();
-        String query = "SELECT * FROM view_solicitudes_empleados";
+        String query = "SELECT * FROM view_solicitudes_empleados ORDER BY id_vacaciones desc";
 
         try {
             ConexionMysql conexionMysql = new ConexionMysql();

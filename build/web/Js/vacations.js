@@ -5,13 +5,14 @@ import * as cng from './config.js'
 import * as cmp from './components.js'
 
 let html
+const data = await getAllData()
 
 export async function loadVacationsModule(content) {
-    const data = await getAllData()
-
     applyContentOnModule(content)
 
     loadEmployeesTable(data)
+
+    loadEmployeeSelect(data)
 
     verityFileInputs()
 }
@@ -20,6 +21,20 @@ function applyContentOnModule(content) {
     const moduleContainer = document.querySelector('#module-container')
 
     moduleContainer.innerHTML = content
+}
+
+function loadEmployeeSelect(data) {
+    const slcInput = document.querySelector('#txtCreadtedBy')
+    const employeesData = data[0]
+
+
+    employeesData.forEach(employee => {
+        const item = document.createElement('option')
+        const name = `${employee.persona.nombre} ${employee.persona.apellidoPaterno} ${employee.persona.apellidoMaterno}`
+        item.value = name
+        item.text = name
+        slcInput.appendChild(item)
+    })
 }
 
 function loadEmployeesTable(data) {
@@ -68,6 +83,8 @@ function targetEmployeeData(idEmployee, vacationsData, employeeData) {
     const newVacationsList = []
     const container = document.querySelector('#vacations-info_list')
     const btnCreateRequest = document.querySelector('#btnCreateRequest')
+    const btnUpdateVacationsLeft = document.querySelector('#btnUpdateVacationsLeft')
+    const btnUpdateVacationsLimit = document.querySelector('#btnUpdateVacationsLimit')
 
     if (!vacationsData.response) {
         vacationsData.map(vacation => {
@@ -79,7 +96,11 @@ function targetEmployeeData(idEmployee, vacationsData, employeeData) {
     }
 
     changeEmployeeVacationsInfo(employeeData)
+    changeDataFormInfo(employeeData, vacationsData)
+
     btnCreateRequest.onclick = () => createNewVacationRequest(idEmployee, employeeData)
+    btnUpdateVacationsLeft.onclick = () => updateDaysLeft(idEmployee, employeeData)
+    btnUpdateVacationsLimit.onclick = () => updateDaysLimit(idEmployee)
 
     updateFileButton()
     cleanForm()
@@ -87,65 +108,176 @@ function targetEmployeeData(idEmployee, vacationsData, employeeData) {
     function loadVacationsList(vacationsData) {
         container.innerHTML = ''
 
-        vacationsData.forEach(vacation => {
+        vacationsData.forEach((vacation, index) => {
             const item = createVacationItem(vacation)
+            item.onclick = () => loadVacationInfo(vacation)
             container.appendChild(item)
         })
     }
+}
 
-    function changeEmployeeVacationsInfo(data) {
-        const image = document.querySelector('.circle-vacations-info img')
-        const vacationsLeft = document.querySelector('.circle-vacations-info h2 b')
-        const vacationsLimit = document.querySelectorAll('.circle-vacations-info small')
+function loadVacationInfo(vacationData) {
+    const labels = document.querySelectorAll('.info-request-container small')
+    const btnShowSupportDocument = document.querySelector('#btnShowSupportDocument')
 
-        image.src = data.foto // Asignamos la foto
-        vacationsLeft.textContent = data.vacacionesRestantes // Asignamos las vacaciones restantes
-        vacationsLimit[1].textContent = `de ${data.limiteVacaciones} dias` // Asignamos el limite de vacaciones
+    const dateRequestLabel = labels[0].textContent = `${vacationData.fechaSolicitud}`
+    const timeRangeRequest = labels[1].textContent = `${vacationData.fechaInicio} -> ${vacationData.fechaFin} (${getDays(vacationData.fechaInicio, vacationData.fechaFin)} dias)`
+    const createdBy = labels[2].textContent = `${vacationData.nombreCreador}`
+    const checkedBy = labels[3].textContent = `${vacationData.nombreAprobador}`
+    const creatorComments = labels[4].textContent = `${vacationData.comentariosCreador}`
+    const employeeComments = labels[5].textContent = `${vacationData.comentariosEmpleado}`
+
+    if (vacationData.documentoSoporte != '') {
+        btnShowSupportDocument.onclick = () => msg.showFrame(vacationData.documentoSoporte)
+    } else {
+        btnShowSupportDocument.onclick = () => {
+            msg.questionMessage(
+                "Sin Documento",
+                "Esta solicitud no contiene un documento adicional."
+            )
+        }
+    }
+}
+
+function changeEmployeeVacationsInfo(data) {
+    const image = document.querySelector('.circle-vacations-info img')
+    const vacationsLeft = document.querySelector('.circle-vacations-info h2 b')
+    const vacationsLimit = document.querySelectorAll('.circle-vacations-info small')
+
+    image.src = data.foto // Asignamos la foto
+    vacationsLeft.textContent = data.vacacionesRestantes // Asignamos las vacaciones restantes
+    vacationsLimit[1].textContent = `de ${data.limiteVacaciones} dias` // Asignamos el limite de vacaciones
+}
+
+function changeDataFormInfo(employeeData, vacationsData) {
+    const date = employeeData.antiguedad
+    const employeeTime = getTimeInYears(date)
+    const request = filterEmployeeVacations()
+    const todayDate = getTodayDate()
+
+    const labels = document.querySelectorAll('.col-md-6 small')
+    const dateLabel = labels[0]
+    const lastRequest = labels[1]
+
+    dateLabel.textContent = `${date} (${employeeTime.years} años, ${employeeTime.months} meses)`
+
+    if (request.length <= 0) {
+        lastRequest.textContent = `No hay solicitudes`
+    } else {
+        lastRequest.textContent = `${request[request.length - 1].fechaSolicitud} (Hace ${getDays(request[request.length - 1].fechaSolicitud, todayDate)} dias)`
     }
 
-    function createVacationItem(data) {
-        const item = document.createElement('div')
-        item.classList.add('vacations-info_item', 'border-bottom', 'py-3')
+    function filterEmployeeVacations() {
+        const employeeRequests = vacationsData.filter(request =>
+            request.empleado.idEmpleado == employeeData.idEmpleado
+        )
 
-        const firstRow = document.createElement('div')
-        firstRow.classList.add('d-flex', 'justify-content-between', 'pointer')
+        return employeeRequests
+    }
+}
 
-        const spanInfo = document.createElement('span')
-        spanInfo.classList.add('text-dark', 'mx-1')
-        spanInfo.textContent = `${data.fechaInicio} - ${data.fechaFin} (${getDays(data.fechaInicio, data.fechaFin)} dias)`
+function createVacationItem(data) {
+    const item = document.createElement('div')
+    item.classList.add('vacations-info_item', 'border-bottom', 'py-3')
 
-        const spanStatus = document.createElement('span')
-        if (data.estatus == 'aprobada') {
-            spanStatus.textContent = 'Aprobada'
-            spanStatus.classList.add('badge', 'text-bg-success')
-        } else if (data.estatus == 'pendiente') {
-            spanStatus.textContent = 'Pendiente'
-            spanStatus.classList.add('badge', 'text-bg-warning')
+    const firstRow = document.createElement('div')
+    firstRow.classList.add('d-flex', 'justify-content-between', 'pointer')
+
+    const spanInfo = document.createElement('span')
+    spanInfo.classList.add('text-dark', 'mx-1')
+    spanInfo.textContent = `${data.fechaInicio} - ${data.fechaFin} (${getDays(data.fechaInicio, data.fechaFin)} dias)`
+
+    const spanStatus = document.createElement('span')
+    if (data.estatus == 'aprobada') {
+        spanStatus.textContent = 'Aprobada'
+        spanStatus.classList.add('badge', 'text-bg-success')
+    } else if (data.estatus == 'pendiente') {
+        spanStatus.textContent = 'Pendiente'
+        spanStatus.classList.add('badge', 'text-bg-warning')
+    } else {
+        spanStatus.textContent = 'Denegada'
+        spanStatus.classList.add('badge', 'text-bg-danger')
+    }
+
+    firstRow.appendChild(spanInfo)
+    firstRow.appendChild(spanStatus)
+
+    item.appendChild(firstRow)
+
+    return item
+}
+
+async function updateDaysLeft(idEmployee, employeeData) {
+    const VACATIONS_LIMIT = employeeData.limiteVacaciones
+    const VACATIONS_LEFT = employeeData.vacacionesRestantes
+    parseInt(VACATIONS_LIMIT, 10)
+    parseInt(VACATIONS_LEFT, 10)
+    const URL = cng.URL_BASE + '/vacacion/actualizarCantidadVacaciones'
+    const inputs = [{ selector: '#txtVacationsLeft', key: 'vacacionesRestantes', name: "Vacaciones Restantes", required: true }]
+    const data = await hlp.getInputValues(inputs)
+
+    let response = hlp.errorHandler(data)
+    if (response.Header) {
+        msg.errorMessage(response.Header, response.Body, response.Content ? response.Content.join(', ') : "")
+    } else {
+        if (parseInt(data.vacacionesRestantes, 10) < 0) {
+            msg.errorMessage('Cantidad no valida', 'La canttidad no debe de ser negativa', 'Ingresa otro numero')
         } else {
-            spanStatus.textContent = 'Denegada'
-            spanStatus.classList.add('badge', 'text-bg-danger')
+            if (parseFloat(data.vacacionesRestantes, 10) <= VACATIONS_LIMIT) {
+                const employeeObj = { idEmpleado: idEmployee, vacacionesRestantes: data.vacacionesRestantes }
+                const apiResponse = await APIhlp.saveObjectApiData(URL, 'empleado', employeeObj)
+            
+                if (apiResponse.response === 'OK') {
+                    msg.successMessage('La cantidad se actualizó correctamente.')
+                    updateVacationsLeftOnEmployee(idEmployee, data.vacacionesRestantes)
+                } else {
+                    const serverMessage = hlp.handlerApiResponse(apiResponse, 'Error al actualizar la cantidad', 'Ocurrió un error. Por favor, vuelve a intentarlo más tarde.')
+                    msg.errorMessage('Error al procesar la solicitud', serverMessage)
+                }
+            } else {
+                msg.errorMessage('Límite no permitido', 'La cantidad ingresada supera el límite.', 'Ingresa una cantidad menor o igual a ' + VACATIONS_LIMIT)
+            }
         }
+    }
+}
 
-        firstRow.appendChild(spanInfo)
-        firstRow.appendChild(spanStatus)
+async function updateDaysLimit(idEmployee) {
+    const inputs = [{ selector: '#txtVacationsLimit', key: 'limiteVacaciones', name: "Limite de vacaciones", required: true }]
+    const data = await hlp.getInputValues(inputs)
+    const URL = cng.URL_BASE + '/vacacion/actualizarLimiteVacaciones'
 
-        item.appendChild(firstRow)
-
-        return item
+    let response = hlp.errorHandler(data)
+    if (response.Header) {
+        msg.errorMessage(response.Header, response.Body, response.Content ? response.Content.join(', ') : "")
+    } else {
+        if (parseInt(data.limiteVacaciones, 10) < 0) {
+            msg.errorMessage('Límite no válido', 'El límite no debe ser negativo.', 'Ingresa otro número.')
+        } else {
+            const employeeObj = { idEmpleado: idEmployee, limiteVacaciones: parseInt(data.limiteVacaciones, 10) }
+            const apiResponse = await APIhlp.saveObjectApiData(URL, 'empleado', employeeObj)
+        
+            if (apiResponse.response === 'OK') {
+                msg.successMessage('El límite se actualizó correctamente.')
+                updateVacationsLimitOnEmployee(idEmployee, data.limiteVacaciones)
+            } else {
+                const serverMessage = hlp.handlerApiResponse(apiResponse, 'Error al actualizar el límite', 'Ocurrió un error. Por favor, vuelve a intentarlo más tarde.')
+                msg.errorMessage('Error al procesar la solicitud', serverMessage)
+            }
+        }
     }
 }
 
 async function createNewVacationRequest(idEmpleado, employeeData) {
     const data = await hlp.getInputValues(getAllRequestInputs())
-    const VACATIONS_LIMIT = parseInt(employeeData.limiteVacaciones, 10);
-    const VACATIONS_LEFT = parseInt(employeeData.vacacionesRestantes, 10);
+    const VACATIONS_LIMIT = employeeData.limiteVacaciones
+    const VACATIONS_LEFT = employeeData.vacacionesRestantes
+    parseInt(VACATIONS_LIMIT, 10)
+    parseInt(VACATIONS_LEFT, 10)
     const URL = cng.URL_BASE + '/vacacion/insertSolicitud'
 
     let response = hlp.errorHandler(data)
 
     const diasSolicitados = getDays(response.fechaInicio, response.fechaFin)
-
-    console.log(`${diasSolicitados} ${VACATIONS_LIMIT}`)
 
     if (response.Header) {
         msg.errorMessage(response.Header, response.Body, response.Content ? response.Content.join(', ') : "")
@@ -156,15 +288,15 @@ async function createNewVacationRequest(idEmpleado, employeeData) {
                     'Límite Excedido',
                     'Los días solicitados superan el límite permitido o las vacaciones disponibles.',
                     'Por favor, selecciona otras fechas.'
-                )
+                );
             } else {
                 const newRequest = createJsonRequest(response, idEmpleado)
-                let apiResponse = await APIhlp.saveObjectApiData(URL, 'vacacion', newRequest)
-                if (apiResponse.response == 'OK') {
+                const apiResponse = await APIhlp.saveObjectApiData(URL, 'vacacion', newRequest)
+                if (apiResponse.response === 'OK') {
                     msg.successMessage('La solicitud se ha creado con éxito.')
                 } else {
                     const serverMessage = hlp.handlerApiResponse(apiResponse, 'Error al crear la solicitud', 'Ocurrió un error. Por favor, vuelve a intentarlo más tarde.')
-                    msg.errorMessage('Error al procesar la soliciud', serverMessage)
+                    msg.errorMessage('Error al procesar la solicitud', serverMessage)
                 }
             }
         } else {
@@ -217,7 +349,7 @@ function verityFileInputs() {
     const supportInput = document.querySelector("input[type='file']")
     const SUPPORT_ITEM_INDEX = 0
 
-    supportInput.addEventListener('change', function(event) {
+    supportInput.addEventListener('change', function (event) {
         const file = event.target.files[0]
         verifyFile(file, 'application/pdf', SUPPORT_ITEM_INDEX)
     })
@@ -354,11 +486,11 @@ async function getAllData() {
 
 function getAllRequestInputs() {
     const inputs = [
-        { selector: '#txtStartVacations', key: 'fechaInicio', name: "Fecha de inicio" },
-        { selector: '#txtEndVacations', key: 'fechaFin', name: "Fecha de fin" },
-        { selector: '#txtCreadtedBy', key: 'nombreCreador', name: "Nombre del creador de la solicitud" },
-        { selector: '#txtCommentsC', key: 'comentariosCreador', name: "Comentarios del creador" },
-        { selector: '#txtCommentsE', key: 'comentariosEmpleado', name: "Comentarios del empleado" },
+        { selector: '#txtStartVacations', key: 'fechaInicio', name: "Fecha de inicio", required: true },
+        { selector: '#txtEndVacations', key: 'fechaFin', name: "Fecha de fin", required: true },
+        { selector: '#txtCreadtedBy', key: 'nombreCreador', name: "Nombre del creador de la solicitud", required: true },
+        { selector: '#txtCommentsC', key: 'comentariosCreador', name: "Comentarios del creador", required: true },
+        { selector: '#txtCommentsE', key: 'comentariosEmpleado', name: "Comentarios del empleado", required: true },
         { selector: '#txtFileSupportData', key: 'documentoSoporte', name: "Documento de soporte", required: false }
     ]
     return inputs
@@ -371,9 +503,10 @@ function createJsonRequest(data, idEmpleado) {
         },
         "fechaInicio": data.fechaInicio,
         "fechaFin": data.fechaFin,
+        "nombreCreador": data.nombreCreador,
         "diasSolicitados": getDays(data.fechaInicio, data.fechaFin),
-        "comentarioAprobador": data.comentariosCreador,
-        "comentarioEmpleado": data.comentariosEmpleado,
+        "comentariosCreador": data.comentariosCreador,
+        "comentariosEmpleado": data.comentariosEmpleado,
         "documentoSoporte": data.documentoSoporte ? data.documentoSoporte : ''
     }
 
@@ -397,354 +530,49 @@ function getDays(startDate, endDate) {
     return Math.round(differenceInDays + 1)
 }
 
-
-// async function loadModuleControls() {
-//     const data = await getAllData()
-//     const employees = data[0]
-//     const vacations = data[1]
-
-//     let employeeSelected = null
-//     let vacationSelected = null
-
-//     function updateEmployeeSelected(newData) {
-//         employeeSelected = newData
-//     }
-
-//     function updateVacationsPetition(newData) {
-//         vacationSelected = newData
-//     }
-
-//     loadPanelControls()
-
-//     updateAlertStatus()
-
-//     if (!vacations.response) {
-//         appendVacationsTable(vacations, updateVacationsPetition)
-//     }
-
-//     const buttonSelectEmployee = document.querySelector('#btnSelectEmployee')
-//     buttonSelectEmployee.addEventListener('click', () => selectEmployee(employees, updateEmployeeSelected))
-
-//     const buttonSave = document.querySelector('#btnSave')
-//     buttonSave.addEventListener('click', () => saveVacation(employeeSelected))
-
-//     const buttonUpdate = document.querySelector('#btnUpdate')
-//     buttonUpdate.addEventListener('click', () => updateVacation(vacationSelected))
-// }
-
-// function selectEmployee(content, updateEmployeeSelected) {
-//     setPanelContent(content, updateEmployeeSelected)
-//     modifyPanelTitles('Selección de Empleados', 'Selecciona un empleado para registrar una solicitud de vacaciones')
-//     togglePanelVisibility()
-// }
-
-// function togglePanelVisibility() {
-//     const panel = document.querySelector('.form-container')
-
-//     panel.classList.toggle('form-active')
-// }
-
-// function loadPanelControls() {
-//     const btnClosePanel = document.querySelector('#btnClosePanel')
-//     const btnExpandPanel = document.querySelector('#btnPlus')
-//     const btnRelasePanel = document.querySelector('#btnMinus')
-
-//     btnClosePanel.addEventListener('click', togglePanelVisibility)
-
-//     btnExpandPanel.addEventListener('click', () => modifyPanelWidth(100))
-
-//     btnRelasePanel.addEventListener('click', () => modifyPanelWidth(-100))
-// }
-
-// function modifyPanelWidth(value) {
-//     const rootElement = document.documentElement
-//     let panelWidth = getComputedStyle(rootElement).getPropertyValue('--panel-width').trim()
-
-//     let pixelValue = parseFloat(panelWidth)
-
-//     let newWidth = pixelValue + value
-
-//     if (newWidth < 500) {
-//         newWidth = 500
-//     } else if (newWidth > 800) {
-//         newWidth = 800
-//     }
-
-//     rootElement.style.setProperty('--panel-width', `${newWidth}px`);
-// }
-
-// function modifyPanelTitles(title, subtitle) {
-//     const panelTitle = document.querySelector('#panelTitle').textContent = title
-//     const panelSubTitle = document.querySelector('#panelSubtitle').textContent = subtitle
-// }
-
-// async function setPanelContent(content, updateEmployeeSelected) {
-//     const panelContentContainer = document.querySelector('#panel-container')
-
-//     if (panelContentContainer) {
-//         cleanPanelContentContainer()
-
-//         const table = createTable(content[0].persona, 'Tabla de empleados', 'table-employees')
-
-//         const tableBody = table.querySelector('#table-employees')
-
-//         const entries = [
-//             'persona.nombre',
-//             'persona.apellidoPaterno',
-//             'persona.apellidoMaterno',
-//             'persona.fechaNacimiento',
-//             'persona.edad',
-//             'persona.rfc',
-//             'persona.curp',
-//             'persona.nss'
-//         ]
-
-//         createTableContent(content, tableBody, updateEmployeeSelected, entries)
-
-//         panelContentContainer.appendChild(table)
-
-//     } else {
-//         msg.errorMessage("Error al cargar el panel", "No se pudo cargar el contenido en el panel", "Repita la acción nuevamente")
-//     }
-// }
-
-// function cleanPanelContentContainer() {
-//     const panelContentContainer = document.querySelector('#panel-container')
-
-//     panelContentContainer.innerHTML = ''
-// }
-
-// function appendVacationsTable(data, updateVacationsPetition) {
-//     const container = document.querySelector('#container-table-vacations')
-
-//     const newHeaders = modifyVacationsJson(data[0])
-
-//     let newVacationsJson = []
-
-//     data.forEach(data => {
-//         newVacationsJson.push(modifyVacationsJson(data))
-//     })
-
-//     let table = createTable(newHeaders, 'Tabla de vacaciones', 'table-vacations')
-
-//     const tableBody = table.querySelector('#table-vacations')
-
-//     const entries = [
-//         'nombre',
-//         'fechaSolicitud',
-//         'fechaInicio',
-//         'fechaFin',
-//         'estatus'
-//     ]
-
-//     createTableContent(newVacationsJson, tableBody, null, entries, updateVacationsPetition)
-
-//     container.appendChild(table)
-// }
-
-// function createTable(content, caption, id) {
-//     let table
-
-//     let headers = getObjetProperties(content)
-//     let [, ...restHeaders] = headers
-
-//     table = cmp.createTable({
-//         Caption: caption,
-//         Headers: restHeaders,
-//         Id: id
-//     })
-
-//     return table
-// }
-
-// function createTableContent(content, container, updateEmployeeSelected, properties = [], updateVacationsPetition) {
-//     content.forEach(item => {
-//         let row = document.createElement('tr')
-
-//         properties.forEach(property => {
-//             let cell = document.createElement('td')
-
-//             let value = property.split('.').reduce((obj, key) => obj && obj[key] !== undefined ? obj[key] : '', item)
-
-//             cell.textContent = value
-
-//             row.appendChild(cell)
-//         });
-
-//         row.addEventListener('click', () => {
-//             if (updateEmployeeSelected != null) {
-//                 updateEmployeeSelected(item)
-//                 if (item.persona) {
-//                     updateAlertStatus(`${item.persona.nombre} ${item.persona.apellidoPaterno} ${item.persona.apellidoMaterno} (Creando nueva solicitud)`)
-//                 }
-//             } else if (updateVacationsPetition != null) {
-//                 updateVacationsPetition(item)
-//                 updateAlertStatus(`${item.nombre} (Modificando solicitud existente)`)
-//                 setFormValues(item)
-//             }
-//         })
-
-//         container.appendChild(row)
-//     });
-// }
-
-// function getObjetProperties(object) {
-//     return reformatParameters(Object.keys(object))
-// }
-
-// function reformatParameters(parameters) {
-//     return parameters.map(parameter => {
-//         let words = parameter.split(/(?=[A-Z])/)
-
-//         let upperCaseWords = words.map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-
-//         return upperCaseWords.join(' ')
-//     })
-// }
-
-// function updateAlertStatus(data) {
-//     const alert = document.querySelector('#selectionAlert')
-
-//     if (data == null) {
-//         alert.classList.add('alert-warning')
-//         alert.classList.remove('alert-success')
-//         alert.textContent = 'Ningún empleado seleccionado.'
-//     } else {
-//         alert.textContent = `Empleado seleccionado: ${data}`
-//         alert.classList.remove('alert-warning')
-//         alert.classList.add('alert-success')
-//     }
-// }
-
-// async function saveVacation(employeeSelected) {
-//     const URL = URL_BASE + '/vacacion/insertSolicitud'
-//     const data = await hlp.getInputValues(dataInputs())
-
-//     let response = hlp.errorHandler(data)
-
-//     if (employeeSelected != null) {
-//         if (response.Header) {
-//             msg.errorMessage(response.Header, response.Body, response.Content ? response.Content.join(', ') : "")
-//         } else {
-//             let newVacations = createVacationsJson(response, employeeSelected.idEmpleado, "Pendiente")
-
-//             let apiResponse = await APIhlp.saveObjectApiData(URL, 'vacacion', newVacations)
-
-//             if (apiResponse.response) {
-//                 loadVacationsModule(html)
-//                 msg.successMessage("Solicitud Creada", "La solicitud de vacaciones se creo con exito")
-//             } else {
-//                 msg.errorMessage("Error", "Hubo un error al crear la solicitud", "Por favor, vuelve a intentarlo.")
-//             }
-//         }
-//     } else {
-//         msg.errorMessage("Ningún empleado seleccionado", "Por favor, selecciona un empleado.", "Presiona el botón 'Seleccionar Empleado'.");
-//     }
-// }
-
-// async function updateVacation(vacationSelected) {
-//     const URL = URL_BASE + '/vacacion/modificarSolicitud'
-//     const data = await hlp.getInputValues(dataInputs())
-
-//     let response = hlp.errorHandler(data)
-
-//     if (response.Header) {
-//         msg.errorMessage(response.Header, response.Body, response.Content ? response.Content.join(', ') : "")
-//     } else {
-//         let newVacations = createVacationUpdateJson(response, vacationSelected.idVacaciones, "Aceptada")
-
-//         let apiResponse = await APIhlp.saveObjectApiData(URL, 'vacacion', newVacations)
-
-//         if (apiResponse.response) {
-//             loadVacationsModule(html)
-//             msg.successMessage("Solicitud Actualizada", "La solicitud de vacaciones se actualizó con éxito")
-//         } else {
-//             msg.errorMessage("Error", "Hubo un error al actualizar la solicitud", "Por favor, vuelve a intentarlo.")
-//         }
-//     }
-// }
-
-// function modifyVacationsJson(json) {
-//     let newJson = {
-//         "idVacaciones": json.idVacaciones,
-//         "nombre": json.empleado.persona.nombre,
-//         "fechaSolicitud": json.fechaSolicitud,
-//         "fechaInicio": json.fechaInicio,
-//         "fechaFin": json.fechaFin,
-//         "estatus": json.estatus
-//     }
-
-//     return newJson
-// }
-
-// async function getAllEmployees() {
-//     const URL = URL_BASE + '/empleado/getAll'
-
-//     const employees = await APIhlp.getAllData(URL)
-
-//     return employees
-// }
-
-// async function getAllVacations() {
-//     const URL = URL_BASE + '/vacacion/getAllSolicitudes'
-//     const response = await APIhlp.getAllData(URL)
-
-//     return response
-// }
-
-// // * Esta funcion obtiene todos los valores o datos desde un inicio para ahorrar recursos al cargar los componentes
-// async function getAllData() {
-//     const data = []
-//     const employees = await getAllEmployees()
-//     const vacations = await getAllVacations()
-
-//     data.push(employees)
-//     data.push(vacations)
-
-//     return data
-// }
-
-// function dataInputs() {
-//     const inputs = [
-//         { selector: '#txtWeekStart', key: 'weekStart', name: "Inicio de Semana" },
-//         { selector: '#txtWeekEnd', key: 'weekEnd', name: "Fin de Semana" }
-//     ]
-
-//     return inputs
-// }
-
-// function createVacationsJson(data, employeeSelected, status) {
-//     const object = {
-//         empleado: {
-//             "idEmpleado": employeeSelected
-//         },
-//         "fechaInicio": data.weekStart,
-//         "fechaFin": data.weekEnd,
-//         "estatus": status
-//     }
-
-//     return object
-// }
-
-// function createVacationUpdateJson(data, vacationSelected, status) {
-//     const object = {
-//         "idVacaciones": vacationSelected,
-//         "fechaInicio": data.weekStart,
-//         "fechaFin": data.weekEnd,
-//         "estatus": status
-//     }
-
-//     return object
-// }
-
-// function setFormValues(data) {
-//     const dataToForm = [data.fechaInicio, data.fechaFin]
-
-//     const inputs = dataInputs()
-
-//     inputs.map((input, index) => {
-//         let inputSelected = document.querySelector(input.selector)
-
-//         inputSelected.value = dataToForm[index]
-//     })
-// }
+function getTimeInYears(inputDate) {
+    const nodawaysDate = new Date()
+
+    const startDate = new Date(inputDate)
+
+    let years = nodawaysDate.getFullYear() - startDate.getFullYear()
+    let months = nodawaysDate.getMonth() - startDate.getMonth()
+
+    if (months < 0) {
+        years--
+        months += 12
+    }
+
+    return { years, months }
+}
+
+function getTodayDate() {
+    const date = new Date()
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const day = String(date.getDate()).padStart(2, '0')
+
+    return `${year}-${month}-${day}`
+}
+
+function updateVacationsLeftOnEmployee(idEmployee, newVacationsLeft) {
+    const employeeData = data
+    employeeData[0].forEach(employee => {
+        if (employee.idEmpleado == idEmployee) {
+            employee.vacacionesRestantes = parseInt(newVacationsLeft, 10)
+            loadEmployeesTable(data)
+            changeEmployeeVacationsInfo(employee)
+        }
+    })
+}
+
+function updateVacationsLimitOnEmployee(idEmployee, newVacationsLimit) {
+    const employeeData = data
+    employeeData[0].forEach(employee => {
+        if (employee.idEmpleado == idEmployee) {
+            employee.limiteVacaciones = parseInt(newVacationsLimit, 10)
+            loadEmployeesTable(data)
+            changeEmployeeVacationsInfo(employee)
+        }
+    })
+}

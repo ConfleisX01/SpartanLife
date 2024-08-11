@@ -18,7 +18,8 @@
                                             class="rounded-circle" style="width: 4rem; height: 4rem;">
                                         <div class="container-fluid text-center">
                                             <small>Vacaciones disponibles</small>
-                                            <h2 class="text-bg-primary-light"><b class="fs-1"></b><smallclass="m-0 fs-5"></small></h2>
+                                            <h2 class="text-bg-primary-light"><b class="fs-1"></b><smallclass="m-0
+                                                    fs-5"></small></h2>
                                             <small>Nada Seleccionado</small>
                                         </div>
                                     </div>
@@ -69,8 +70,8 @@
                             </div>
                             <div class="col-md-12 py-2">
                                 <label for="txtCreadtedBy" class="form-label">Creada por</label>
-                                <input type="text" name="txtCreadtedBy" id="txtCreadtedBy" class="form-control"
-                                    placeholder="Nombre del creador de la solicitud">
+                                <select class="form-select" aria-label="Default select example" id="txtCreadtedBy">
+                                </select>
                             </div>
                             <div class="col-md-6 py-2">
                                 <label class="form-label mx-2" for="txtCommentsC">Comentarios del administrador</label>
@@ -121,16 +122,16 @@
                         <p class="m-0">Actualizar limite de vacaciones</p>
                         <div class="input-group input-group-sm">
                             <span class="input-group-text">Nuevo limite</span>
-                            <input type="text" name="" id="" class="form-control" placeholder="Ingresa el nuevo limite">
-                            <button class="btn-base button_update btn-outline-secondary">Actualizar limite</button>
+                            <input type="text" name="" id="txtVacationsLimit" class="form-control" placeholder="Ingresa el nuevo limite">
+                            <button class="btn-base button_update btn-outline-secondary" id="btnUpdateVacationsLimit">Actualizar limite</button>
                         </div>
                     </div>
                     <div class="container-fluid py-2">
                         <p class="m-0">Actualizar cantidad de vacaciones</p>
                         <div class="input-group input-group-sm">
                             <span class="input-group-text">Nueva cantidad</span>
-                            <input type="text" name="" id="" class="form-control" placeholder="Ingresa la cantidad">
-                            <button class="btn-base button_update btn-outline-secondary">Actualizar cantidad</button>
+                            <input type="text" name="txtVacationsLeft" id="txtVacationsLeft" class="form-control" placeholder="Ingresa la cantidad">
+                            <button class="btn-base button_update btn-outline-secondary" id="btnUpdateVacationsLeft">Actualizar cantidad</button>
                         </div>
                     </div>
                 </div>
@@ -154,7 +155,7 @@
                                 <small>22-02-2024 (Hace 5 dias)</small>
                             </div>
                         </div>
-                        <div class="row py-2">
+                        <div class="row py-2 info-request-container">
                             <div class="col-md-12">
                                 <p>Informacion de la solicitud</p>
                             </div>
@@ -184,7 +185,7 @@
                             </div>
                             <div class="col-md-12 py-2 d-flex align-items-center justify-content-between">
                                 <p class="text-dark m-0">Documento de respaldo</p>
-                                <button class="btn-base btn-outline-secondary">Ver documento</button>
+                                <button class="btn-base btn-outline-secondary" id="btnShowSupportDocument">Ver documento</button>
                             </div>
                         </div>
                     </div>
