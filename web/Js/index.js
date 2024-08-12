@@ -37,6 +37,37 @@ async function loadIndexControls() {
     })
 }
 
+async function verifyUserSession() {
+    const token = hlp.getFromLocalStorage("token")
+
+    if (token == null) {
+        loadIndex()
+    }
+
+    if (token != null) {
+        const URL = URL_BASE + '/usuario/verificarSesion?token=' + token
+        const apiResponse = await APIhlp.getAllData(URL)
+
+        console.log(apiResponse)
+
+        if (!apiResponse.response) {
+            await loadIndex()
+        }
+
+        if (apiResponse.idUsuario) {
+            console.log(apiResponse)
+            loadDashboad(apiResponse)
+        }
+    }
+}
+
+async function loadIndex() {
+    const content = await hlp.getModule("index.html")
+    hlp.applyContent(content, "container-body")
+
+    loadIndexControls()
+}
+
 async function loadSesionControls() {
     let btnCreateAccount = document.getElementById('btnCreateAccount');
     let btnLoginUser = document.getElementById('btnLoginUser');
@@ -50,7 +81,7 @@ async function loadSesionControls() {
     let lbPasswordCreate = document.getElementById('txtPasswordCreate');
 
     const loginElements = [lbUser, lbPassword];
-    const signinElements = [txtRol , lbUserCreate, lbPasswordCreate];
+    const signinElements = [txtRol, lbUserCreate, lbPasswordCreate];
 
     btnCreateAccount.addEventListener('click', () => {
         switchAccountMode(0);
@@ -66,7 +97,8 @@ async function loadSesionControls() {
             let verifiedUser = await Dbg.verifyUser(user);
             if (verifiedUser) {
                 msg.successMessage("Usuario Verificado", "Ingresando al sistema");
-                console.log(verifiedUser)
+                localStorage.removeItem('token')
+                hlp.saveToLocalStorage('token', verifiedUser.token)
                 loadDashboad(verifiedUser);
             } else {
                 msg.errorMessage("Usuario Incorrecto", "El usuario ingresado no existe", "Ingrese un usuario existente");
@@ -80,7 +112,7 @@ async function loadSesionControls() {
         if (hlp.verifyInputs(signinElements)) {
             let user = { "rol": txtRol.value, "nombreUsuario": lbUserCreate.value, "contrasenia": lbPasswordCreate.value };
             const URL = URL_BASE + '/usuario/insertarUsuario';
-            Dbg.addUser(URL, "usuario" ,user);
+            Dbg.addUser(URL, "usuario", user);
             msg.successMessage("Usuario Creado", "Se ha creado el usuario con éxito");
             Dbg.viewUsers();
             switchAccountMode(1)
@@ -89,9 +121,6 @@ async function loadSesionControls() {
         }
     });
 }
-
-
-
 
 function switchAccountMode(position) {
     let containerLogin = document.getElementById('container-login')
@@ -108,20 +137,16 @@ function switchAccountMode(position) {
 
 // Funcion para cargar el DashBoard
 function loadDashboad(user) {
-
     if (user.rol == 'ADMIN') {
-        console.log("jola ")
-        loadAdminDashboard()
+        loadAdminDashboard(user)
 
     } else if (user.rol == 'USER') {
-                console.log("adios ")
-        loadUserDashboard()
-
+        loadUserDashboard(user)
     }
 }
 
 // Funcion para loguear al usuario tipo ADMIN
-async function loadAdminDashboard() {
+async function loadAdminDashboard(userInfo) {
     const container = document.querySelector('body')
 
     const contentMenu = await hlp.getModule('Html/Dashboard/dashboard.html')
@@ -131,16 +156,20 @@ async function loadAdminDashboard() {
 
     loadControls()
 
+    document.querySelector('#lbUserName').textContent = userInfo.nombreUsuario
+    document.querySelector('#lbUserRole').textContent = userInfo.rol == 'ADMIN' ? "Administrador" : "Usuario"
+    document.querySelector('#iconUser').classList.add('bi', 'bi-person-fill-gear')
+
     // Cargamos por defecto el modulo vista de empleados
     const moduleViewEmployee = await hlp.getModule('Html/Empleado/Vista.html')
     dsh.loadUserViewTable(moduleViewEmployee)
 
-    fixDashboard()
+    fixAlertsOnDashboard()
 }
 
 // Funcion para loguear al usuario tipo USER
-async  function loadUserDashboard() {
-        const container = document.querySelector('body')
+async function loadUserDashboard(userInfo) {
+    const container = document.querySelector('body')
 
     const contentMenu = await hlp.getModule('Html/Dashboard/dashboardUser.html')
 
@@ -149,16 +178,19 @@ async  function loadUserDashboard() {
 
     loadControlsUser()
 
+    document.querySelector('#lbUserName').textContent = userInfo.nombreUsuario
+    document.querySelector('#lbUserRole').textContent = userInfo.rol == 'ADMIN' ? "Administrador" : "Usuario"
+    document.querySelector('#iconUser').classList.add('bi', 'bi-person-fill')
+
     // Cargamos por defecto el modulo vista de empleados
     const moduleViewEmployee = await hlp.getModule('Html/Empleado/Vista.html')
     dsh.loadUserViewTable(moduleViewEmployee)
 
-    fixDashboard()
-
+    fixAlertsOnDashboard()
 }
 
 // Funcion para arregar el error de las alertas en el dashboard
-function fixDashboard() {
+function fixAlertsOnDashboard() {
     const container = document.querySelector('body')
     container.classList.remove('swal2-height-auto')
 }
@@ -206,20 +238,29 @@ function loadControls() {
         vcs.loadVacationsModule(content)
     })
 
-     btnPermiso.addEventListener('click', async () => {
-         const content = await hlp.getModule('Html/Reportes/Permisos.html')
+    btnPermiso.addEventListener('click', async () => {
+        const content = await hlp.getModule('Html/Reportes/Permisos.html')
         per.loadPermisosModule(content)
-     })
-     
-     btnIncidencia.addEventListener('click', async () => {
-         const content = await hlp.getModule('Html/Reportes/Incidencias.html')
+    })
+
+    btnIncidencia.addEventListener('click', async () => {
+        const content = await hlp.getModule('Html/Reportes/Incidencias.html')
         inc.loadIncidenciasModule(content)
-     })
+    })
 
     btnEnterpriseConfiguration.addEventListener('click', async () => {
         const content = await hlp.getModule('Html/Empresa/Configuraciones.html')
         entConfig.loadEnterpriseConfigurationModule(content)
     })
+
+    btnLogout.onclick = function () {
+        closeUserSession()
+    }
+}
+
+function closeUserSession() {
+    localStorage.removeItem('token')
+    location.reload()
 }
 
 function loadControlsUser() {
@@ -245,10 +286,21 @@ function loadControlsUser() {
         dsh.loadUserViewTable(moduleViewEmployee)
     })
 
-    btnEditEmployee.addEventListener('click', async () => {
-        const content = await hlp.getModule('Html/Empleado/Editar.html')
-        emp.loadModule(content)
-    })
+    // btnEditEmployee.addEventListener('click', async () => {
+    //     const content = await hlp.getModule('Html/Empleado/Editar.html')
+    //     emp.loadModule(content)
+    // })
+
+    btnPermiso.classList.add('d-none')
+    btnEditEmployee.classList.add('d-none')
+    btnIncidencia.classList.add('d-none')
+    btnVacations.classList.add('d-none')
+    btnEnterpriseConfiguration.classList.add('d-none')
+    btnConfig.classList.add('d-none')
+
+    btnLogout.onclick = function() {
+        closeUserSession()
+    }
 
     // btnAttendance.addEventListener('click', async () => {
     //     const content = await hlp.getModule('Html/Asistencias/Registro.html')
@@ -260,29 +312,30 @@ function loadControlsUser() {
     //     bon.loadBonusModule(content)
     // })
 
-    btnVacations.addEventListener('click', async () => {
-        const content = await hlp.getModule('Html/Vacaciones/Solicitudes.html')
-        vcs.loadVacationsModule(content)
-    })
+    // btnVacations.addEventListener('click', async () => {
+    //     const content = await hlp.getModule('Html/Vacaciones/Solicitudes.html')
+    //     vcs.loadVacationsModule(content)
+    // })
 
-     btnPermiso.addEventListener('click', async () => {
-         const content = await hlp.getModule('Html/Reportes/PermisosUser.html')
-        per2.loadPermisosModule(content)
-     })
-     
-     btnIncidencia.addEventListener('click', async () => {
-         const content = await hlp.getModule('Html/Reportes/IncidenciasUser.html')
-        inc2.loadIncidenciasModule(content)
-     })
+    // btnPermiso.addEventListener('click', async () => {
+    //     const content = await hlp.getModule('Html/Reportes/PermisosUser.html')
+    //     per2.loadPermisosModule(content)
+    // })
 
-    btnEnterpriseConfiguration.addEventListener('click', async () => {
-        const content = await hlp.getModule('Html/Empresa/Configuraciones.html')
-        entConfig.loadEnterpriseConfigurationModule(content)
-    })
+    // btnIncidencia.addEventListener('click', async () => {
+    //     const content = await hlp.getModule('Html/Reportes/IncidenciasUser.html')
+    //     inc2.loadIncidenciasModule(content)
+    // })
+
+    // btnEnterpriseConfiguration.addEventListener('click', async () => {
+    //     const content = await hlp.getModule('Html/Empresa/Configuraciones.html')
+    //     entConfig.loadEnterpriseConfigurationModule(content)
+    // })
 }
 
 // Funcion principal para cargar los controladores del sistema
 //loadIndexControls()
+verifyUserSession()
 // TODO: Funcion de prueba, eliminar cuando se termine de probar el apartado del dashboard
 //loadAdminDashboard()
-loadUserDashboard()
+//loadUserDashboard()

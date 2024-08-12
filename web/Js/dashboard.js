@@ -92,6 +92,7 @@ function loadTableControls() {
 
       headers.forEach(header => {
         const cell = document.createElement('td')
+
         const fullKey = header
 
         const value = getNestedProperty(employee, fullKey)
@@ -122,7 +123,6 @@ function loadTableControls() {
 async function getAllData() {
   const URL = URL_BASE + '/empleado/getAll'
 
-  console.log(URL)
   const employees = await APIhlp.getAllData(URL)
 
   if (employees.Type) {

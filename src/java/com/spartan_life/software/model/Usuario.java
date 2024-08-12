@@ -4,7 +4,7 @@ package com.spartan_life.software.model;
 
 public class Usuario {
     
-    private int idUusario;
+    private int idUsuario;
     private Persona persona;
     private String nombreUsuario;
     private String contrasenia;
@@ -16,7 +16,7 @@ public class Usuario {
     }
 
     public Usuario(int idUusario, Persona persona, String nombreUsuario, String contrasenia, String token, String rol) {
-        this.idUusario = idUusario;
+        this.idUsuario = idUusario;
         this.persona = persona;
         this.nombreUsuario = nombreUsuario;
         this.contrasenia = contrasenia;
@@ -32,12 +32,12 @@ public class Usuario {
         this.token = token;
     }
 
-    public int getIdUusario() {
-        return idUusario;
+    public int getIdUsuario() {
+        return idUsuario;
     }
 
-    public void setIdUusario(int idUusario) {
-        this.idUusario = idUusario;
+    public void setIdUsuario(int idUsuario) {
+        this.idUsuario = idUsuario;
     }
 
     public Persona getPersona() {

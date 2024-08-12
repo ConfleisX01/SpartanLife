@@ -9,7 +9,7 @@ let data = []
 
 export async function loadVacationsModule(content) {
     data = await getAllData();
-    
+
     applyContentOnModule(content)
 
     loadEmployeesTable(data)
@@ -150,7 +150,7 @@ function changeEmployeeVacationsInfo(data) {
     const vacationsLimit = document.querySelectorAll('.circle-vacations-info small')
 
     image.src = data.foto // Asignamos la foto
-    vacationsLeft.textContent = data.vacacionesRestantes // Asignamos las vacaciones restantes
+    vacationsLeft.textContent = `${data.vacacionesRestantes} dias` // Asignamos las vacaciones restantes
     vacationsLimit[1].textContent = `de ${data.limiteVacaciones} dias` // Asignamos el limite de vacaciones
 }
 
@@ -160,24 +160,28 @@ function changeDataFormInfo(employeeData, vacationsData) {
     const request = filterEmployeeVacations()
     const todayDate = getTodayDate()
 
-    const labels = document.querySelectorAll('.col-md-6 small')
+    const labels = document.querySelectorAll('.form-small-info small')
     const dateLabel = labels[0]
     const lastRequest = labels[1]
 
     dateLabel.textContent = `${date} (${employeeTime.years} años, ${employeeTime.months} meses)`
 
-    if (request.length <= 0) {
-        lastRequest.textContent = `No hay solicitudes`
-    } else {
-        lastRequest.textContent = `${request[request.length - 1].fechaSolicitud} (Hace ${getDays(request[0].fechaSolicitud, todayDate)} dias)`
+    if (request != null) {
+        if (request.length <= 0) {
+            lastRequest.textContent = `No hay solicitudes`
+        } else {
+            lastRequest.textContent = `${request[request.length - 1].fechaSolicitud} (Hace ${getDays(request[0].fechaSolicitud, todayDate)} dias)`
+        }
     }
 
     function filterEmployeeVacations() {
-        const employeeRequests = vacationsData.filter(request =>
-            request.empleado.idEmpleado == employeeData.idEmpleado
-        )
-
-        return employeeRequests
+        if (!vacationsData.response) {
+            const employeeRequests = vacationsData.filter(request =>
+                request.empleado.idEmpleado == employeeData.idEmpleado
+            )
+            return employeeRequests
+        }
+        return null
     }
 }
 

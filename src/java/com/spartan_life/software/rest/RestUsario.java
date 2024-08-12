@@ -82,4 +82,30 @@ public class RestUsario {
 
         return Response.status(Response.Status.OK).entity(out).build();
     }
+
+    @Path("verificarSesion")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response verificarSesion(@QueryParam("token") @DefaultValue("") String token) {
+        String out = "";
+        ControllerUsuario cu = new ControllerUsuario();
+        Gson gson = new Gson();
+
+        try {
+            Usuario user = cu.verificarSessionUsuario(token);
+            if (user != null) {
+                out = gson.toJson(user);
+            } else {
+                out = """
+                      {"response" : false}
+                      """;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            out = """
+                  {"response" : "SERVER_ERROR"}
+                  """;
+        }
+        return Response.ok(out).build();
+    }
 }

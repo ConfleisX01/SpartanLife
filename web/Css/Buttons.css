@@ -1,0 +1,42 @@
+:root {
+    --button-save-bg: #007bff;
+    --button-delete-bg: #dc3545;
+    --buton-update-bg: #ffc107;
+    --button-text: #F8FAFC;
+    --button-dark-text: #1f2d3d;
+}
+
+.btn-base {
+    border: inherit;
+    padding: 0.5rem 1rem;
+    border-radius: 0.2rem;
+    font-weight: 500;
+}
+
+.button_save {
+    background-color: var(--button-save-bg);
+    color: var(--button-text);
+}
+
+.button_danger {
+    background-color: var(--buton-delete-bg);
+    color: var(--button-text);
+}
+
+.button_update {
+    background-color: var(--buton-update-bg);
+    color: var(--button-dark-text);
+}
+
+#btnExpand {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+
+#btnExpand:hover {
+    background-color: #d7d7d7;
+}

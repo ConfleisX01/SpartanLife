@@ -57,6 +57,7 @@ async function loadTable(data = null, branchs, jobs) {
     if (data != null) {
         data.forEach((employee, index) => {
             let employeeItem = document.createElement('tr')
+            employeeItem.classList.add('align-middle')
             let photo = document.createElement('th')
             let image = document.createElement('img')
             let name = document.createElement('th')
