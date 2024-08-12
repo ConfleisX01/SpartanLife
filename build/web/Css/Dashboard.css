@@ -106,10 +106,31 @@ td {
 .menu-title {
   color: var(--princial_color);
   padding: 0rem 2rem;
+  transition: all 1s ease-in-out;
+}
+
+.menu-title i {
+  transition: all 1s ease-in-out;
 }
 
 .menu-item:hover {
   background-color: var(--second_complementary);
+}
+
+.menu-item:hover > i {
+  transform: scale(1.2);
+}
+
+.menu-item_selected {
+  background-color: var(--success-green);
+}
+
+.menu-item_selected i {
+  color: var(--white-50);
+}
+
+.menu-item_selected p {
+  color: var(--white-50);
 }
 
 .menu-item i {
@@ -380,7 +401,7 @@ ul li p {
   justify-content: center;
 }
 
-.circle-vacations-info::before{
+.circle-vacations-info::before {
   position: absolute;
   content: '';
   width: 14rem;

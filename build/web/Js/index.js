@@ -48,14 +48,11 @@ async function verifyUserSession() {
         const URL = URL_BASE + '/usuario/verificarSesion?token=' + token
         const apiResponse = await APIhlp.getAllData(URL)
 
-        console.log(apiResponse)
-
         if (!apiResponse.response) {
             await loadIndex()
         }
 
         if (apiResponse.idUsuario) {
-            console.log(apiResponse)
             loadDashboad(apiResponse)
         }
     }
@@ -195,6 +192,22 @@ function fixAlertsOnDashboard() {
     container.classList.remove('swal2-height-auto')
 }
 
+function setSelectedModule() {
+    const modulesButtons = document.querySelectorAll('li')
+
+    modulesButtons.forEach(item => {
+        item.onclick = () => activeSelected(item)
+    })
+
+    function activeSelected(item) {
+        modulesButtons.forEach(item => {
+            item.classList.remove('menu-item_selected')
+        })
+
+        item.classList.add('menu-item_selected')
+    }
+}
+
 function loadControls() {
     const btnListEmployee = document.querySelector('#btnListEmployee')
     const btnEditEmployee = document.querySelector('#btnEditEmployee')
@@ -253,9 +266,11 @@ function loadControls() {
         entConfig.loadEnterpriseConfigurationModule(content)
     })
 
-    btnLogout.onclick = function () {
+    btnLogout.addEventListener('click', () => {
         closeUserSession()
-    }
+    })
+
+    setSelectedModule()
 }
 
 function closeUserSession() {
@@ -298,9 +313,9 @@ function loadControlsUser() {
     btnEnterpriseConfiguration.classList.add('d-none')
     btnConfig.classList.add('d-none')
 
-    btnLogout.onclick = function() {
+    btnLogout.addEventListener('click', () => {
         closeUserSession()
-    }
+    })
 
     // btnAttendance.addEventListener('click', async () => {
     //     const content = await hlp.getModule('Html/Asistencias/Registro.html')
