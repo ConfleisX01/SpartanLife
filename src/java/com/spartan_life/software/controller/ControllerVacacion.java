@@ -166,11 +166,12 @@ public class ControllerVacacion {
                 p.setApellidoMaterno(rs.getString("apellido_materno"));
                 e.setIdEmpleado(rs.getInt("id_empleado"));
                 e.setAntiguedad(rs.getString("fecha_registro"));
-                e.setFoto(rs.getString("foto"));
+                //e.setFoto(rs.getString("foto"));
                 e.setLimiteVacaciones(rs.getInt("limite_vacaciones"));
                 e.setVacacionesRestantes(rs.getInt("vacaciones_restantes"));
                 sv.setIdVacaciones(rs.getInt("id_vacaciones"));
                 sv.setFechaSolicitud(rs.getString("fecha_solicitud"));
+                sv.setFechaRespondido(rs.getString(("fecha_respondido")));
                 sv.setNombreCreador(rs.getString("nombre_creador"));
                 sv.setFechaInicio(rs.getString("fecha_inicio"));
                 sv.setFechaFin(rs.getString("fecha_fin"));

@@ -14,7 +14,7 @@ export async function loadVacationsModule(content) {
 
     loadEmployeesTable(data)
 
-    loadEmployeeSelect(data)
+    loadEmployeeSelect(data) // Agrega los empleados al seleccionador de creador de la solicitud
 
     verityFileInputs()
 }
@@ -227,7 +227,7 @@ async function updateRequest(vacationData) {
         let apiResponse = await APIhlp.saveObjectApiData(URL, 'vacacion', object)
         if (apiResponse.response == 'OK') {
             msg.successMessage("Solicitud actualizada.")
-            //updateRequestOnEmployee(object.idVacaciones, object)
+            updateRequestStatusOnEmployee(object.idVacaciones, object.estatus, object.nombreAprobador)
         } else {
             const serverMessage = hlp.handlerApiResponse(apiResponse, 'Error al actualizar la solicitud', 'Ocurrió un error. Por favor, vuelve a intentarlo más tarde.')
             msg.errorMessage('Error al procesar la solicitud', serverMessage)
@@ -257,7 +257,7 @@ async function updateDaysLeft(idEmployee, employeeData) {
 
                 if (apiResponse.response == 'OK') {
                     msg.successMessage('La cantidad se actualizó correctamente.')
-                    updateVacationsLeftOnEmployee(idEmployee, data.vacacionesRestantes)
+                    updateVacationsLeftOnEmployee(idEmployee, employeeObj.vacacionesRestantes)
                 } else {
                     const serverMessage = hlp.handlerApiResponse(apiResponse, 'Error al actualizar la cantidad', 'Ocurrió un error. Por favor, vuelve a intentarlo más tarde.')
                     msg.errorMessage('Error al procesar la solicitud', serverMessage)
@@ -286,7 +286,7 @@ async function updateDaysLimit(idEmployee) {
 
             if (apiResponse.response == 'OK') {
                 msg.successMessage('El límite se actualizó correctamente.')
-                updateVacationsLimitOnEmployee(idEmployee, data.limiteVacaciones)
+                updateVacationsLimitOnEmployee(idEmployee, employeeObj.limiteVacaciones)
             } else {
                 const serverMessage = hlp.handlerApiResponse(apiResponse, 'Error al actualizar el límite', 'Ocurrió un error. Por favor, vuelve a intentarlo más tarde.')
                 msg.errorMessage('Error al procesar la solicitud', serverMessage)
@@ -322,7 +322,7 @@ async function createNewVacationRequest(idEmpleado, employeeData) {
                 const apiResponse = await APIhlp.saveObjectApiData(URL, 'vacacion', newRequest)
                 if (apiResponse.response === 'OK') {
                     msg.successMessage('La solicitud se ha creado con éxito.')
-                    updateVacationsLeftOnEmployee(idEmpleado, VACATIONS_LEFT - newRequest.diasSolicitados)
+                    addRequestOnEmployee(idEmpleado, newRequest)
                 } else {
                     const serverMessage = hlp.handlerApiResponse(apiResponse, 'Error al crear la solicitud', 'Ocurrió un error. Por favor, vuelve a intentarlo más tarde.')
                     msg.errorMessage('Error al procesar la solicitud', serverMessage)
@@ -584,53 +584,132 @@ function getTodayDate() {
     return `${year}-${month}-${day}`
 }
 
-function updateVacationsLeftOnEmployee(idEmployee, newVacationsLeft) {
-    const employeeData = data
-    employeeData[0].forEach(employee => {
-        if (employee.idEmpleado == idEmployee) {
-            employee.vacacionesRestantes = parseInt(newVacationsLeft, 10)
-            loadEmployeesTable(data)
-            changeEmployeeVacationsInfo(employee)
-        }
-    })
+function addRequestOnEmployee(idEmployee, requestInfo) {
+    const requestData = data[1] // Index de las solicitudes en el array global
+    const employeeData = data[0] // Index de los empleados en el array global
+    const LAST_REQUEST_ID = requestData.length > 0 && requestData[0].idVacaciones !== undefined ? requestData[0].idVacaciones : 0
+
+    substractDaysLeftOnEmployee(idEmployee, requestInfo.diasSolicitados)
+    createNewJsonRequest(LAST_REQUEST_ID, idEmployee, requestInfo)
 }
 
-function updateVacationsLimitOnEmployee(idEmployee, newVacationsLimit) {
-    const employeeData = data
-    employeeData[0].forEach(employee => {
-        if (employee.idEmpleado == idEmployee) {
-            employee.limiteVacaciones = parseInt(newVacationsLimit, 10)
-            loadEmployeesTable(data)
-            changeEmployeeVacationsInfo(employee)
+function substractDaysLeftOnEmployee(idEmployee, daysToSubstract) {
+    const EMPLOYEE_DATA_INDEX = 0
+
+    const employee = data[EMPLOYEE_DATA_INDEX].find(emp => emp.idEmpleado === idEmployee)
+
+    if (employee) {
+        employee.vacacionesRestantes -= daysToSubstract
+
+        if (employee.vacacionesRestantes < 0) {
+            employee.vacacionesRestantes = 0
         }
-    })
+
+    } else {
+        alert("Empleado no encontrado")
+    }
+
+    loadEmployeesTable(data)
 }
 
-function updateRequestOnEmployee(idVacation, newInfo) {
-    const vacationData = data
+function createNewJsonRequest(lastRequestId, idEmployee, requestInfo) {
+    const EMPLOYEE_DATA_INDEX = 0
 
-    vacationData[1].forEach(request => {
-        if (request.idVacaciones == idVacation) {
-            request.estatus = newInfo.estatus
-            request.nombreAprobador = newInfo.nombreAprobador
+    const employee = data[EMPLOYEE_DATA_INDEX].find(emp => emp.idEmpleado === idEmployee)
 
-            const employee = vacationData[0].filter(employee => {
-                return employee.idEmpleado == request.empleado.idEmpleado
-            })[0]; // Agregamos [0] para obtener el primer (y único) resultado del filter
+    const newRequestJson = {
+        "idVacaciones": lastRequestId + 1,
+        "empleado": {
+            "idEmpleado": employee.idEmpleado,
+            "persona": {
+                "idPersona": employee.persona.idPersona,
+                "apellidoPaterno": employee.persona.apellidoPaterno,
+                "apellidoMaterno": employee.persona.apellidoMaterno
+            },
+            "antiguedad": "2024-08-12",
+            "limiteVacaciones": employee.limiteVacaciones,
+            "vacacionesRestantes": employee.vacacionesRestantes
+        },
+        "fechaSolicitud": getTodayDate(),
+        "fechaInicio": requestInfo.fechaInicio,
+        "fechaFin": requestInfo.fechaFin,
+        "diasSolicitados": requestInfo.diasSolicitados,
+        "estatus": "pendiente",
+        "nombreCreador": requestInfo.nombreCreador,
+        "comentariosCreador": requestInfo.comentariosCreador,
+        "vacacionesRestantes": employee.vacacionesRestantes,
+        "comentariosEmpleado": requestInfo.comentariosEmpleado,
+        "documentoSoporte": requestInfo.documentoSoporte && requestInfo.documentoSoporte != undefined ? requestInfo.documentoSoporte : ""
+    }
 
-            let daysLeft = employee.vacacionesRestantes
-
-            if (request.estatus == 'aprobado') {
-                daysLeft -= request.diasSolicitados
-            }
-
-            if (request.estatus == 'denegado') {
-                daysLeft += request.diasSolicitados
-            }
-
-            loadEmployeesTable(data)
-            targetEmployeeData(request.empleado.idEmpleado, vacationData[1], employee)
-            updateVacationsLeftOnEmployee(employee.idEmpleado, daysLeft)
+    try {
+        if (!Array.isArray(data[1])) {
+            data[1] = []
         }
-    })
+
+        data[1].push(newRequestJson)
+
+        if (data[1].length > 0) {
+            data[1].sort((a, b) => b.idVacaciones - a.idVacaciones)
+        }
+
+    } catch (error) {
+        console.log(error)
+    }
+
+    loadEmployeesTable(data)
+
+    targetEmployeeData(idEmployee, data[1], employee)
+}
+
+function updateVacationsLimitOnEmployee(idEmployee, newLimit) {
+    const EMPLOYEE_DATA_INDEX = 0
+
+    const employee = data[EMPLOYEE_DATA_INDEX].find(emp => emp.idEmpleado == idEmployee)
+
+    if (employee) {
+        employee.limiteVacaciones = newLimit
+    } else {
+        msg.errorMessage('Error al acutalizar los datos locales', 'No se encontro al empleado', 'vuelva a cargar la pagina actual')
+    }
+
+    loadEmployeesTable(data)
+
+    targetEmployeeData(idEmployee, data[1], employee)
+}
+
+function updateVacationsLeftOnEmployee(idEmployee, newDays) {
+    const EMPLOYEE_DATA_INDEX = 0
+
+    const employee = data[EMPLOYEE_DATA_INDEX].find(emp => emp.idEmpleado == idEmployee)
+
+    if (employee) {
+        employee.vacacionesRestantes = newDays
+    } else {
+        msg.errorMessage('Error al acutalizar los datos locales', 'No se encontro al empleado', 'vuelva a cargar la pagina actual')
+    }
+
+    loadEmployeesTable(data)
+
+    targetEmployeeData(idEmployee, data[1], employee)
+}
+
+function updateRequestStatusOnEmployee(idRequest, requestStatus, name) {
+    const REQUEST_DATA_INDEX = 1
+    const EMPLOYEE_DATA_INDEX = 0
+
+    const request = data[REQUEST_DATA_INDEX].find(request => request.idVacaciones == idRequest)
+    const employee = data[EMPLOYEE_DATA_INDEX].find(emp => request.empleado.idEmpleado == emp.idEmpleado)
+
+    if (request) {
+        request.estatus = requestStatus
+        request.nombreAprobador = name
+        request.fechaRespondido = getTodayDate()
+    } else {
+        msg.errorMessage('Error al acutalizar los datos locales', 'No se pudo actualizar los datos de la solicitud', 'Vuelva a cargar la pagina actual')
+    }
+
+    const newDays = request.estatus == 'aprobado' ? employee.vacacionesRestantes : employee.vacacionesRestantes + request.diasSolicitados
+
+    updateVacationsLeftOnEmployee(employee.idEmpleado, newDays)
 }

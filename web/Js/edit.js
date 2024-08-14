@@ -275,8 +275,6 @@ function loadControlsForm(employee = null) {
     //btnDelete.removeEventListener('click', () => deleteEmployee(employee))
     //btnDelete.addEventListener('click', () => deleteEmployee(employee))
     btnDelete.onclick = () => deleteEmployee(employee)
-
-    console.log("Nuevas funciones corregidas")
 }
 
 // ? Funcion para limpiar el formulario en caso de ser necesario

@@ -68,7 +68,7 @@ async function createNewBranch() {
 
 async function createNewJob() {
     const URL = URL_BASE + '/puesto/insertarPuesto'
-    const inputsSelectors = [{ selector: "#txtJobName", key: "jobName", name: "Nombre del Puesto" }]
+    const inputsSelectors = [{ selector: "#txtJobName", key: "nombrePuesto", name: "Nombre del Puesto" }]
 
     const data = await hlp.getInputValues(inputsSelectors)
 
@@ -77,7 +77,7 @@ async function createNewJob() {
     if (response.Header) {
         msg.errorMessage(response.Header, response.Body, response.Content ? response.Content.join(', ') : "")
     } else {
-        let newJob = createBranchJson(response)
+        let newJob = createJobJson(response)
 
         let apiResponse = await APIhlp.saveObjectApiData(URL, "puesto", newJob)
 
@@ -101,7 +101,7 @@ function createBranchJson(branch) {
 
 function createJobJson(job) {
     const newJob = {
-        "nombrePuesto": job.jobName
+        "nombrePuesto": job.nombrePuesto
     }
 
     return newJob

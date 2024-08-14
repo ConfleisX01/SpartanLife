@@ -58,7 +58,6 @@ export function viewUsers() {
 async function getAllUsusario(){
      const URL = URL_BASE + '/usuario/traerUsuario';
     const usuarios = await APIhlp.getAllData(URL);
-    console.log(usuarios)
     return usuarios;
 }
 
