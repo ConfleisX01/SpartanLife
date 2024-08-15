@@ -5,9 +5,9 @@ import * as hlp from './helpers.js'
 //Objeto para usar los helpers de las APIS
 import * as APIhlp from './APIHelpers.js'
 // Objeto para control del dashboard
-import * as dsh from './Dashboard.js'
+import * as dsh from './dashboard.js'
 // Objeto para el control de los empleados
-import * as emp from './Edit.js'
+import * as emp from './edit.js'
 // Objeto para el control de las asistencias
 import * as atn from './attendance.js'
 // Objeto para el control de solicitudes de vacaciones
@@ -23,7 +23,7 @@ import * as inc2 from './incidenciaUser.js'
 // Objeto para el control de configuraciones de la sucursal
 import * as entConfig from './enterprise.js'
 //Objeto para debugear
-import * as Dbg from './Debug.js'
+import * as Dbg from './debug.js'
 // solo se ocupa en la creacion
 import { URL_BASE } from './config.js';
 
