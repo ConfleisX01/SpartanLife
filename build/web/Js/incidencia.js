@@ -326,3 +326,29 @@ async function showIncidenciaSelected(employeeSelected, employees) {
 function cleanTableRows(tableBody) {
     tableBody.innerHTML = '';
 }
+
+
+// funcion para contar caracteres
+
+function validarLongitudInput(valorInput, longitudMaxima) {
+    return valorInput.length <= longitudMaxima;
+}
+
+function validarDataInputs() {
+    const inputs = dataInputs();
+    let esValido = true;
+
+    inputs.forEach(input => {
+        const valorInput = document.querySelector(input.selector).value;
+
+        // Validar solo los campos que no son fechas
+        if (input.selector !== '#txtWeekStart' && input.selector !== '#txtWeekEnd') {
+            if (!validarLongitudInput(valorInput, 255)) {
+                esValido = false;
+                         msg.errorMessage("Error", "Por favor, vuelva a intentarlo.", "Debes colocar menos de 255 caracteres");
+            }
+        }
+    });
+
+    return esValido;
+}
