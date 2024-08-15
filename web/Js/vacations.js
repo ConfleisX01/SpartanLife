@@ -128,7 +128,7 @@ function loadVacationInfo(vacationData) {
     const dateRequestLabel = labels[0].textContent = `${vacationData.fechaSolicitud}`
     const timeRangeRequest = labels[1].textContent = `${vacationData.fechaInicio} -> ${vacationData.fechaFin} (${getDays(vacationData.fechaInicio, vacationData.fechaFin)} dias)`
     const createdBy = labels[2].textContent = `${vacationData.nombreCreador}`
-    const checkedBy = labels[3].textContent = `${vacationData.nombreAprobador}`
+    const checkedBy = labels[3].textContent = `${vacationData.nombreAprobador!=undefined?vacationData.nombreAprobador : "No atendida"}`
     const creatorComments = labels[4].textContent = `${vacationData.comentariosCreador}`
     const employeeComments = labels[5].textContent = `${vacationData.comentariosEmpleado}`
 
@@ -217,6 +217,10 @@ function createVacationItem(data) {
 }
 
 async function updateRequest(vacationData) {
+   // Validar la longitud de los inputs antes de continuar
+    if (!validarGetAllRequestInputs()) {
+        return // Si la validación falla, se detiene la ejecución de la función
+    }
     const URL = cng.URL_BASE + '/vacacion/actualizarEstatus'
     const btnUpdateRequest = document.querySelector('#btnUpdateRequest')
 
@@ -236,6 +240,10 @@ async function updateRequest(vacationData) {
 }
 
 async function updateDaysLeft(idEmployee, employeeData) {
+      // Validar la longitud de los inputs antes de continuar
+    if (!validarGetAllRequestInputs()) {
+        return // Si la validación falla, se detiene la ejecución de la función
+    }
     const VACATIONS_LIMIT = employeeData.limiteVacaciones
     const VACATIONS_LEFT = employeeData.vacacionesRestantes
     parseInt(VACATIONS_LIMIT, 10)
@@ -270,6 +278,10 @@ async function updateDaysLeft(idEmployee, employeeData) {
 }
 
 async function updateDaysLimit(idEmployee) {
+       // Validar la longitud de los inputs antes de continuar
+    if (!validarGetAllRequestInputs()) {
+        return // Si la validación falla, se detiene la ejecución de la función
+    }
     const inputs = [{ selector: '#txtVacationsLimit', key: 'limiteVacaciones', name: "Limite de vacaciones", required: true }]
     const data = await hlp.getInputValues(inputs)
     const URL = cng.URL_BASE + '/vacacion/actualizarLimiteVacaciones'
@@ -296,6 +308,10 @@ async function updateDaysLimit(idEmployee) {
 }
 
 async function createNewVacationRequest(idEmpleado, employeeData) {
+           // Validar la longitud de los inputs antes de continuar
+    if (!validarGetAllRequestInputs()) {
+        return // Si la validación falla, se detiene la ejecución de la función
+    }
     const data = await hlp.getInputValues(getAllRequestInputs())
     const VACATIONS_LIMIT = employeeData.limiteVacaciones
     const VACATIONS_LEFT = employeeData.vacacionesRestantes
@@ -712,4 +728,41 @@ function updateRequestStatusOnEmployee(idRequest, requestStatus, name) {
     const newDays = request.estatus == 'aprobado' ? employee.vacacionesRestantes : employee.vacacionesRestantes + request.diasSolicitados
 
     updateVacationsLeftOnEmployee(employee.idEmpleado, newDays)
+}
+
+// validar inputs
+function validarLongitudInput(valorInput, longitudMaxima) {
+    return valorInput.length <= longitudMaxima;
+}
+
+function validarGetAllRequestInputs() {
+    const inputs = getAllRequestInputs();
+    let esValido = true;
+
+    inputs.forEach(input => {
+        const valorInput = document.querySelector(input.selector).value;
+
+        // Validar según el campo específico
+        switch (input.key) {
+            case 'nombreCreador':
+            case 'nombreAprobador':
+            case 'comentariosCreador':
+            case 'comentariosEmpleado':
+                if (!validarLongitudInput(valorInput, 255)) {
+                    esValido = false;
+                    msg.errorMessage("Error", "Por favor, vuelva a intentarlo.", `El campo '${input.name}' debe contener menos de 255 caracteres.`);
+                }
+                break;
+            case 'estatus':
+                if (!validarLongitudInput(valorInput, 100)) {
+                    esValido = false;
+                    msg.errorMessage("Error", "Por favor, vuelva a intentarlo.", `El campo '${input.name}' debe contener menos de 100 caracteres.`);
+                }
+                break;
+            default:
+                break;
+        }
+    });
+
+    return esValido;
 }

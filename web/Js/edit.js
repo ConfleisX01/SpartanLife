@@ -298,26 +298,32 @@ function closeForm() {
 }
 
 async function updateEmployee(employee) {
-    const data = await hlp.getInputValues(getAllInputs())
-    const URL = URL_BASE + '/empleado/modificarEmpleado'
+    // Validar la longitud de los inputs antes de continuar
+    if (!validarGetAllInputs()) {
+        return // Si la validación falla, se detiene la ejecución de la función
+    }
 
-    let response = hlp.errorHandler(data)
+    const data = await hlp.getInputValues(getAllInputs());
+    const URL = URL_BASE + '/empleado/modificarEmpleado';
+
+    let response = hlp.errorHandler(data);
 
     if (response.Header) {
-        msg.errorMessage(response.Header, response.Body, response.Content ? response.Content.join(', ') : "")
+        msg.errorMessage(response.Header, response.Body, response.Content ? response.Content.join(', ') : "");
     } else {
-        let newEmployee = createEmployeeJsonToUpdate(data, employee.persona.idPersona, employee.idEmpleado)
+        let newEmployee = createEmployeeJsonToUpdate(data, employee.persona.idPersona, employee.idEmpleado);
 
-        const apiResponse = await APIhlp.saveObjectApiData(URL, "empleado", newEmployee)
+        const apiResponse = await APIhlp.saveObjectApiData(URL, "empleado", newEmployee);
 
         if (apiResponse.response) {
-            msg.successMessage("Empleado Actualizado", "El empelado ha sido actualizado con éxito")
-            loadModule(html)
+            msg.successMessage("Empleado Actualizado", "El empleado ha sido actualizado con éxito.");
+            loadModule(html);
         } else {
-            msg.errorMessage("Error", "Hubo un error al actualizar el empleado", "Por favor, vuelve a intentarlo.")
+            msg.errorMessage("Error", "Hubo un error al actualizar el empleado", "Por favor, vuelve a intentarlo.");
         }
     }
 }
+
 
 async function deleteEmployee(employee) {
     const data = await hlp.getInputValues(getAllInputs())
@@ -340,26 +346,32 @@ async function deleteEmployee(employee) {
 }
 
 async function saveEmployee() {
-    const data = await hlp.getInputValues(getAllInputs())
-    const URL = URL_BASE + '/empleado/insertEmpleado'
+    // Validar la longitud de los inputs antes de continuar
+    if (!validarGetAllInputs()) {
+        return // Si la validación falla, se detiene la ejecución de la función
+    }
 
-    let response = hlp.errorHandler(data)
+    const data = await hlp.getInputValues(getAllInputs());
+    const URL = URL_BASE + '/empleado/insertEmpleado';
+
+    let response = hlp.errorHandler(data);
 
     if (response.Header) {
-        msg.errorMessage(response.Header, response.Body, response.Content ? response.Content.join(', ') : "")
+        msg.errorMessage(response.Header, response.Body, response.Content ? response.Content.join(', ') : "");
     } else {
-        let newEmployee = createEmployeeJson(response)
+        let newEmployee = createEmployeeJson(response);
 
-        let apiResponse = await APIhlp.saveObjectApiData(URL, 'empleado', newEmployee)
+        let apiResponse = await APIhlp.saveObjectApiData(URL, 'empleado', newEmployee);
 
         if (apiResponse.response) {
-            msg.successMessage("Empleado Creado", "El empleado ha sido creado con éxito.")
-            loadModule(html)
+            msg.successMessage("Empleado Creado", "El empleado ha sido creado con éxito.");
+            loadModule(html);
         } else {
-            msg.errorMessage("Error", "Hubo un error al crear el empleado", "Por favor, vuelve a intentarlo.")
+            msg.errorMessage("Error", "Hubo un error al crear el empleado", "Por favor, vuelve a intentarlo.");
         }
     }
 }
+
 
 function createEmployeeJson(data) {
     const employee = {
@@ -615,4 +627,43 @@ function showFileViewer(index) {
 
 async function getBase64FileData(file) {
     return await hlp.fileToBase64(file)
+}
+
+// validar inputs
+
+function validarLongitudInput(valorInput, longitudMaxima) {
+    return valorInput.length <= longitudMaxima;
+}
+
+function validarGetAllInputs() {
+    const inputs = getAllInputs();
+    let esValido = true;
+
+    inputs.forEach(input => {
+        const valorInput = document.querySelector(input.selector).value;
+
+        // Validar según el campo específico
+        switch (input.key) {
+            case 'nombre':
+                if (!validarLongitudInput(valorInput, 255)) {
+                    esValido = false;
+                    msg.errorMessage("Error", "Por favor, vuelva a intentarlo.", "El campo 'Nombre' debe contener menos de 255 caracteres.");
+                }
+                break;
+            case 'apellidoPaterno':
+            case 'apellidoMaterno':
+            case 'rfc':
+            case 'curp':
+            case 'nss':
+                if (!validarLongitudInput(valorInput, 50)) {
+                    esValido = false;
+                    msg.errorMessage("Error", "Por favor, vuelva a intentarlo.", `El campo '${input.name}' debe contener menos de 50 caracteres.`);
+                }
+                break;
+            default:
+                break;
+        }
+    });
+
+    return esValido;
 }
