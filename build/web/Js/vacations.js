@@ -712,4 +712,5 @@ function updateRequestStatusOnEmployee(idRequest, requestStatus, name) {
     const newDays = request.estatus == 'aprobado' ? employee.vacacionesRestantes : employee.vacacionesRestantes + request.diasSolicitados
 
     updateVacationsLeftOnEmployee(employee.idEmpleado, newDays)
+    loadVacationInfo(request)
 }
