@@ -47,6 +47,9 @@ async function createNewBranch() {
     ]
 
     const data = await hlp.getInputValues(inputsSelectors)
+     if (!validarInputsSucursal(data)) {
+        return; // Si la validación falla, se detiene la ejecución de la función
+    }
 
     let response = hlp.errorHandler(data)
 
@@ -71,6 +74,10 @@ async function createNewJob() {
     const inputsSelectors = [{ selector: "#txtJobName", key: "nombrePuesto", name: "Nombre del Puesto" }]
 
     const data = await hlp.getInputValues(inputsSelectors)
+    
+       if (!validarInputsPuesto(data)) {
+        return; // Si la validación falla, se detiene la ejecución de la función
+    }
 
     let response = hlp.errorHandler(data)
 
@@ -105,4 +112,48 @@ function createJobJson(job) {
     }
 
     return newJob
+}
+
+// validaciones
+function validarLongitudInput(valorInput, longitudMaxima) {
+    return valorInput.length <= longitudMaxima;
+}
+
+function validarInputsSucursal(data) {
+    const validaciones = [
+        { key: 'BranchName', name: 'Nombre de Sucursal', longitudMaxima: 255 },
+        { key: 'BranchAdress', name: 'Dirección de la sucursal', longitudMaxima: 255 }
+    ];
+
+    let esValido = true;
+
+    validaciones.forEach(validacion => {
+        const valorInput = data[validacion.key];
+
+        if (!validarLongitudInput(valorInput, validacion.longitudMaxima)) {
+            esValido = false;
+            msg.errorMessage("Error", "Por favor, vuelva a intentarlo.", `El campo '${validacion.name}' debe tener menos de ${validacion.longitudMaxima} caracteres.`);
+        }
+    });
+
+    return esValido;
+}
+
+function validarInputsPuesto(data) {
+    const validaciones = [
+        { key: 'nombrePuesto', name: 'Nombre del Puesto', longitudMaxima: 255 }
+    ];
+
+    let esValido = true;
+
+    validaciones.forEach(validacion => {
+        const valorInput = data[validacion.key];
+
+        if (!validarLongitudInput(valorInput, validacion.longitudMaxima)) {
+            esValido = false;
+            msg.errorMessage("Error", "Por favor, vuelva a intentarlo.", `El campo '${validacion.name}' debe tener menos de ${validacion.longitudMaxima} caracteres.`);
+        }
+    });
+
+    return esValido;
 }

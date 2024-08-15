@@ -181,6 +181,10 @@ function updateAlertStatus(data) {
 }
 
 async function saveIncidencia(employeeSelected) {
+      // Validar la longitud de los inputs antes de continuar
+    if (!validarDataInputs()) {
+        return // Si la validación falla, se detiene la ejecución de la función
+    }
     if (!employeeSelected) {
         msg.errorMessage("Error", "No se ha seleccionado un empleado", "Por favor, seleccione un empleado.");
         return;
@@ -207,6 +211,10 @@ async function saveIncidencia(employeeSelected) {
 }
 
 async function updateIncidencia(employeeSelected){
+      // Validar la longitud de los inputs antes de continuar
+    if (!validarDataInputs()) {
+        return // Si la validación falla, se detiene la ejecución de la función
+    }
       if (!employeeSelected) {
         msg.errorMessage("Error", "No se ha seleccionado un empleado", "Por favor, seleccione un empleado.");
         return;
@@ -329,26 +337,32 @@ function cleanTableRows(tableBody) {
 
 
 // funcion para contar caracteres
-
 function validarLongitudInput(valorInput, longitudMaxima) {
-    return valorInput.length <= longitudMaxima;
+    return valorInput.length <= longitudMaxima
 }
 
 function validarDataInputs() {
-    const inputs = dataInputs();
-    let esValido = true;
+    const inputs = dataInputs()
+    let esValido = true
 
     inputs.forEach(input => {
-        const valorInput = document.querySelector(input.selector).value;
+        const valorInput = document.querySelector(input.selector).value
 
-        // Validar solo los campos que no son fechas
-        if (input.selector !== '#txtWeekStart' && input.selector !== '#txtWeekEnd') {
-            if (!validarLongitudInput(valorInput, 255)) {
-                esValido = false;
-                         msg.errorMessage("Error", "Por favor, vuelva a intentarlo.", "Debes colocar menos de 255 caracteres");
-            }
+        // Validar según el campo específico
+        switch (input.key) {
+            case 'severity':
+            case 'reason':
+            case 'sanction':
+                if (!validarLongitudInput(valorInput, 255)) {
+                    esValido = false
+                    msg.errorMessage("Error", "Por favor, vuelva a intentarlo.", `El campo '${input.name}' debe contener menos de 255 caracteres.`)
+                }
+                break
+            default:
+                // Otros campos pueden tener validaciones específicas si es necesario
+                break
         }
-    });
+    })
 
-    return esValido;
+    return esValido
 }

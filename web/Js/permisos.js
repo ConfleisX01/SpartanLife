@@ -181,6 +181,10 @@ function updateAlertStatus(data) {
 }
 
 async function savePermiso(employeeSelected) {
+     // Validar la longitud de los inputs antes de continuar
+    if (!validarDataInputs()) {
+        return // Si la validación falla, se detiene la ejecución de la función
+    }
     if (!employeeSelected) {
         msg.errorMessage("Error", "No se ha seleccionado un empleado", "Por favor, seleccione un empleado.");
         return;
@@ -208,6 +212,10 @@ async function savePermiso(employeeSelected) {
 }
 
 async function updatePermiso(employeeSelected){
+      // Validar la longitud de los inputs antes de continuar
+    if (!validarDataInputs()) {
+        return // Si la validación falla, se detiene la ejecución de la función
+    }
       if (!employeeSelected) {
         msg.errorMessage("Error", "No se ha seleccionado un empleado", "Por favor, seleccione un empleado.");
         return;
@@ -323,4 +331,40 @@ async function showPermisoSelected(employeeSelected, employees) {
 
 function cleanTableRows(tableBody) {
     tableBody.innerHTML = '';
+}
+
+
+// contar caracteres
+function validarLongitudInput(valorInput, longitudMaxima) {
+    return valorInput.length <= longitudMaxima;
+}
+
+function validarDataInputs() {
+    const inputs = dataInputs();
+    let esValido = true;
+
+    inputs.forEach(input => {
+        const valorInput = document.querySelector(input.selector).value;
+
+        // Validar según el campo específico
+        switch (input.key) {
+            case 'motivo':
+                if (!validarLongitudInput(valorInput, 255)) {
+                    esValido = false;
+                    msg.errorMessage("Error", "Por favor, vuelva a intentarlo.", `El campo '${input.name}' debe contener menos de 255 caracteres.`);
+                }
+                break;
+            case 'explicacion':
+                if (!validarLongitudInput(valorInput, 500)) {
+                    esValido = false;
+                    msg.errorMessage("Error", "Por favor, vuelva a intentarlo.", `El campo '${input.name}' debe contener menos de 500 caracteres.`);
+                }
+                break;
+            default:
+                // Otros campos pueden tener validaciones específicas si es necesario
+                break;
+        }
+    });
+
+    return esValido;
 }
