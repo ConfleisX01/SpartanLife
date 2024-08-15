@@ -5,9 +5,9 @@ import * as hlp from './helpers.js'
 //Objeto para usar los helpers de las APIS
 import * as APIhlp from './APIHelpers.js'
 // Objeto para control del dashboard
-import * as dsh from './Dashboard.js'
+import * as dsh from './dashboard.js'
 // Objeto para el control de los empleados
-import * as emp from './Edit.js'
+import * as emp from './edit.js'
 // Objeto para el control de las asistencias
 import * as atn from './attendance.js'
 // Objeto para el control de solicitudes de vacaciones
@@ -23,7 +23,7 @@ import * as inc2 from './incidenciaUser.js'
 // Objeto para el control de configuraciones de la sucursal
 import * as entConfig from './enterprise.js'
 //Objeto para debugear
-import * as Dbg from './Debug.js'
+import * as Dbg from './debug.js'
 // solo se ocupa en la creacion
 import { URL_BASE } from './config.js';
 
@@ -107,12 +107,14 @@ async function loadSesionControls() {
 
     btnCreate.addEventListener('click', () => {
         if (hlp.verifyInputs(signinElements)) {
+            if(verificarCaracteres(signinElements)){
             let user = { "rol": txtRol.value, "nombreUsuario": lbUserCreate.value, "contrasenia": lbPasswordCreate.value };
             const URL = URL_BASE + '/usuario/insertarUsuario';
             Dbg.addUser(URL, "usuario", user);
             msg.successMessage("Usuario Creado", "Se ha creado el usuario con éxito");
             Dbg.viewUsers();
             switchAccountMode(1)
+        }
         } else {
             msg.errorMessage("Entradas Vacías", "Error al crear el usuario", "Rellene todos los campos solicitados del formulario");
         }
@@ -354,3 +356,41 @@ verifyUserSession()
 // TODO: Funcion de prueba, eliminar cuando se termine de probar el apartado del dashboard
 //loadAdminDashboard()
 //loadUserDashboard()
+
+// contar caracteres
+function verificarCaracteres() {
+    // Obtener los elementos de entrada
+    const lbUserCreate = document.getElementById('txtUserCreate');
+    const lbPasswordCreate = document.getElementById('txtPasswordCreate');
+
+    // Definir las longitudes máximas permitidas
+    const maxLengths = {
+        'txtUserCreate': 50, // Longitud máxima para nombre_usuario
+        'txtPasswordCreate': 255 // Longitud máxima para contrasenia
+    };
+
+    let valid = true;
+
+    // Verificar longitud del campo de nombre de usuario
+    if (lbUserCreate.value.length > maxLengths['txtUserCreate']) {
+        valid = false;
+        msg.errorMessage(
+            'Longitud Excedida en Usuario',
+            `El campo Usuario  no debe superar los ${maxLengths['txtUserCreate']} caracteres.`,
+            `Por favor, reduzca la longitud del campo Usuario  a ${maxLengths['txtUserCreate']} caracteres o menos.`
+        );
+    }
+
+    // Verificar longitud del campo de contraseña
+    if (lbPasswordCreate.value.length > maxLengths['txtPasswordCreate']) {
+        valid = false;
+        msg.errorMessage(
+            'Longitud Excedida en Contraseña',
+            `El campo Contraseña  no debe superar los ${maxLengths['txtPasswordCreate']} caracteres.`,
+            `Por favor, reduzca la longitud del campo Contraseña a ${maxLengths['txtPasswordCreate']} caracteres o menos.`
+        );
+    }
+
+    return valid;
+}
+
